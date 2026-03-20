@@ -583,6 +583,11 @@ html, body { height: 100%; overflow: hidden; overflow-x: hidden; max-width: 100%
         <input class="kinput" type="text" id="aiTitle" placeholder="예) 제주딸기 셀링" />
       </div>
       <div id="aiTypeBlocks"></div>
+      <!-- 메모 -->
+      <div class="kform-group" style="margin-bottom:10px;">
+        <label class="kform-label">메모 <span style="color:#999;font-size:11px;font-weight:400;">(선택 · 특이사항, 적용 매장 등)</span></label>
+        <textarea class="kinput" id="aiMemo" placeholder="예) 강서점 사이즈 기준" rows="2" style="resize:vertical;font-size:14px;"></textarea>
+      </div>
       <button class="kadd-type-btn" onclick="aiAddType()">+ 타입 추가</button>
       <div class="kmodal-actions">
         <button class="kbtn-cancel" onclick="modalClose('modalAddImg')">취소</button>
@@ -1523,7 +1528,7 @@ function openAddImg(prodName) {
   aiInlineSubMode=false; aiInlineProdMode=false;
   aiSelSub=aState.sub; aiSelProd=prodName||( aState.prod==='__all__'?'':aState.prod);
   document.getElementById('aiTitle').value='';
-  if(document.getElementById('aiMemo')) document.getElementById('aiMemo').value='';
+  var memoEl=document.getElementById('aiMemo'); if(memoEl) memoEl.value='';
   aiTypeCount=0; aiTypeSrcs={};
   document.getElementById('aiTypeBlocks').innerHTML='';
   renderAiSubRow();
