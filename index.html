@@ -2139,8 +2139,12 @@ function rqSubmit() {
   DB.requests.unshift(request);
   saveData();
 
+  // Supabase에 저장
+  sbSaveRequest(request).then(function(ok) {
+    if(!ok) console.warn('Supabase 저장 실패');
+  });
+
   modalClose('modalRequest');
-  // 신청 완료 팝업 - 신청 번호 표시
   openRequestSuccess(request.reqCode);
 }
 
