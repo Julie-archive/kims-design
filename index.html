@@ -891,9 +891,23 @@ function loadData() {
 }
 
 function saveData() {
-  // requests는 Supabase가 원본 - localStorage에 저장 안 함
-  var toSave = {subs:DB.subs, products:DB.products, ads:DB.ads, nextId:DB.nextId};
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(toSave));
+  try {
+    // requests는 Supabase가 원본 - localStorage에 저장 안 함
+    // ads에서 base64 이미지 제거 (용량 초과 방지)
+    var adsToSave = (DB.ads||[]).map(function(ad) {
+      return Object.assign({}, ad, {
+        types: (ad.types||[]).map(function(t) {
+          return Object.assign({}, t, {
+            src: (t.src && t.src.startsWith('data:')) ? '' : (t.src||'')
+          });
+        })
+      });
+    });
+    var toSave = {subs:DB.subs, products:DB.products, ads:adsToSave, nextId:DB.nextId};
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(toSave));
+  } catch(e) {
+    console.warn('localStorage 저장 실패:', e);
+  }
 }
 
 // Supabase 동기화 함수들
@@ -2205,7 +2219,8 @@ async function uploadImageToStorage(base64DataUrl, fileName) {
     while(n--) { u8arr[n] = bstr.charCodeAt(n); }
     var blob = new Blob([u8arr], {type: mime});
     var ext = mime.split('/')[1] || 'jpg';
-    var path = fileName + '_' + Date.now() + '.' + ext;
+    var safeName = fileName.replace(/[^a-zA-Z0-9_-]/g, '_').replace(/_+/g,'_');
+    var path = safeName + '_' + Date.now() + '.' + ext;
     var res = await sb.storage.from('images').upload(path, blob, {contentType: mime, upsert: true});
     if(res.error) throw res.error;
     var urlRes = sb.storage.from('images').getPublicUrl(path);
