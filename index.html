@@ -164,7 +164,7 @@ html, body { height: 100%; overflow: hidden; background: var(--bg); color: var(-
 @media(max-width: 500px) { .kad-grid { grid-template-columns: repeat(2,1fr); } }
 @media(max-width: 600px) {
   .kad-grid { grid-template-columns: 1fr !important; gap: 10px; }
-  .kad-thumb { aspect-ratio: 16/9; }
+  .kad-thumb { aspect-ratio: 16/6; }
   .kad-meta { padding: 8px 12px 12px; }
   .kad-title { font-size: 15px; margin-bottom: 6px; }
   .kad-overlay { display: none !important; }
@@ -2643,11 +2643,18 @@ function formatTelInput(el) {
 // 더미 requests 강제 주입 (테스트용)
 // Supabase에서 데이터 로드 후 렌더링
 (async function() {
-  renderHomeA(); // 먼저 로컬 데이터로 빠르게 렌더
+  renderHomeA();
   var ok = await sbLoadAll();
   if(ok) {
     console.log('Supabase 데이터 로드 성공');
-    renderHomeA();
+    if(homeScreen === 'B') {
+      // 현재 카테고리로 sub 다시 설정 후 재렌더
+      var firstSub = getSubs(hState.cat)[0]?.name || '';
+      if(!hState.sub && firstSub) hState.sub = firstSub;
+      renderHomeB();
+    } else {
+      renderHomeA();
+    }
   }
 })();
 </script>
