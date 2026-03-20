@@ -1041,19 +1041,18 @@ function renderHomeA() {
 }
 
 function homeCatSelect(cat) {
-  const firstSub = getSubs(cat)[0]?.name || '';
-  hState = {cat, sub:firstSub, prod:'__all__'};
   homeScreen = 'B';
-  renderHomeB();
-  // Supabase에서 데이터 아직 안 왔으면 로드 후 재렌더
-  if(DB.ads.length === 0) {
-    sbLoadAll().then(function(ok) {
-      if(ok && homeScreen === 'B' && hState.cat === cat) {
-        hState.sub = getSubs(cat)[0]?.name || '';
-        renderHomeB();
-      }
-    });
-  }
+  hState = {cat, sub:'', prod:'__all__'};
+  // 로딩 화면 먼저 표시
+  var el = document.getElementById('viewHome');
+  el.innerHTML = '<div style="flex:1;display:flex;align-items:center;justify-content:center;"><div style="font-size:14px;color:#aaa;">불러오는 중...</div></div>';
+  // 항상 Supabase에서 최신 데이터 로드 후 렌더
+  sbLoadAll().then(function(ok) {
+    if(homeScreen === 'B' && hState.cat === cat) {
+      hState.sub = getSubs(cat)[0]?.name || '';
+      renderHomeB();
+    }
+  });
 }
 
 function renderHomeB() {
