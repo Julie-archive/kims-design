@@ -837,27 +837,12 @@ const SUPABASE_KEY = 'sb_publishable_NoUBNfjDdpbJJgBDsdpKxw_K9IEg4UP';
 const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 const STORAGE_KEY = 'kims_archive_v5'; // fallback용
 
-var DUMMY_REQUESTS_DEFAULT = [
-  {id:91,reqCode:'KD-20260319-003',submittedAt:'2026. 3. 19. 오후 3:42',status:'완료',dept:'농산팀',name:'김지수',tel:'010-1234-5678',title:'제주 한라봉 행사 배너 제작',deadline:'2026-03-25',adTypes:['배너'],bannerType:'행잉형',customSize:'',adTitle:'제주 직송 한라봉',selling:'달콤한 제주의 맛, 지금 만나보세요!',eventStart:'2026-03-20',eventEnd:'2026-03-26',eventDesc:'제주 직송 한라봉 특별 할인 행사입니다.',sitePhotoSrcs:[],refImageSrcs:[],manager:'',dueDate:''},
-  {id:92,reqCode:'KD-20260319-002',submittedAt:'2026. 3. 19. 오후 1:15',status:'진행 중',dept:'농산팀',name:'김지수',tel:'010-1234-5678',title:'딸기 시즌 POP 제작 요청',deadline:'2026-03-22',adTypes:['규격 POP (A3)','와블러'],bannerType:'',customSize:'',adTitle:'봄 딸기 특가!',selling:'달콤한 봄의 시작, 신선한 딸기를 만나보세요',eventStart:'2026-03-21',eventEnd:'2026-03-31',eventDesc:'딸기 시즌 행사 POP 제작 요청드립니다.',sitePhotoSrcs:[],refImageSrcs:[],manager:'',dueDate:''},
-  {id:93,reqCode:'KD-20260319-001',submittedAt:'2026. 3. 19. 오전 10:03',status:'검토 중',dept:'농산팀',name:'김지수',tel:'010-1234-5678',title:'쌈채소 코너 매장 연출 의뢰',deadline:'2026-03-28',adTypes:['매장 연출','시트 작업'],bannerType:'',customSize:'',adTitle:'싱싱한 쌈채소',selling:'매일 아침 신선하게 들어옵니다',eventStart:'',eventEnd:'',eventDesc:'쌈채소 코너 신규 연출 작업입니다.',sitePhotoSrcs:[],refImageSrcs:[],manager:'',dueDate:''}
-];
 function loadData() {
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
-    if (raw) {
-      var data = JSON.parse(raw);
-      var hasDummy = (data.requests||[]).some(function(r){ return r.reqCode === 'KD-20260319-001'; });
-      if (!hasDummy) {
-        data.requests = DUMMY_REQUESTS_DEFAULT.concat(data.requests||[]);
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
-      }
-      return data;
-    }
+    if (raw) return JSON.parse(raw);
   } catch(e) {}
-  return {
-    subs: [], products: [], ads: [], requests: DUMMY_REQUESTS_DEFAULT, nextId: 100
-  };
+  return { subs: [], products: [], ads: [], requests: [], nextId: 100 };
 }
 
 function saveData() { localStorage.setItem(STORAGE_KEY, JSON.stringify(DB)); }
