@@ -782,18 +782,17 @@ html, body { height: 100%; overflow: hidden; overflow-x: hidden; max-width: 100%
 <!-- REQUEST SUCCESS MODAL -->
 <div class="kmodal-overlay center" id="modalReqSuccess">
   <div class="kmodal-sheet" style="max-width:400px;border-radius:20px;text-align:center;">
-    <div style="font-size:36px;margin-bottom:16px;">✓</div>
-    <div style="font-size:20px;font-weight:900;margin-bottom:8px;">신청이 완료되었습니다</div>
-    <div style="font-size:13px;color:#999;margin-bottom:24px;">아래 신청 번호로 진행 상태를 확인할 수 있습니다</div>
-    <div style="background:#f7f7f7;border-radius:12px;padding:16px 20px;margin-bottom:24px;">
-      <div style="font-size:11px;color:#999;font-weight:600;letter-spacing:1px;text-transform:uppercase;margin-bottom:6px;">신청 번호</div>
-      <div style="display:flex;align-items:center;justify-content:center;gap:10px;">
-        <span id="successReqCode" style="font-size:22px;font-weight:800;letter-spacing:2px;font-family:monospace;color:#111;"></span>
-        <button onclick="copyReqCode()" style="background:none;border:1.5px solid #ddd;border-radius:8px;padding:4px 10px;font-size:11px;font-weight:600;cursor:pointer;color:#555;">복사</button>
+    <div style="font-size:32px;margin-bottom:16px;color:#111;">✓</div>
+    <div style="font-size:20px;font-weight:900;margin-bottom:16px;">신청이 완료되었습니다</div>
+    <div style="background:#f7f7f7;border-radius:12px;padding:16px;margin-bottom:20px;">
+      <div style="font-size:13px;color:#555;line-height:1.7;">
+        신청 현황은 홈 화면의<br>
+        <strong style="color:#111;">신청 현황 조회</strong>에서<br>
+        신청 시 입력한 <strong style="color:#111;">연락처</strong>로 확인하실 수 있습니다.
       </div>
     </div>
-    <div style="font-size:12px;color:#bbb;margin-bottom:20px;">신청 현황은 신청 시 입력한 연락처로 조회할 수 있습니다.</div>
-    <button onclick="modalClose('modalReqSuccess')" style="width:100%;padding:14px;background:#111;color:#fff;border:none;border-radius:50px;font-family:'Pretendard',sans-serif;font-size:15px;font-weight:700;cursor:pointer;">확인</button>
+    <button onclick="modalClose('modalReqSuccess')" style="width:100%;padding:14px;background:#111;color:#fff;border:none;border-radius:50px;font-size:15px;font-weight:700;cursor:pointer;font-family:Pretendard,sans-serif;">확인</button>
+    <div style="margin-top:14px;font-size:11px;color:#ccc;">신청 번호: <span id="successReqCode"></span></div>
   </div>
 </div>
 
