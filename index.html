@@ -932,7 +932,17 @@ async function sbSaveRequest(req) {
     }).select().single();
     if(res.error) throw res.error;
     req.id = res.data.id;
-  } catch(e) { console.warn('sbSaveRequest error:', e); }
+    return true;
+  } catch(e) {
+    console.warn('sbSaveRequest error:', e);
+    // 저장 실패 알림
+    var t = document.createElement('div');
+    t.style.cssText = 'position:fixed;top:20px;left:50%;transform:translateX(-50%);background:#e03333;color:#fff;padding:12px 24px;border-radius:50px;font-size:13px;font-weight:600;z-index:9999;font-family:Pretendard,sans-serif;';
+    t.textContent = '⚠️ 서버 저장 실패 — 잠시 후 다시 시도해주세요';
+    document.body.appendChild(t);
+    setTimeout(function(){ t.remove(); }, 4000);
+    return false;
+  }
 }
 
 async function sbUpdateRequest(id, fields) {
@@ -1333,7 +1343,7 @@ function renderAdminContent() {
     el.innerHTML = `
       <div class="ksect-title">
         ${aState.prod} <span>광고</span>
-        <button class="ksect-add-btn" onclick="openAddImg()">
+        <button class="ksect-add-btn" onclick="openAddImg('${aState.prod}')">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="16" height="16"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
         </button>
       </div>
@@ -1354,7 +1364,7 @@ function renderAdminContent() {
         return `<div style="margin-bottom:36px;padding-bottom:36px;border-bottom:1px solid rgba(0,0,0,0.06);">
           <div class="ksect-title">
             ${p.name} <span>광고</span>
-            <button class="ksect-add-btn" onclick="openAddImg()">
+            <button class="ksect-add-btn" onclick="openAddImg('${p.name}')">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="16" height="16"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
             </button>
           </div>
@@ -1441,14 +1451,12 @@ document.querySelectorAll('.kmodal-overlay').forEach(el=>{
 let aiInlineSubMode=false, aiInlineProdMode=false;
 let aiSelSub='', aiSelProd='';
 
-function openAddImg() {
+function openAddImg(prodName) {
   // populate cat
   const catEl=document.getElementById('aiCat');
-  catEl.innerHTML=MAIN_CATS.map(c=>`<option value="${c}" ${c===aState.cat?'selected':''}>{c}</option>`).join('');
-  // use f-string safe version:
   catEl.innerHTML = MAIN_CATS.map(c=>`<option value="${c}" ${c===aState.cat?'selected':''}>${c}</option>`).join('');
   aiInlineSubMode=false; aiInlineProdMode=false;
-  aiSelSub=aState.sub; aiSelProd=aState.prod==='__all__'?'':aState.prod;
+  aiSelSub=aState.sub; aiSelProd=prodName||( aState.prod==='__all__'?'':aState.prod);
   document.getElementById('aiTitle').value='';
   aiTypeCount=0; aiTypeSrcs={};
   document.getElementById('aiTypeBlocks').innerHTML='';
