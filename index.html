@@ -282,7 +282,7 @@ html, body { height: 100%; overflow: hidden; overflow-x: hidden; max-width: 100%
   -webkit-appearance: none; transition: border-color .15s, box-shadow .15s;
 }
 .kinput:focus { border-color: #111; box-shadow: 0 0 0 3px var(--kaccent-glow); }
-.kinput-sm { padding: 8px 10px; font-size: 13px; border-radius: var(--kr2); border: 1.5px solid var(--kborder2); background: #fff; color: var(--ktext); font-family: 'Pretendard',sans-serif; outline:none; flex:1; }
+.kinput-sm { flex: 1; min-width: 0; padding: 8px 10px; font-size: 16px; border-radius: var(--kr2); border: 1.5px solid var(--kborder2); background: #fff; color: var(--ktext); font-family: 'Pretendard',sans-serif; outline:none; flex:1; }
 .kinput-sm:focus { border-color: #111; }
 
 /* ── Modal action buttons ── */
@@ -302,13 +302,13 @@ html, body { height: 100%; overflow: hidden; overflow-x: hidden; max-width: 100%
 /* ── Type block ── */
 .ktype-block {
   border: 1.5px solid var(--kborder); border-radius: var(--kr2);
-  padding: 14px; margin-bottom: 12px; background: var(--bg4);
+  overflow: hidden; padding: 14px; margin-bottom: 12px; background: var(--bg4);
 }
 .ktype-block-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; gap: 8px; }
 .ktype-block select { flex:1; background:#fff; border:1.5px solid var(--kborder2); border-radius:var(--kr2); padding:8px 10px; font-size:13px; color:var(--ktext); font-family:'Pretendard',sans-serif; outline:none; -webkit-appearance:none; }
 .ktype-remove { background:none; border:none; cursor:pointer; color:var(--ktext3); font-size:20px; padding:0 4px; line-height:1; }
 .ktype-remove:hover { color: #e03333; }
-.ktype-size-row { display: flex; gap: 8px; margin-bottom: 10px; align-items: center; }
+.ktype-size-row { display: flex; gap: 6px; margin-bottom: 10px; align-items: center; width: 100%; box-sizing: border-box; }
 .ktype-size-row span { color: #999; font-size: 13px; }
 .kupload-label {
   border: 1.5px dashed var(--kborder2); border-radius: var(--kr2); padding: 16px;
@@ -952,8 +952,8 @@ async function sbDeleteRequest(id) {
 let DB = loadData();
 
 // ── DB helpers ──
-function getSubs(mainCat) { return DB.subs.filter(s=>s.mainCat===mainCat); }
-function getProds(mainCat,subCat) { return DB.products.filter(p=>p.mainCat===mainCat&&p.subCat===subCat); }
+function getSubs(mainCat) { return DB.subs.filter(s=>s.mainCat===mainCat).sort((a,b)=>a.name.localeCompare(b.name,'ko')); }
+function getProds(mainCat,subCat) { return DB.products.filter(p=>p.mainCat===mainCat&&p.subCat===subCat).sort((a,b)=>a.name.localeCompare(b.name,'ko')); }
 function getAds(mainCat,subCat,prod) { return DB.ads.filter(a=>a.mainCat===mainCat&&a.subCat===subCat&&a.product===prod); }
 function nextId() { return DB.nextId++; }
 
@@ -1430,7 +1430,8 @@ function modalClose(id) {
 }
 // close on overlay click
 document.querySelectorAll('.kmodal-overlay').forEach(el=>{
-  if(el.id === 'modalRequest') return; // 신청서는 바탕 클릭으로 안 닫힘
+  if(el.id === 'modalRequest') return;
+  if(el.id === 'modalAddImg') return; // 광고 등록도 바탕 클릭으로 안 닫힘
   el.addEventListener('click', e=>{ if(e.target===el) el.classList.remove('open'); });
 });
 
