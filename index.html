@@ -140,7 +140,7 @@ html, body { height: 100%; overflow: hidden; overflow-x: hidden; max-width: 100%
   cursor: pointer; transition: all .18s; white-space: nowrap;
 }
 .ksub-pill.active { background: #111; color: #fff; border-color: #111; }
-.ksub-pill-del {
+.ksub-pill-del { display: none !important; /* 편집 모달에서 관리 */
   background: none; border: none; cursor: pointer; color: #ccc; font-size: 14px;
   padding: 0 2px; line-height: 1; flex-shrink: 0; transition: color .15s;
 }
@@ -159,7 +159,7 @@ html, body { height: 100%; overflow: hidden; overflow-x: hidden; max-width: 100%
   letter-spacing: -0.02em; font-family: 'Pretendard', sans-serif;
 }
 .kprod-btn.active { color: #111; font-weight: 700; }
-.kprod-del {
+.kprod-del { display: none !important; /* 편집 모달에서 관리 */
   background: none; border: none; cursor: pointer; color: #ccc; font-size: 13px;
   padding: 0 2px; line-height: 1; transition: color .15s;
 }
@@ -473,6 +473,30 @@ html, body { height: 100%; overflow: hidden; overflow-x: hidden; max-width: 100%
 .kmgr-opt.active { background: #111; color: #fff; }
 .kmgr-opt.unassign { color: #bbb; font-weight: 400; }
 
+
+/* ── Edit Category Modal ── */
+.kedit-item {
+  display: flex; align-items: center; gap: 8px;
+  padding: 10px 0; border-bottom: 1px solid var(--kborder);
+}
+.kedit-item:last-child { border-bottom: none; }
+.kedit-item-name {
+  flex: 1; font-size: 14px; font-weight: 600; color: #111;
+}
+.kedit-item input {
+  flex: 1; padding: 6px 12px; border: 1.5px solid #111;
+  border-radius: 8px; font-size: 14px; font-weight: 600;
+  font-family: Pretendard, sans-serif; outline: none;
+}
+.kedit-item-btn {
+  flex-shrink: 0; padding: 5px 12px; border-radius: 8px;
+  font-size: 12px; font-weight: 600; cursor: pointer;
+  font-family: Pretendard, sans-serif; border: none;
+}
+.kedit-rename-btn { background: #f0f0f0; color: #111; }
+.kedit-rename-btn.saving { background: #111; color: #fff; }
+.kedit-del-btn { background: #fff0f0; color: #e03333; }
+
 /* ── Add sub inline btn ── */
 .kadd-sub-btn {
   flex-shrink: 0; padding: 4px 12px;
@@ -619,6 +643,23 @@ html, body { height: 100%; overflow: hidden; overflow-x: hidden; max-width: 100%
 
   <!-- Lightbox -->
   
+
+<!-- EDIT CATEGORY MODAL -->
+<div class="kmodal-overlay center" id="modalEditCat">
+  <div class="kmodal-sheet" style="max-width:440px;border-radius:20px;">
+    <div class="kmodal-handle"></div>
+    <div style="font-size:18px;font-weight:900;margin-bottom:4px;" id="editCatTitle">카테고리 편집</div>
+    <div style="font-size:12px;color:#999;margin-bottom:20px;" id="editCatDesc"></div>
+    <div id="editCatList" style="max-height:320px;overflow-y:auto;margin-bottom:16px;"></div>
+    <!-- 새 항목 추가 -->
+    <div style="display:flex;gap:8px;padding-top:12px;border-top:1px solid var(--kborder);">
+      <input class="kinput" id="editCatNewInput" placeholder="새 항목 이름" style="flex:1;" />
+      <button onclick="editCatAdd()" style="padding:10px 18px;background:#111;color:#fff;border:none;border-radius:10px;font-size:13px;font-weight:700;cursor:pointer;font-family:Pretendard,sans-serif;flex-shrink:0;">추가</button>
+    </div>
+    <button onclick="modalClose('modalEditCat')" style="width:100%;margin-top:12px;padding:13px;background:#f0f0f0;color:#111;border:none;border-radius:50px;font-size:14px;font-weight:700;cursor:pointer;font-family:Pretendard,sans-serif;">닫기</button>
+  </div>
+</div>
+
 <!-- REQUEST MODAL -->
 <div class="kmodal-overlay center" id="modalRequest">
   <div class="kmodal-sheet" style="max-width:600px;border-radius:20px;max-height:92vh;overflow-y:auto;">
@@ -1259,13 +1300,13 @@ function renderAdmin() {
         <div class="ksub-scroll" id="adminSubScroll">
           ${subs.map(s=>`
             <div style="display:flex;align-items:center;gap:2px;flex-shrink:0;">
-              <button class="ksub-pill ${aState.sub===s.name?'active':''}" onclick="adminSubSelect('${s.name}')">
+              <button class="ksub-pill ${aState.sub===s.name?'active':''}" data-id="${s.id}" onclick="adminSubSelect('${s.name}')">
                 ${s.name}
               </button>
               <button class="ksub-pill-del" title="${s.name} 삭제" onclick="adminDeleteSub(${s.id},'${s.name}')">×</button>
             </div>
           `).join('')}
-          <button class="kadd-sub-btn" onclick="openAddSub()">+ 세부 추가</button>
+          <button class="kadd-sub-btn" onclick="openEditCatModal(\'sub\')">✎ 세부 편집</button>
         </div>
       </div>
       <!-- Prod filter -->
@@ -1274,11 +1315,11 @@ function renderAdmin() {
           <button class="kprod-btn ${aState.prod==='__all__'?'active':''}" onclick="adminProdSelect('__all__')">전체 보기</button>
           ${prods.map(p=>`
             <div style="display:flex;align-items:center;gap:2px;flex-shrink:0;">
-              <button class="kprod-btn ${aState.prod===p.name?'active':''}" onclick="adminProdSelect('${p.name}')">${p.name}</button>
+              <button class="kprod-btn ${aState.prod===p.name?'active':''}" data-id="${p.id}" onclick="adminProdSelect('${p.name}')">${p.name}</button>
               <button class="kprod-del" title="${p.name} 삭제" onclick="adminDeleteProd(${p.id},'${p.name}')">×</button>
             </div>
           `).join('')}
-          <button class="kadd-prod-btn" onclick="openAddProd()">+ 상품 추가</button>
+          <button class="kadd-prod-btn" onclick="openEditCatModal(\'prod\')">✎ 상품 편집</button>
         </div>
       </div>
       <!-- Content -->
@@ -1329,7 +1370,7 @@ function adminProdSelect(prod) {
     row.innerHTML = '<div class="kprod-scroll">'
       + '<button class="kprod-btn '+(prod==='__all__'?'active':'')+'" onclick="adminProdSelect(\'__all__\')" style="color:'+(prod==='__all__'?'#111':'#aaa')+'">전체 보기</button>'
       + del_btns
-      + '<button class="kadd-prod-btn" onclick="openAddProd()">+ 상품 추가</button>'
+      + '<button class="kadd-prod-btn" onclick="openEditCatModal(\'prod\')">✎ 상품 편집</button>'
       + '</div>';
   }
   renderAdminContent();
@@ -1450,7 +1491,8 @@ function modalClose(id) {
 document.querySelectorAll('.kmodal-overlay').forEach(el=>{
   if(el.id === 'modalRequest') return;
   if(el.id === 'modalAddImg') return;
-  if(el.id === 'modalDetail') return; // 광고 수정도 바탕 클릭으로 안 닫힘
+  if(el.id === 'modalDetail') return;
+  if(el.id === 'modalEditCat') return;
   el.addEventListener('click', e=>{ if(e.target===el) el.classList.remove('open'); });
 });
 
@@ -2201,6 +2243,172 @@ async function processRequestFiles(srcs, prefix) {
   return result;
 }
 
+
+
+function adminRenameSub(id, oldName) {
+  var pill = document.querySelector('.ksub-pill[data-id="'+id+'"]');
+  if(!pill) return;
+  var input = document.createElement('input');
+  input.value = oldName;
+  input.style.cssText = 'width:'+(Math.max(60, oldName.length*14))+'px;padding:4px 10px;border:1.5px solid #111;border-radius:50px;font-size:14px;font-weight:600;font-family:Pretendard,sans-serif;outline:none;text-align:center;';
+  pill.replaceWith(input);
+  input.focus();
+  input.select();
+  function save() {
+    var newName = input.value.trim();
+    if(!newName || newName === oldName) { renderAdminSubRow(); return; }
+    var idx = DB.subs.findIndex(function(s){ return s.id===id; });
+    if(idx !== -1) {
+      // 관련 ads, products도 업데이트
+      DB.ads.forEach(function(a){ if(a.mainCat===DB.subs[idx].mainCat && a.subCat===oldName) a.subCat=newName; });
+      DB.products.forEach(function(p){ if(p.mainCat===DB.subs[idx].mainCat && p.subCat===oldName) p.subCat=newName; });
+      DB.subs[idx].name = newName;
+      saveData();
+      // Supabase 업데이트
+      sb.from('subs').update({name:newName}).eq('id',id);
+    }
+    renderAdminSubRow();
+    renderAdminProdRow();
+  }
+  input.addEventListener('blur', save);
+  input.addEventListener('keydown', function(e){ if(e.key==='Enter') { input.blur(); } if(e.key==='Escape') { renderAdminSubRow(); } });
+}
+
+function adminRenameProd(id, oldName) {
+  var pill = document.querySelector('.kprod-btn[data-id="'+id+'"]');
+  if(!pill) return;
+  var input = document.createElement('input');
+  input.value = oldName;
+  input.style.cssText = 'width:'+(Math.max(60, oldName.length*14))+'px;padding:4px 10px;border:1.5px solid #111;border-radius:50px;font-size:13px;font-weight:600;font-family:Pretendard,sans-serif;outline:none;text-align:center;';
+  pill.replaceWith(input);
+  input.focus();
+  input.select();
+  function save() {
+    var newName = input.value.trim();
+    if(!newName || newName === oldName) { renderAdminProdRow(); return; }
+    var idx = DB.products.findIndex(function(p){ return p.id===id; });
+    if(idx !== -1) {
+      DB.ads.forEach(function(a){ if(a.product===oldName) a.product=newName; });
+      DB.products[idx].name = newName;
+      saveData();
+      sb.from('products').update({name:newName}).eq('id',id);
+    }
+    renderAdminProdRow();
+  }
+  input.addEventListener('blur', save);
+  input.addEventListener('keydown', function(e){ if(e.key==='Enter') { input.blur(); } if(e.key==='Escape') { renderAdminProdRow(); } });
+}
+
+
+// ── Category Edit Modal ──
+var editCatMode = ''; // 'sub' or 'prod'
+
+function openEditCatModal(mode) {
+  editCatMode = mode;
+  var title = document.getElementById('editCatTitle');
+  var desc = document.getElementById('editCatDesc');
+  var input = document.getElementById('editCatNewInput');
+  input.value = '';
+
+  if(mode === 'sub') {
+    title.textContent = '세부 카테고리 편집';
+    desc.textContent = aState.cat + ' · 세부 카테고리를 관리하세요';
+  } else {
+    title.textContent = '상품 카테고리 편집';
+    desc.textContent = aState.cat + ' > ' + aState.sub + ' · 상품을 관리하세요';
+  }
+  renderEditCatList();
+  document.getElementById('modalEditCat').classList.add('open');
+}
+
+function renderEditCatList() {
+  var list = document.getElementById('editCatList');
+  var items = editCatMode === 'sub'
+    ? getSubs(aState.cat)
+    : getProds(aState.cat, aState.sub);
+
+  if(items.length === 0) {
+    list.innerHTML = '<div style="text-align:center;padding:20px;font-size:13px;color:#bbb;">등록된 항목이 없습니다</div>';
+    return;
+  }
+
+  list.innerHTML = '';
+  items.forEach(function(item) {
+    var row = document.createElement('div');
+    row.className = 'kedit-item';
+    row.id = 'kedit-row-' + item.id;
+    row.innerHTML =
+      '<span class="kedit-item-name" id="kedit-name-'+item.id+'">'+item.name+'</span>'
+      + '<button class="kedit-item-btn kedit-rename-btn" data-id="'+item.id+'" data-name="'+item.name.replace(/"/g,'&quot;')+'">수정</button>'
+      + '<button class="kedit-item-btn kedit-del-btn" data-id="'+item.id+'" data-name="'+item.name.replace(/"/g,'&quot;')+'">삭제</button>';
+    row.querySelector('.kedit-rename-btn').addEventListener('click', function(){ editCatStartRename(item.id, item.name); });
+    row.querySelector('.kedit-del-btn').addEventListener('click', function(){ editCatDelete(item.id, item.name); });
+    list.appendChild(row);
+  });
+}
+
+function editCatStartRename(id, oldName) {
+  var nameEl = document.getElementById('kedit-name-'+id);
+  if(!nameEl) return;
+  var input = document.createElement('input');
+  input.value = oldName;
+  nameEl.replaceWith(input);
+  input.focus(); input.select();
+
+  var saveBtn = document.querySelector('#kedit-row-'+id+' .kedit-rename-btn');
+  if(saveBtn) { saveBtn.textContent = '저장'; saveBtn.className = 'kedit-item-btn kedit-rename-btn saving'; saveBtn.onclick = function(){ doRename(); }; }
+
+  function doRename() {
+    var newName = input.value.trim();
+    if(!newName) return;
+    if(newName === oldName) { renderEditCatList(); return; }
+    if(editCatMode === 'sub') {
+      var idx = DB.subs.findIndex(function(s){ return s.id==id; });
+      if(idx !== -1) {
+        DB.ads.forEach(function(a){ if(a.subCat===oldName) a.subCat=newName; });
+        DB.products.forEach(function(p){ if(p.subCat===oldName) p.subCat=newName; });
+        DB.subs[idx].name = newName;
+        saveData();
+        sb.from('subs').update({name:newName}).eq('id',id);
+      }
+    } else {
+      var idx2 = DB.products.findIndex(function(p){ return p.id==id; });
+      if(idx2 !== -1) {
+        DB.ads.forEach(function(a){ if(a.product===oldName) a.product=newName; });
+        DB.products[idx2].name = newName;
+        saveData();
+        sb.from('products').update({name:newName}).eq('id',id);
+      }
+    }
+    renderEditCatList();
+    renderAdminSubRow();
+    renderAdminProdRow();
+  }
+  input.addEventListener('keydown', function(e){ if(e.key==='Enter') doRename(); if(e.key==='Escape') renderEditCatList(); });
+}
+
+function editCatDelete(id, name) {
+  if(!confirm(name + ' 을(를) 삭제할까요?')) return;
+  if(editCatMode === 'sub') {
+    adminDeleteSub(id, name);
+  } else {
+    adminDeleteProd(id, name);
+  }
+  renderEditCatList();
+}
+
+function editCatAdd() {
+  var input = document.getElementById('editCatNewInput');
+  var name = input.value.trim();
+  if(!name) return;
+  if(editCatMode === 'sub') {
+    addSubConfirm(aState.cat, name);
+  } else {
+    addProdConfirm(aState.cat, aState.sub, name);
+  }
+  input.value = '';
+  setTimeout(renderEditCatList, 100);
+}
 
 // ══════════════════════════════════════════════════════
 //  ADMIN REQUESTS TAB
