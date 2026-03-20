@@ -1441,7 +1441,8 @@ function modalClose(id) {
 // close on overlay click
 document.querySelectorAll('.kmodal-overlay').forEach(el=>{
   if(el.id === 'modalRequest') return;
-  if(el.id === 'modalAddImg') return; // 광고 등록도 바탕 클릭으로 안 닫힘
+  if(el.id === 'modalAddImg') return;
+  if(el.id === 'modalDetail') return; // 광고 수정도 바탕 클릭으로 안 닫힘
   el.addEventListener('click', e=>{ if(e.target===el) el.classList.remove('open'); });
 });
 
@@ -1719,7 +1720,7 @@ function adminDeleteProd(id,name) {
 //  DETAIL MODAL (view + edit tabs)
 // ══════════════════════════════════════════════════════
 function openDetail(id) {
-  detailAd=DB.ads.find(a=>a.id===id);
+  detailAd=DB.ads.find(a=>String(a.id)===String(id));
   if(!detailAd)return;
   detailTab='view';
   renderDetail();
@@ -1858,8 +1859,8 @@ function editSave() {
 }
 
 function openEditImg(id) {
-  // open detail modal on edit tab directly
-  detailAd=DB.ads.find(a=>a.id===id);
+  // open detail modal on edit tab directly - id 타입 통일
+  detailAd=DB.ads.find(a=>String(a.id)===String(id));
   if(!detailAd)return;
   detailTab='edit';
   renderDetail();
