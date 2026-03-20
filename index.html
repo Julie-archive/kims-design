@@ -161,10 +161,9 @@ html, body { height: 100%; overflow: hidden; background: var(--bg); color: var(-
 .kad-grid { display: grid; grid-template-columns: repeat(5,1fr); gap: 10px; }
 @media(max-width: 1100px) { .kad-grid { grid-template-columns: repeat(4,1fr); } }
 @media(max-width: 800px) { .kad-grid { grid-template-columns: repeat(3,1fr); } }
-@media(max-width: 500px) { .kad-grid { grid-template-columns: repeat(2,1fr); } }
 @media(max-width: 600px) {
   .kad-grid { grid-template-columns: 1fr !important; gap: 10px; }
-  .kad-thumb { aspect-ratio: 16/6; }
+  .kad-thumb { aspect-ratio: 16/6 !important; }
   .kad-meta { padding: 8px 12px 12px; }
   .kad-title { font-size: 15px; margin-bottom: 6px; }
   .kad-overlay { display: none !important; }
@@ -1046,6 +1045,15 @@ function homeCatSelect(cat) {
   hState = {cat, sub:firstSub, prod:'__all__'};
   homeScreen = 'B';
   renderHomeB();
+  // Supabase에서 데이터 아직 안 왔으면 로드 후 재렌더
+  if(DB.ads.length === 0) {
+    sbLoadAll().then(function(ok) {
+      if(ok && homeScreen === 'B' && hState.cat === cat) {
+        hState.sub = getSubs(cat)[0]?.name || '';
+        renderHomeB();
+      }
+    });
+  }
 }
 
 function renderHomeB() {
@@ -1092,7 +1100,7 @@ function renderHomeB() {
       <div class="kcontent" id="homeContent"></div>
     </div>
   `;
-  setTimeout(renderHomeContent, 0);
+  renderHomeContent();
 }
 
 function homeGoBack() { homeScreen='A'; renderHomeA(); }
@@ -2648,10 +2656,18 @@ function formatTelInput(el) {
   if(ok) {
     console.log('Supabase 데이터 로드 성공');
     if(homeScreen === 'B') {
-      // 현재 카테고리로 sub 다시 설정 후 재렌더
-      var firstSub = getSubs(hState.cat)[0]?.name || '';
-      if(!hState.sub && firstSub) hState.sub = firstSub;
+      // sub 재설정 후 renderHomeContent만 갱신
+      if(!hState.sub || !getSubs(hState.cat).find(function(s){ return s.name===hState.sub; })) {
+        hState.sub = getSubs(hState.cat)[0]?.name || '';
+      }
+      if(hState.prod && hState.prod !== '__all__') {
+        if(!getProds(hState.cat, hState.sub).find(function(p){ return p.name===hState.prod; })) {
+          hState.prod = '__all__';
+        }
+      }
       renderHomeB();
+    } else if(curView === 'admin' && adminLoggedIn) {
+      renderAdmin();
     } else {
       renderHomeA();
     }
