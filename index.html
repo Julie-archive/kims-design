@@ -78,11 +78,18 @@ html, body { height: 100%; overflow: hidden; background: var(--bg); color: var(-
   .ktab-bar {
     display: flex; overflow-x: auto; scrollbar-width: none;
     padding: 0; gap: 0;
+    border-bottom: 1px solid var(--kborder);
   }
   .ktab-bar::-webkit-scrollbar { display: none; }
   .ktab-btn {
     flex-shrink: 0; padding: 16px 0;
     font-size: 15px; white-space: nowrap;
+    border-bottom: none !important;
+    box-shadow: none !important;
+  }
+  .ktab-btn.active {
+    border-bottom: none !important;
+    box-shadow: inset 0 -2px 0 #111 !important;
   }
   /* 농산~공산: 각 25% 고정 */
   .ktab-btn:nth-child(1),
@@ -157,9 +164,10 @@ html, body { height: 100%; overflow: hidden; background: var(--bg); color: var(-
 @media(max-width: 500px) { .kad-grid { grid-template-columns: repeat(2,1fr); } }
 @media(max-width: 600px) {
   .kad-grid { grid-template-columns: 1fr !important; gap: 10px; }
-  .kad-thumb { aspect-ratio: 16/7; }
+  .kad-thumb { aspect-ratio: 16/9; }
   .kad-meta { padding: 8px 12px 12px; }
   .kad-title { font-size: 15px; margin-bottom: 6px; }
+  .kad-overlay { display: none !important; }
 }
 
 /* ── Ad Card ── */
@@ -1084,7 +1092,7 @@ function renderHomeB() {
       <div class="kcontent" id="homeContent"></div>
     </div>
   `;
-  renderHomeContent();
+  setTimeout(renderHomeContent, 0);
 }
 
 function homeGoBack() { homeScreen='A'; renderHomeA(); }
