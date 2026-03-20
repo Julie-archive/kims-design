@@ -584,7 +584,7 @@ html, body { height: 100%; overflow: hidden; background: var(--bg); color: var(-
       </div>
       <div>
         <div class="kform-label">연락처</div>
-        <input class="kinput" type="tel" id="rq-tel" placeholder="010-0000-0000" />
+        <input class="kinput" type="tel" id="rq-tel" placeholder="010-0000-0000" oninput="formatTelInput(this)" />
       </div>
     </div>
 
@@ -1362,8 +1362,8 @@ function modalClose(id) {
   document.getElementById(id).classList.remove('open');
 }
 // close on overlay click
-document.getElementById('modalRequest').addEventListener('click',e=>{if(e.target===e.currentTarget)modalClose('modalRequest');});
 document.querySelectorAll('.kmodal-overlay').forEach(el=>{
+  if(el.id === 'modalRequest') return; // 신청서는 바탕 클릭으로 안 닫힘
   el.addEventListener('click', e=>{ if(e.target===el) el.classList.remove('open'); });
 });
 
@@ -1814,6 +1814,11 @@ function openRequestModal() {
     const el = document.getElementById(id);
     if(el) el.value = '';
   });
+  // 연락처 자동 대시 바인딩
+  var telEl = document.getElementById('rq-tel');
+  if(telEl) {
+    telEl.oninput = function(){ formatTelInput(this); };
+  }
   rqSiteFiles = []; rqRefFiles = []; rqSelectedTypes = new Set();
   document.getElementById('rq-site-preview').innerHTML = '';
   document.getElementById('rq-ref-preview').innerHTML = '';
