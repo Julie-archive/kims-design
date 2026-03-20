@@ -922,7 +922,7 @@ async function sbLoadAll() {
     if(subsRes.error || prodsRes.error || adsRes.error || reqsRes.error) throw new Error('Load failed');
     DB.subs = subsRes.data.map(function(r){ return {id:r.id, mainCat:r.main_cat, name:r.name}; });
     DB.products = prodsRes.data.map(function(r){ return {id:r.id, mainCat:r.main_cat, subCat:r.sub_cat, name:r.name}; });
-    DB.ads = adsRes.data.map(function(r){ return {id:r.id, mainCat:r.main_cat, subCat:r.sub_cat, product:r.product, title:r.title, adDate:r.ad_date, types:r.types||[]}; });
+    DB.ads = adsRes.data.map(function(r){ return {id:r.id, mainCat:r.main_cat, subCat:r.sub_cat, product:r.product, title:r.title, adDate:r.ad_date, types:r.types||[], memo:r.memo||''}; });
     DB.requests = reqsRes.data.map(function(r){ return {
       id:r.id, reqCode:r.req_code, submittedAt:r.submitted_at, status:r.status,
       dept:r.dept, name:r.name, tel:r.tel, title:r.title, deadline:r.deadline,
@@ -966,7 +966,7 @@ async function sbSaveAd(ad) {
   try {
     const res = await sb.from('ads').insert({
       main_cat:ad.mainCat, sub_cat:ad.subCat, product:ad.product,
-      title:ad.title, ad_date:ad.adDate, types:ad.types
+      title:ad.title, ad_date:ad.adDate, types:ad.types, memo:ad.memo||''
     }).select().single();
     if(res.error) throw res.error;
     ad.id = res.data.id;
@@ -1244,7 +1244,7 @@ function adCardHTML(ad, mode) {
     </button>
   ` : '';
   return `
-    <div class="kad-card" onclick="openDetail(${ad.id})">
+    <div class="kad-card" onclick="openDetail(${ad.id}, 'home')">
       <div class="kad-thumb-wrap">
         <div class="kad-thumb">
           ${thumb ? `<img src="${thumb}" alt="${ad.title}" />` : `<div class="kad-thumb-empty">
@@ -1523,6 +1523,7 @@ function openAddImg(prodName) {
   aiInlineSubMode=false; aiInlineProdMode=false;
   aiSelSub=aState.sub; aiSelProd=prodName||( aState.prod==='__all__'?'':aState.prod);
   document.getElementById('aiTitle').value='';
+  if(document.getElementById('aiMemo')) document.getElementById('aiMemo').value='';
   aiTypeCount=0; aiTypeSrcs={};
   document.getElementById('aiTypeBlocks').innerHTML='';
   renderAiSubRow();
@@ -1681,9 +1682,10 @@ function aiConfirm() {
   const typesRaw=collectTypes('ai');
   // 이미지 Supabase에 업로드
   processAdTypes(typesRaw).then(function(types) {
+    const memo = document.getElementById('aiMemo')?.value.trim()||'';
     const ad={
       id:nextId(), mainCat:cat, subCat:sub, product:prod,
-      title, adDate:new Date().toLocaleDateString('ko-KR'), types,
+      title, adDate:new Date().toLocaleDateString('ko-KR'), types, memo,
     };
     DB.ads.push(ad);
     saveData();
@@ -1783,9 +1785,11 @@ function adminDeleteProd(id,name) {
 // ══════════════════════════════════════════════════════
 //  DETAIL MODAL (view + edit tabs)
 // ══════════════════════════════════════════════════════
-function openDetail(id) {
+var detailMode = 'admin';
+function openDetail(id, mode) {
   detailAd=DB.ads.find(a=>String(a.id)===String(id));
   if(!detailAd)return;
+  detailMode = mode || 'admin';
   detailTab='view';
   renderDetail();
   document.getElementById('modalDetail').classList.add('open');
