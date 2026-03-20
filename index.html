@@ -840,12 +840,20 @@ const STORAGE_KEY = 'kims_archive_v5'; // fallback용
 function loadData() {
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
-    if (raw) return JSON.parse(raw);
+    if (raw) {
+      var d = JSON.parse(raw);
+      d.requests = []; // requests는 항상 Supabase에서 로드
+      return d;
+    }
   } catch(e) {}
   return { subs: [], products: [], ads: [], requests: [], nextId: 100 };
 }
 
-function saveData() { localStorage.setItem(STORAGE_KEY, JSON.stringify(DB)); }
+function saveData() {
+  // requests는 Supabase가 원본 - localStorage에 저장 안 함
+  var toSave = {subs:DB.subs, products:DB.products, ads:DB.ads, nextId:DB.nextId};
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(toSave));
+}
 
 // Supabase 동기화 함수들
 async function sbLoadAll() {
@@ -868,7 +876,7 @@ async function sbLoadAll() {
       eventDesc:r.event_desc, sitePhotoSrcs:r.site_photo_srcs||[], refImageSrcs:r.ref_image_srcs||[],
       manager:r.manager, dueDate:r.due_date
     }; });
-    saveData();
+    // localStorage에 저장하지 않음 - 항상 Supabase가 원본
     return true;
   } catch(e) { console.warn('Supabase load failed, using localStorage:', e); return false; }
 }
