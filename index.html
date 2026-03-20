@@ -1534,15 +1534,22 @@ function aiConfirm() {
   const title=document.getElementById('aiTitle').value.trim();
   if(!title){alert('광고 이름을 입력하세요');return;}
   if(!prod){alert('상품을 선택하세요');return;}
-  const types=collectTypes('ai');
-  const ad={
-    id:nextId(), mainCat:cat, subCat:sub, product:prod,
-    title, adDate:new Date().toLocaleDateString('ko-KR'), types,
-  };
-  DB.ads.push(ad);
-  saveData();
-  sbSaveAd(ad);
-  modalClose('modalAddImg');
+  const typesRaw=collectTypes('ai');
+  // 이미지 Supabase에 업로드
+  processAdTypes(typesRaw).then(function(types) {
+    const ad={
+      id:nextId(), mainCat:cat, subCat:sub, product:prod,
+      title, adDate:new Date().toLocaleDateString('ko-KR'), types,
+    };
+    DB.ads.push(ad);
+    saveData();
+    sbSaveAd(ad);
+    modalClose('modalAddImg');
+    aState={cat,sub,prod};
+    renderAdmin();
+    if(homeScreen==='B'&&hState.cat===cat) renderHomeContent();
+  });
+  return;
   aState={cat,sub,prod};
   renderAdmin();
   if(homeScreen==='B'&&hState.cat===cat) renderHomeContent();
@@ -1966,6 +1973,58 @@ function rqSubmit() {
   openRequestSuccess(request.reqCode);
 }
 
+
+
+
+// ── Supabase Storage 이미지 업로드 ──
+async function uploadImageToStorage(base64DataUrl, fileName) {
+  try {
+    // base64 → Blob 변환
+    var arr = base64DataUrl.split(',');
+    var mime = arr[0].match(/:(.*?);/)[1];
+    var bstr = atob(arr[1]);
+    var n = bstr.length;
+    var u8arr = new Uint8Array(n);
+    while(n--) { u8arr[n] = bstr.charCodeAt(n); }
+    var blob = new Blob([u8arr], {type: mime});
+    var ext = mime.split('/')[1] || 'jpg';
+    var path = fileName + '_' + Date.now() + '.' + ext;
+    var res = await sb.storage.from('images').upload(path, blob, {contentType: mime, upsert: true});
+    if(res.error) throw res.error;
+    var urlRes = sb.storage.from('images').getPublicUrl(path);
+    return urlRes.data.publicUrl;
+  } catch(e) {
+    console.warn('Storage upload failed, using base64:', e);
+    return null;
+  }
+}
+
+async function processAdTypes(types) {
+  var result = [];
+  for(var i=0; i<types.length; i++) {
+    var t = types[i];
+    if(t.src && t.src.startsWith('data:')) {
+      var url = await uploadImageToStorage(t.src, 'ad_' + t.name.replace(/\s/g,'_'));
+      result.push({name:t.name, width:t.width, height:t.height, src: url || t.src});
+    } else {
+      result.push(t);
+    }
+  }
+  return result;
+}
+
+async function processRequestFiles(srcs, prefix) {
+  var result = [];
+  for(var i=0; i<srcs.length; i++) {
+    if(srcs[i] && srcs[i].startsWith('data:')) {
+      var url = await uploadImageToStorage(srcs[i], prefix + '_' + i);
+      result.push(url || srcs[i]);
+    } else {
+      result.push(srcs[i]);
+    }
+  }
+  return result;
+}
 
 
 // ══════════════════════════════════════════════════════
