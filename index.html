@@ -541,7 +541,18 @@ html, body { height: 100%; overflow: hidden; overflow-x: hidden; max-width: 100%
   font-size: 11px; color: #bbb; cursor: pointer; font-family: 'Pretendard',sans-serif; font-weight: 500;
 }
 
-/* ── inline add row ── */
+/* ── Ad Request type tabs ── */
+.adreq-type-tab {
+  flex-shrink: 0; padding: 8px 18px;
+  background: #fff; border: 1.5px solid rgba(0,0,0,0.15);
+  border-radius: 50px; font-size: 14px; font-weight: 600; color: #555;
+  cursor: pointer; font-family: 'Pretendard', sans-serif;
+  transition: all .15s; white-space: nowrap;
+}
+.adreq-type-tab.active {
+  background: #111; color: #fff; border-color: #111;
+}
+#adreq-type-tabs::-webkit-scrollbar { display: none; }
 .kinline-add { display: flex; gap: 6px; flex-shrink: 0; align-items: center; }
 .kinline-input {
   flex: 1; background: var(--bg); border: 1.5px solid #111;
@@ -926,8 +937,16 @@ html, body { height: 100%; overflow: hidden; overflow-x: hidden; max-width: 100%
           <input class="kinput" type="text" id="adreq-name" placeholder="이름" />
         </div>
       </div>
-      <div class="kform-label" style="font-size:11px;color:#999;margin-bottom:4px;">연락처</div>
-      <input class="kinput" type="tel" id="adreq-tel" placeholder="010-0000-0000" oninput="formatTelInput(this)" />
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+        <div>
+          <div class="kform-label" style="font-size:11px;color:#999;margin-bottom:4px;">연락처</div>
+          <input class="kinput" type="tel" id="adreq-tel" placeholder="010-0000-0000" oninput="formatTelInput(this)" />
+        </div>
+        <div>
+          <div class="kform-label" style="font-size:11px;color:#999;margin-bottom:4px;">입고 지점</div>
+          <input class="kinput" type="text" id="adreq-branch" placeholder="예) 강서점" />
+        </div>
+      </div>
     </div>
 
     <!-- 마감일 -->
@@ -936,10 +955,24 @@ html, body { height: 100%; overflow: hidden; overflow-x: hidden; max-width: 100%
       <input class="kinput" type="date" id="adreq-deadline" />
     </div>
 
-    <!-- 사이즈 선택 (등록된 타입 기반) -->
-    <div class="kform-group" id="adreq-size-group">
-      <label class="kform-label">사이즈 선택 <span style="color:#e03333;">*</span></label>
-      <div id="adreq-size-options" style="display:flex;flex-direction:column;gap:8px;"></div>
+    <!-- 광고물 형태 -->
+    <div class="kform-group">
+      <label class="kform-label">광고물 형태 <span style="color:#e03333;">*</span></label>
+      <div style="display:flex;gap:8px;overflow-x:auto;padding-bottom:4px;scrollbar-width:none;" id="adreq-type-tabs">
+        <button type="button" class="adreq-type-tab" data-type="규격POP (A3)" onclick="adreqSelectType(this)">규격POP (A3)</button>
+        <button type="button" class="adreq-type-tab" data-type="규격POP (A4)" onclick="adreqSelectType(this)">규격POP (A4)</button>
+        <button type="button" class="adreq-type-tab" data-type="우드락 셀링" onclick="adreqSelectType(this)">우드락 셀링</button>
+      </div>
+      <!-- 우드락 셀링 선택 시 사이즈 입력 -->
+      <div id="adreq-woodlak-size" style="display:none;margin-top:10px;">
+        <div class="kform-label" style="font-size:12px;color:#555;margin-bottom:6px;">사이즈 입력 <span style="color:#999;font-weight:400;">(mm)</span></div>
+        <div style="display:flex;align-items:center;gap:8px;">
+          <input class="kinput" type="number" id="adreq-size-w" placeholder="가로" min="1" />
+          <span style="font-size:15px;color:#bbb;flex-shrink:0;">×</span>
+          <input class="kinput" type="number" id="adreq-size-h" placeholder="세로" min="1" />
+          <span style="font-size:13px;color:#999;flex-shrink:0;">mm</span>
+        </div>
+      </div>
     </div>
 
     <!-- 수량 -->
@@ -947,7 +980,7 @@ html, body { height: 100%; overflow: hidden; overflow-x: hidden; max-width: 100%
       <label class="kform-label">수량</label>
       <div style="display:flex;align-items:center;gap:10px;">
         <input class="kinput" type="number" id="adreq-qty" placeholder="예) 3" min="1" style="max-width:120px;" />
-        <span style="font-size:13px;color:#999;">매</span>
+        <span style="font-size:13px;color:#999;">개</span>
       </div>
     </div>
 
@@ -955,7 +988,7 @@ html, body { height: 100%; overflow: hidden; overflow-x: hidden; max-width: 100%
     <div class="kform-group">
       <label class="kform-label">설치 위치 사진 <span style="color:#999;font-size:11px;font-weight:400;">(설치될 곳)</span></label>
       <label class="kupload-label" style="min-height:80px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;position:relative;">
-        <input type="file" accept="image/*" multiple onchange="adreqHandlePhotos(this)" style="position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%;" />
+        <input type="file" accept="image/*" multiple capture="environment" onchange="adreqHandlePhotos(this)" style="position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%;" />
         <svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.5" width="24" height="24" style="opacity:.3;"><rect x="6" y="14" width="36" height="26" rx="4"/><path d="M24 8v16m-6-6 6-6 6 6"/></svg>
         <span style="font-size:12px;color:#aaa;">클릭하여 사진 업로드 (복수 선택 가능)</span>
       </label>
@@ -2395,45 +2428,28 @@ function openAdRequest(adId) {
     ? `<img src="${thumb}" style="width:100%;height:100%;object-fit:cover;" />`
     : `<svg viewBox="0 0 24 24" fill="none" stroke="#ccc" stroke-width="1.5" width="20" height="20"><rect x="3" y="7" width="18" height="13" rx="2"/><circle cx="9" cy="13" r="2"/><path d="m3 18 5-4 4 4 3-3 6 5"/></svg>`;
 
-  const sizeOpts = document.getElementById('adreq-size-options');
-  const types = ad.types || [];
-  if(types.length === 0) {
-    document.getElementById('adreq-size-group').style.display = 'none';
-  } else {
-    document.getElementById('adreq-size-group').style.display = '';
-    sizeOpts.innerHTML = types.map(t => `
-      <label onclick="adreqToggleSize(this)" style="display:flex;align-items:center;gap:10px;padding:12px 14px;border:1.5px solid rgba(0,0,0,0.12);border-radius:12px;cursor:pointer;transition:all .15s;background:#fff;user-select:none;" data-type="${t.name}">
-        <div style="width:18px;height:18px;border-radius:50%;border:1.5px solid #ccc;flex-shrink:0;display:flex;align-items:center;justify-content:center;" class="adreq-dot"></div>
-        <div style="flex:1;">
-          <div style="font-size:14px;font-weight:600;color:#111;">${t.name}</div>
-          ${t.width&&t.height?`<div style="font-size:12px;color:#999;margin-top:2px;">${t.width} × ${t.height} px</div>`:''}
-        </div>
-      </label>
-    `).join('');
-  }
+  // 타입 탭 초기화
+  document.querySelectorAll('.adreq-type-tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('adreq-woodlak-size').style.display = 'none';
 
-  ['adreq-dept','adreq-name','adreq-tel','adreq-deadline','adreq-qty','adreq-desc'].forEach(id => {
+  // 폼 초기화
+  ['adreq-dept','adreq-name','adreq-tel','adreq-branch','adreq-deadline',
+   'adreq-qty','adreq-desc','adreq-size-w','adreq-size-h'].forEach(id => {
     const el = document.getElementById(id); if(el) el.value = '';
   });
   document.getElementById('adreq-site-preview').innerHTML = '';
   document.getElementById('modalAdRequest').classList.add('open');
 }
 
-function adreqToggleSize(el) {
-  const isActive = el.classList.contains('adreq-active');
-  document.querySelectorAll('#adreq-size-options label').forEach(l => {
-    l.classList.remove('adreq-active');
-    l.style.background = '#fff'; l.style.borderColor = 'rgba(0,0,0,0.12)';
-    l.querySelectorAll('div:not(.adreq-dot)').forEach(d => d.style.color = '');
-    const dot = l.querySelector('.adreq-dot');
-    if(dot) { dot.style.background='transparent'; dot.style.borderColor='#ccc'; dot.innerHTML=''; }
-  });
-  if(!isActive) {
-    el.classList.add('adreq-active');
-    el.style.background='#111'; el.style.borderColor='#111';
-    el.querySelectorAll('div:not(.adreq-dot)').forEach(d => d.style.color='#fff');
-    const dot = el.querySelector('.adreq-dot');
-    if(dot) { dot.style.background='#fff'; dot.style.borderColor='#fff'; dot.innerHTML='<div style="width:8px;height:8px;border-radius:50%;background:#111;"></div>'; }
+function adreqSelectType(el) {
+  document.querySelectorAll('.adreq-type-tab').forEach(t => t.classList.remove('active'));
+  el.classList.add('active');
+  const isWoodlak = el.dataset.type === '우드락 셀링';
+  document.getElementById('adreq-woodlak-size').style.display = isWoodlak ? '' : 'none';
+  if(!isWoodlak) {
+    const w = document.getElementById('adreq-size-w');
+    const h = document.getElementById('adreq-size-h');
+    if(w) w.value = ''; if(h) h.value = '';
   }
 }
 
@@ -2462,17 +2478,22 @@ function adreqSubmit() {
   const dept     = (document.getElementById('adreq-dept')?.value||'').trim();
   const name     = (document.getElementById('adreq-name')?.value||'').trim();
   const tel      = (document.getElementById('adreq-tel')?.value||'').trim();
+  const branch   = (document.getElementById('adreq-branch')?.value||'').trim();
   const deadline = (document.getElementById('adreq-deadline')?.value||'');
   const qty      = (document.getElementById('adreq-qty')?.value||'').trim();
   const desc     = (document.getElementById('adreq-desc')?.value||'').trim();
-  const selectedType = document.querySelector('#adreq-size-options label.adreq-active')?.dataset?.type||'';
+  const activeTab = document.querySelector('.adreq-type-tab.active');
+  const adType   = activeTab?.dataset?.type || '';
+  const sizeW    = (document.getElementById('adreq-size-w')?.value||'').trim();
+  const sizeH    = (document.getElementById('adreq-size-h')?.value||'').trim();
   const ad = DB.ads.find(a => String(a.id) === String(adreqAdId));
-  const hasSizeGroup = document.getElementById('adreq-size-group').style.display !== 'none';
 
   var missing = [];
   if(!dept||!name||!tel) missing.push('요청자 정보');
   if(!deadline) missing.push('마감 요청일');
-  if(hasSizeGroup && !selectedType) missing.push('사이즈');
+  if(!adType) missing.push('광고물 형태');
+  if(adType === '우드락 셀링' && (!sizeW || !sizeH)) missing.push('우드락 셀링 사이즈');
+
   if(missing.length > 0) {
     var toast = document.createElement('div');
     toast.style.cssText = 'position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:#fff;border:1.5px solid #e03333;color:#e03333;padding:20px 28px;border-radius:16px;font-size:14px;font-weight:700;z-index:9999;box-shadow:0 8px 32px rgba(0,0,0,0.15);text-align:center;line-height:1.6;';
@@ -2480,8 +2501,7 @@ function adreqSubmit() {
     document.body.appendChild(toast); setTimeout(()=>toast.remove(), 2500); return;
   }
 
-  const t = (ad?.types||[]).find(t=>t.name===selectedType);
-  const sizeText = t&&t.width&&t.height ? `${selectedType} (${t.width}×${t.height}px)` : selectedType;
+  const sizeText = adType === '우드락 셀링' ? `${adType} (${sizeW}×${sizeH}mm)` : adType;
   const sitePrevImgs = Array.from(document.getElementById('adreq-site-preview').querySelectorAll('img'));
   const sitePhotoSrcs = sitePrevImgs.map(img=>img.src);
 
@@ -2490,14 +2510,23 @@ function adreqSubmit() {
   var cnt = (DB.requests||[]).filter(r=>r.reqCode&&r.reqCode.indexOf('KD-'+dateStr)===0).length;
   var reqCode = 'KD-'+dateStr+'-'+String(cnt+1).padStart(3,'0');
 
+  var descLines = [
+    `참고 광고: ${ad?.title||''}`,
+    `광고물 형태: ${sizeText}`,
+    qty ? `수량: ${qty}개` : '',
+    branch ? `입고 지점: ${branch}` : '',
+    desc ? `\n${desc}` : ''
+  ].filter(Boolean).join('\n');
+
   var request = {
     id:nextId(), reqCode, submittedAt:new Date().toLocaleString('ko-KR'),
     status:'검토 중', dept, name, tel,
-    title:`[${ad?.title||''}] ${sizeText}${qty?' · '+qty+'매':''}`,
-    deadline, adTypes:[selectedType||'기존 광고 신청'],
-    bannerType:'', customSize:'', adTitle:ad?.title||'', selling:'',
+    title:`[${ad?.title||''}] ${sizeText}${qty?' · '+qty+'개':''}${branch?' · '+branch:''}`,
+    deadline, adTypes:[adType],
+    bannerType:'', customSize: adType==='우드락 셀링'?`${sizeW}×${sizeH}mm`:'',
+    adTitle:ad?.title||'', selling:'',
     eventStart:'', eventEnd:'',
-    eventDesc:`참고 광고: ${ad?.title||''}\n사이즈: ${sizeText}${qty?'\n수량: '+qty+'매':''}\n\n${desc}`.trim(),
+    eventDesc: descLines,
     sitePhotoSrcs, refImageSrcs:[], manager:'', dueDate:''
   };
   if(!DB.requests) DB.requests=[];
