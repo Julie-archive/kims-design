@@ -165,6 +165,38 @@ html, body { height: 100%; overflow: hidden; overflow-x: hidden; max-width: 100%
 }
 .kprod-del:hover { color: #e03333; }
 
+/* ── Search bar (home) ── */
+.ksearch-row {
+  padding: 12px 40px; flex-shrink: 0;
+  border-bottom: 1px solid var(--kborder); background: #fff;
+}
+@media(max-width:600px) {
+  .ksearch-row { padding: 10px 16px; }
+}
+.ksearch-wrap {
+  position: relative; display: flex; align-items: center;
+}
+.ksearch-icon {
+  position: absolute; left: 14px; color: #bbb; pointer-events: none;
+  display: flex; align-items: center;
+}
+.ksearch-input {
+  width: 100%; background: var(--bg); border: 1.5px solid var(--kborder2);
+  border-radius: 50px; padding: 10px 40px 10px 42px;
+  font-family: 'Pretendard', sans-serif; font-size: 14px; color: var(--ktext);
+  outline: none; transition: border-color .15s, box-shadow .15s;
+  -webkit-appearance: none;
+}
+.ksearch-input:focus { border-color: #111; box-shadow: 0 0 0 3px var(--kaccent-glow); }
+.ksearch-input::placeholder { color: #bbb; }
+.ksearch-clear {
+  position: absolute; right: 14px; background: none; border: none; cursor: pointer;
+  color: #bbb; display: flex; align-items: center; padding: 0;
+  opacity: 0; pointer-events: none; transition: opacity .15s;
+}
+.ksearch-clear.visible { opacity: 1; pointer-events: auto; }
+.ksearch-clear:hover { color: #555; }
+
 /* ── Content area ── */
 .kcontent { flex: 1; overflow-y: auto; padding: 24px 40px 60px; }
 
@@ -865,6 +897,84 @@ html, body { height: 100%; overflow: hidden; overflow-x: hidden; max-width: 100%
   </div>
 </div>
 
+<!-- AD REQUEST MODAL (기존 광고 기반 간략 신청) -->
+<div class="kmodal-overlay center" id="modalAdRequest">
+  <div class="kmodal-sheet" style="max-width:520px;border-radius:20px;max-height:92vh;overflow-y:auto;">
+    <div class="kmodal-handle"></div>
+
+    <!-- 참고 광고 헤더 -->
+    <div style="display:flex;align-items:center;gap:12px;background:#f7f8f5;border-radius:14px;padding:14px 16px;margin-bottom:20px;">
+      <div id="adreq-thumb" style="width:52px;height:52px;border-radius:8px;overflow:hidden;flex-shrink:0;background:#e8e8e5;display:flex;align-items:center;justify-content:center;">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#ccc" stroke-width="1.5" width="20" height="20"><rect x="3" y="7" width="18" height="13" rx="2"/><circle cx="9" cy="13" r="2"/><path d="m3 18 5-4 4 4 3-3 6 5"/></svg>
+      </div>
+      <div style="flex:1;min-width:0;">
+        <div style="font-size:11px;color:#999;font-weight:600;margin-bottom:3px;" id="adreq-cat"></div>
+        <div style="font-size:15px;font-weight:800;color:#111;letter-spacing:-0.03em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;" id="adreq-title"></div>
+      </div>
+    </div>
+
+    <!-- 요청자 정보 -->
+    <div class="kform-label" style="margin-bottom:8px;">요청자 정보 <span style="color:#e03333;">*</span></div>
+    <div style="background:#f7f7f7;border-radius:12px;padding:14px;margin-bottom:16px;">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px;">
+        <div>
+          <div class="kform-label" style="font-size:11px;color:#999;margin-bottom:4px;">소속</div>
+          <input class="kinput" type="text" id="adreq-dept" placeholder="예) 농산팀" />
+        </div>
+        <div>
+          <div class="kform-label" style="font-size:11px;color:#999;margin-bottom:4px;">이름</div>
+          <input class="kinput" type="text" id="adreq-name" placeholder="이름" />
+        </div>
+      </div>
+      <div class="kform-label" style="font-size:11px;color:#999;margin-bottom:4px;">연락처</div>
+      <input class="kinput" type="tel" id="adreq-tel" placeholder="010-0000-0000" oninput="formatTelInput(this)" />
+    </div>
+
+    <!-- 마감일 -->
+    <div class="kform-group">
+      <label class="kform-label">마감 요청일 <span style="color:#e03333;">*</span></label>
+      <input class="kinput" type="date" id="adreq-deadline" />
+    </div>
+
+    <!-- 사이즈 선택 (등록된 타입 기반) -->
+    <div class="kform-group" id="adreq-size-group">
+      <label class="kform-label">사이즈 선택 <span style="color:#e03333;">*</span></label>
+      <div id="adreq-size-options" style="display:flex;flex-direction:column;gap:8px;"></div>
+    </div>
+
+    <!-- 수량 -->
+    <div class="kform-group">
+      <label class="kform-label">수량</label>
+      <div style="display:flex;align-items:center;gap:10px;">
+        <input class="kinput" type="number" id="adreq-qty" placeholder="예) 3" min="1" style="max-width:120px;" />
+        <span style="font-size:13px;color:#999;">매</span>
+      </div>
+    </div>
+
+    <!-- 설치 위치 사진 -->
+    <div class="kform-group">
+      <label class="kform-label">설치 위치 사진 <span style="color:#999;font-size:11px;font-weight:400;">(설치될 곳)</span></label>
+      <label class="kupload-label" style="min-height:80px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;position:relative;">
+        <input type="file" accept="image/*" multiple onchange="adreqHandlePhotos(this)" style="position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%;" />
+        <svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.5" width="24" height="24" style="opacity:.3;"><rect x="6" y="14" width="36" height="26" rx="4"/><path d="M24 8v16m-6-6 6-6 6 6"/></svg>
+        <span style="font-size:12px;color:#aaa;">클릭하여 사진 업로드 (복수 선택 가능)</span>
+      </label>
+      <div id="adreq-site-preview" style="display:flex;flex-wrap:wrap;gap:8px;margin-top:8px;"></div>
+    </div>
+
+    <!-- 추가 요청사항 -->
+    <div class="kform-group">
+      <label class="kform-label">추가 요청사항</label>
+      <textarea class="kinput" id="adreq-desc" rows="3" placeholder="특이사항, 설치 위치 설명 등" style="resize:vertical;"></textarea>
+    </div>
+
+    <div class="kmodal-actions" style="margin-top:8px;">
+      <button class="kbtn-cancel" onclick="modalClose('modalAdRequest')">취소</button>
+      <button class="kbtn-confirm" onclick="adreqSubmit()">신청하기</button>
+    </div>
+  </div>
+</div>
+
 <div class="klightbox" id="lightbox" onclick="this.classList.remove('open')">
     <button class="klb-close" onclick="event.stopPropagation();document.getElementById('lightbox').classList.remove('open')">✕</button>
     <img id="lightboxImg" src="" alt="" />
@@ -1118,7 +1228,7 @@ function renderHomeA() {
 
 function homeCatSelect(cat) {
   homeScreen = 'B';
-  hState = {cat, sub:'', prod:'__all__'};
+  hState = {cat, sub:'', prod:'__all__', search:''};
   // 로딩 화면 먼저 표시
   var el = document.getElementById('viewHome');
   el.innerHTML = '<div style="flex:1;display:flex;align-items:center;justify-content:center;"><div style="font-size:14px;color:#aaa;">불러오는 중...</div></div>';
@@ -1145,7 +1255,6 @@ function homeCatSelect(cat) {
 function renderHomeB() {
   const el = document.getElementById('viewHome');
   const subs = getSubs(hState.cat);
-  const prods = getProds(hState.cat, hState.sub);
 
   el.innerHTML = `
     <div style="flex:1;overflow:hidden;display:flex;flex-direction:column;background:#fff;">
@@ -1161,23 +1270,26 @@ function renderHomeB() {
           </button>
         `).join('')}
       </div>
+      <!-- Search bar -->
+      <div class="ksearch-row">
+        <div class="ksearch-wrap">
+          <span class="ksearch-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          </span>
+          <input class="ksearch-input" id="homeSearchInput" type="text" placeholder="광고 검색..." value="${hState.search||''}"
+            oninput="homeSearchChange(this.value)"
+            onkeydown="if(event.key==='Escape'){homeSearchChange('');this.value='';}" />
+          <button class="ksearch-clear ${hState.search?'visible':''}" id="homeSearchClear" onclick="homeSearchChange('');document.getElementById('homeSearchInput').value='';document.getElementById('homeSearchInput').focus();">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="14" height="14"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+          </button>
+        </div>
+      </div>
       <!-- Sub pills -->
       <div class="ksub-row">
         <div class="ksub-scroll">
           ${subs.map(s=>`
             <button class="ksub-pill ${hState.sub===s.name?'active':''}" onclick="homeSubSelect('${s.name}')">
               ${s.name}
-            </button>
-          `).join('')}
-        </div>
-      </div>
-      <!-- Prod filter -->
-      <div class="kprod-row" id="homeProdRow">
-        <div class="kprod-scroll">
-          <button class="kprod-btn ${hState.prod==='__all__'?'active':''}" onclick="homeProdSelect('__all__')">전체 보기</button>
-          ${prods.map(p=>`
-            <button class="kprod-btn ${hState.prod===p.name?'active':''}" onclick="homeProdSelect('${p.name}')">
-              ${p.name}
             </button>
           `).join('')}
         </div>
@@ -1190,48 +1302,56 @@ function renderHomeB() {
 }
 
 function homeGoBack() { homeScreen='A'; renderHomeA(); }
-function homeSubSelect(sub) { hState.sub=sub; hState.prod='__all__'; renderHomeB(); }
-function homeProdSelect(prod) {
-  hState.prod = prod;
-  // prod row 색상 즉시 업데이트
-  var row = document.getElementById('homeProdRow');
-  if(row) {
-    var prods = getProds(hState.cat, hState.sub);
-    row.innerHTML = '<div class="kprod-scroll">'
-      + '<button class="kprod-btn" onclick="homeProdSelect(\'__all__\')" style="color:'+(prod==='__all__'?'#111':'#aaa')+';font-weight:'+(prod==='__all__'?'700':'400')+'">전체 보기</button>'
-      + prods.map(function(p){
-          return '<button class="kprod-btn" onclick="homeProdSelect(\''+p.name+'\')" style="color:'+(prod===p.name?'#111':'#aaa')+';font-weight:'+(prod===p.name?'700':'400')+'">'+p.name+'</button>';
-        }).join('')
-      + '</div>';
-  }
+function homeSubSelect(sub) { hState.sub=sub; hState.prod='__all__'; hState.search=''; renderHomeB(); }
+function homeSearchChange(val) {
+  hState.search = val;
+  var clearBtn = document.getElementById('homeSearchClear');
+  if(clearBtn) clearBtn.classList.toggle('visible', !!val);
   renderHomeContent();
 }
 
 function renderHomeContent() {
   const el = document.getElementById('homeContent');
   if(!el) return;
-  const prods = getProds(hState.cat, hState.sub);
+  const searchQ = (hState.search||'').trim().toLowerCase();
 
-  if(hState.prod && hState.prod!=='__all__') {
-    const ads = getAds(hState.cat, hState.sub, hState.prod);
-    el.innerHTML = `
-      <div class="ksect-title">${hState.prod} <span>광고</span></div>
-      ${ads.length ? `<div class="kad-grid">${ads.map(ad=>adCardHTML(ad,'home')).join('')}</div>`
-        : `<div class="kempty"><div class="kempty-title">등록된 광고 이미지가 없습니다</div><div class="kempty-sub">관리자 모드에서 이미지를 등록해보세요</div></div>`}
-    `;
-  } else {
-    const withAds = prods.filter(p=>getAds(hState.cat,hState.sub,p.name).length>0);
-    if(withAds.length===0) {
-      el.innerHTML=`<div class="kempty"><div class="kempty-title">등록된 광고가 없습니다</div><div class="kempty-sub">관리자 모드에서 이미지를 등록하세요</div></div>`;
+  if(searchQ) {
+    // 검색 모드: 현재 카테고리+세부카테고리 내 전체 광고에서 title 검색
+    const prods = getProds(hState.cat, hState.sub);
+    let allAds = [];
+    prods.forEach(function(p) {
+      getAds(hState.cat, hState.sub, p.name).forEach(function(ad) { allAds.push(ad); });
+    });
+    const filtered = allAds.filter(function(ad) {
+      return ad.title.toLowerCase().includes(searchQ)
+        || (ad.product||'').toLowerCase().includes(searchQ);
+    });
+    if(filtered.length === 0) {
+      el.innerHTML = `<div class="kempty">
+        <svg viewBox="0 0 48 48" fill="none" stroke="#ccc" stroke-width="1.5" width="40" height="40" style="margin:0 auto 12px;display:block;"><circle cx="22" cy="22" r="16"/><line x1="34" y1="34" x2="44" y2="44"/></svg>
+        <div class="kempty-title">"${hState.search}"에 대한 결과가 없습니다</div>
+        <div class="kempty-sub">다른 검색어를 입력해보세요</div>
+      </div>`;
     } else {
-      el.innerHTML = withAds.map(p=>{
-        const ads=getAds(hState.cat,hState.sub,p.name);
-        return `<div style="margin-bottom:36px;">
-          <div class="ksect-title">${p.name} <span>광고</span></div>
-          <div class="kad-grid">${ads.map(ad=>adCardHTML(ad,'home')).join('')}</div>
-        </div>`;
-      }).join('');
+      el.innerHTML = `<div style="font-size:13px;font-weight:600;color:#999;margin-bottom:16px;">${filtered.length}개의 광고</div>
+        <div class="kad-grid">${filtered.map(ad=>adCardHTML(ad,'home')).join('')}</div>`;
     }
+    return;
+  }
+
+  // 검색 없음: 세부 카테고리 내 전체 상품 광고 표시
+  const prods = getProds(hState.cat, hState.sub);
+  const withAds = prods.filter(p=>getAds(hState.cat,hState.sub,p.name).length>0);
+  if(withAds.length===0) {
+    el.innerHTML=`<div class="kempty"><div class="kempty-title">등록된 광고가 없습니다</div><div class="kempty-sub">관리자 모드에서 이미지를 등록하세요</div></div>`;
+  } else {
+    el.innerHTML = withAds.map(p=>{
+      const ads=getAds(hState.cat,hState.sub,p.name);
+      return `<div style="margin-bottom:36px;">
+        <div class="ksect-title">${p.name} <span>광고</span></div>
+        <div class="kad-grid">${ads.map(ad=>adCardHTML(ad,'home')).join('')}</div>
+      </div>`;
+    }).join('');
   }
 }
 
@@ -1349,7 +1469,7 @@ function renderAdmin() {
 }
 
 function adminGoNormal() {
-  hState = {cat:aState.cat, sub:aState.sub, prod:aState.prod};
+  hState = {cat:aState.cat, sub:aState.sub, prod:aState.prod, search:''};
   homeScreen = 'B';
   switchView('home');
   renderHomeB();
@@ -1842,6 +1962,8 @@ function renderDetail() {
       `).join('');
       if(adminLoggedIn) {
         html+=`<button onclick="detailTab='edit';renderDetail();" style="width:100%;margin-top:20px;padding:11px;background:none;border:1.5px dashed var(--kborder2);border-radius:var(--kr2);font-size:13px;font-weight:600;color:var(--ktext3);cursor:pointer;font-family:'Pretendard',sans-serif;">✎ 수정하기</button>`;
+      } else {
+        html+=`<button onclick="openAdRequest(${ad.id})" style="width:100%;margin-top:20px;padding:14px;background:#111;color:#fff;border:none;border-radius:50px;font-size:15px;font-weight:700;cursor:pointer;font-family:'Pretendard',sans-serif;letter-spacing:-0.02em;">이 광고로 신청하기</button>`;
       }
     }
   } else {
@@ -2213,13 +2335,181 @@ function rqSubmit() {
   openRequestSuccess(request.reqCode);
 }
 
+function dtRqSubmit() {
+  const dept = (document.getElementById('dtRqDept')?.value||'').trim();
+  const name = (document.getElementById('dtRqName')?.value||'').trim();
+  const tel  = (document.getElementById('dtRqTel')?.value||'').trim();
+  const title = (document.getElementById('dtRqTitle')?.value||'').trim();
+  const deadline = (document.getElementById('dtRqDeadline')?.value||'');
+  const desc = (document.getElementById('dtRqDesc')?.value||'').trim();
 
+  var missing = [];
+  if(!dept||!name||!tel) missing.push('요청자 정보');
+  if(!title) missing.push('요청 제목');
+  if(!deadline) missing.push('마감 요청일');
+  if(missing.length > 0) {
+    var toast = document.createElement('div');
+    toast.style.cssText = 'position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:#fff;border:1.5px solid #e03333;color:#e03333;padding:20px 28px;border-radius:16px;font-size:14px;font-weight:700;z-index:9999;box-shadow:0 8px 32px rgba(0,0,0,0.15);text-align:center;line-height:1.6;';
+    toast.innerHTML = '<div style="font-size:16px;margin-bottom:6px;">필수 항목을 작성해주세요</div><div style="font-size:12px;font-weight:500;color:#999;">'+missing.join(', ')+'</div>';
+    document.body.appendChild(toast);
+    setTimeout(function(){ toast.remove(); }, 2500);
+    return;
+  }
+  var today = new Date();
+  var dateStr = today.getFullYear().toString()+String(today.getMonth()+1).padStart(2,'0')+String(today.getDate()).padStart(2,'0');
+  var sameDayCount = (DB.requests||[]).filter(function(r){ return r.reqCode && r.reqCode.indexOf('KD-'+dateStr)===0; }).length;
+  var reqCode = 'KD-'+dateStr+'-'+String(sameDayCount+1).padStart(3,'0');
+  var request = {
+    id:nextId(), reqCode, submittedAt:new Date().toLocaleString('ko-KR'),
+    status:'검토 중', dept, name, tel, title, deadline,
+    adTypes:[], bannerType:'', customSize:'',
+    adTitle:detailAd?.title||'', selling:'', eventStart:'', eventEnd:'',
+    eventDesc:desc, sitePhotoSrcs:[], refImageSrcs:[], manager:'', dueDate:''
+  };
+  if(!DB.requests) DB.requests=[];
+  DB.requests.unshift(request);
+  saveData();
+  sbSaveRequest(request);
+  modalClose('modalDetail');
+  openRequestSuccess(reqCode);
+}
 
+// ══════════════════════════════════════════════════════
+//  AD REQUEST (기존 광고 기반 간략 신청)
+// ══════════════════════════════════════════════════════
+let adreqSiteFiles = [];
+let adreqAdId = null;
+
+function openAdRequest(adId) {
+  const ad = DB.ads.find(a => String(a.id) === String(adId));
+  if(!ad) return;
+  adreqAdId = adId;
+  adreqSiteFiles = [];
+
+  document.getElementById('adreq-cat').textContent = ad.mainCat + ' > ' + ad.subCat + ' > ' + ad.product;
+  document.getElementById('adreq-title').textContent = ad.title;
+
+  const thumb = (ad.types||[]).find(t=>t.src)?.src || '';
+  const thumbEl = document.getElementById('adreq-thumb');
+  thumbEl.innerHTML = thumb
+    ? `<img src="${thumb}" style="width:100%;height:100%;object-fit:cover;" />`
+    : `<svg viewBox="0 0 24 24" fill="none" stroke="#ccc" stroke-width="1.5" width="20" height="20"><rect x="3" y="7" width="18" height="13" rx="2"/><circle cx="9" cy="13" r="2"/><path d="m3 18 5-4 4 4 3-3 6 5"/></svg>`;
+
+  const sizeOpts = document.getElementById('adreq-size-options');
+  const types = ad.types || [];
+  if(types.length === 0) {
+    document.getElementById('adreq-size-group').style.display = 'none';
+  } else {
+    document.getElementById('adreq-size-group').style.display = '';
+    sizeOpts.innerHTML = types.map(t => `
+      <label onclick="adreqToggleSize(this)" style="display:flex;align-items:center;gap:10px;padding:12px 14px;border:1.5px solid rgba(0,0,0,0.12);border-radius:12px;cursor:pointer;transition:all .15s;background:#fff;user-select:none;" data-type="${t.name}">
+        <div style="width:18px;height:18px;border-radius:50%;border:1.5px solid #ccc;flex-shrink:0;display:flex;align-items:center;justify-content:center;" class="adreq-dot"></div>
+        <div style="flex:1;">
+          <div style="font-size:14px;font-weight:600;color:#111;">${t.name}</div>
+          ${t.width&&t.height?`<div style="font-size:12px;color:#999;margin-top:2px;">${t.width} × ${t.height} px</div>`:''}
+        </div>
+      </label>
+    `).join('');
+  }
+
+  ['adreq-dept','adreq-name','adreq-tel','adreq-deadline','adreq-qty','adreq-desc'].forEach(id => {
+    const el = document.getElementById(id); if(el) el.value = '';
+  });
+  document.getElementById('adreq-site-preview').innerHTML = '';
+  document.getElementById('modalAdRequest').classList.add('open');
+}
+
+function adreqToggleSize(el) {
+  const isActive = el.classList.contains('adreq-active');
+  document.querySelectorAll('#adreq-size-options label').forEach(l => {
+    l.classList.remove('adreq-active');
+    l.style.background = '#fff'; l.style.borderColor = 'rgba(0,0,0,0.12)';
+    l.querySelectorAll('div:not(.adreq-dot)').forEach(d => d.style.color = '');
+    const dot = l.querySelector('.adreq-dot');
+    if(dot) { dot.style.background='transparent'; dot.style.borderColor='#ccc'; dot.innerHTML=''; }
+  });
+  if(!isActive) {
+    el.classList.add('adreq-active');
+    el.style.background='#111'; el.style.borderColor='#111';
+    el.querySelectorAll('div:not(.adreq-dot)').forEach(d => d.style.color='#fff');
+    const dot = el.querySelector('.adreq-dot');
+    if(dot) { dot.style.background='#fff'; dot.style.borderColor='#fff'; dot.innerHTML='<div style="width:8px;height:8px;border-radius:50%;background:#111;"></div>'; }
+  }
+}
+
+function adreqHandlePhotos(input) {
+  Array.from(input.files).forEach(file => {
+    adreqSiteFiles.push(file);
+    const reader = new FileReader();
+    reader.onload = e => {
+      const preview = document.getElementById('adreq-site-preview');
+      const div = document.createElement('div');
+      div.style.cssText = 'position:relative;width:72px;height:72px;border-radius:8px;overflow:hidden;border:1px solid rgba(0,0,0,0.1);flex-shrink:0;';
+      div.innerHTML = `<img src="${e.target.result}" style="width:100%;height:100%;object-fit:cover;" />`;
+      const del = document.createElement('button');
+      del.innerHTML = '×';
+      del.style.cssText = 'position:absolute;top:2px;right:2px;width:18px;height:18px;border-radius:50%;background:rgba(0,0,0,0.6);color:#fff;border:none;cursor:pointer;font-size:12px;line-height:1;display:flex;align-items:center;justify-content:center;';
+      del.onclick = () => { adreqSiteFiles = adreqSiteFiles.filter(f=>f!==file); div.remove(); };
+      div.appendChild(del);
+      preview.appendChild(div);
+    };
+    reader.readAsDataURL(file);
+  });
+  input.value = '';
+}
+
+function adreqSubmit() {
+  const dept     = (document.getElementById('adreq-dept')?.value||'').trim();
+  const name     = (document.getElementById('adreq-name')?.value||'').trim();
+  const tel      = (document.getElementById('adreq-tel')?.value||'').trim();
+  const deadline = (document.getElementById('adreq-deadline')?.value||'');
+  const qty      = (document.getElementById('adreq-qty')?.value||'').trim();
+  const desc     = (document.getElementById('adreq-desc')?.value||'').trim();
+  const selectedType = document.querySelector('#adreq-size-options label.adreq-active')?.dataset?.type||'';
+  const ad = DB.ads.find(a => String(a.id) === String(adreqAdId));
+  const hasSizeGroup = document.getElementById('adreq-size-group').style.display !== 'none';
+
+  var missing = [];
+  if(!dept||!name||!tel) missing.push('요청자 정보');
+  if(!deadline) missing.push('마감 요청일');
+  if(hasSizeGroup && !selectedType) missing.push('사이즈');
+  if(missing.length > 0) {
+    var toast = document.createElement('div');
+    toast.style.cssText = 'position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:#fff;border:1.5px solid #e03333;color:#e03333;padding:20px 28px;border-radius:16px;font-size:14px;font-weight:700;z-index:9999;box-shadow:0 8px 32px rgba(0,0,0,0.15);text-align:center;line-height:1.6;';
+    toast.innerHTML = '<div style="font-size:16px;margin-bottom:6px;">필수 항목을 작성해주세요</div><div style="font-size:12px;font-weight:500;color:#999;">'+missing.join(', ')+'</div>';
+    document.body.appendChild(toast); setTimeout(()=>toast.remove(), 2500); return;
+  }
+
+  const t = (ad?.types||[]).find(t=>t.name===selectedType);
+  const sizeText = t&&t.width&&t.height ? `${selectedType} (${t.width}×${t.height}px)` : selectedType;
+  const sitePrevImgs = Array.from(document.getElementById('adreq-site-preview').querySelectorAll('img'));
+  const sitePhotoSrcs = sitePrevImgs.map(img=>img.src);
+
+  var today = new Date();
+  var dateStr = today.getFullYear()+String(today.getMonth()+1).padStart(2,'0')+String(today.getDate()).padStart(2,'0');
+  var cnt = (DB.requests||[]).filter(r=>r.reqCode&&r.reqCode.indexOf('KD-'+dateStr)===0).length;
+  var reqCode = 'KD-'+dateStr+'-'+String(cnt+1).padStart(3,'0');
+
+  var request = {
+    id:nextId(), reqCode, submittedAt:new Date().toLocaleString('ko-KR'),
+    status:'검토 중', dept, name, tel,
+    title:`[${ad?.title||''}] ${sizeText}${qty?' · '+qty+'매':''}`,
+    deadline, adTypes:[selectedType||'기존 광고 신청'],
+    bannerType:'', customSize:'', adTitle:ad?.title||'', selling:'',
+    eventStart:'', eventEnd:'',
+    eventDesc:`참고 광고: ${ad?.title||''}\n사이즈: ${sizeText}${qty?'\n수량: '+qty+'매':''}\n\n${desc}`.trim(),
+    sitePhotoSrcs, refImageSrcs:[], manager:'', dueDate:''
+  };
+  if(!DB.requests) DB.requests=[];
+  DB.requests.unshift(request);
+  saveData(); sbSaveRequest(request);
+  modalClose('modalAdRequest');
+  openRequestSuccess(reqCode);
+}
 
 // ── Supabase Storage 이미지 업로드 ──
 async function uploadImageToStorage(base64DataUrl, fileName) {
   try {
-    // base64 → Blob 변환
     var arr = base64DataUrl.split(',');
     var mime = arr[0].match(/:(.*?);/)[1];
     var bstr = atob(arr[1]);
