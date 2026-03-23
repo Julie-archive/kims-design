@@ -696,11 +696,6 @@ html, body { height: 100%; overflow: hidden; overflow-x: hidden; max-width: 100%
         <input class="kinput" type="text" id="aiTitle" placeholder="예) 제주딸기 셀링" />
       </div>
       <div id="aiTypeBlocks"></div>
-      <!-- 메모 -->
-      <div class="kform-group" style="margin-bottom:10px;">
-        <label class="kform-label">메모 <span style="color:#999;font-size:11px;font-weight:400;">(선택 · 특이사항, 적용 매장 등)</span></label>
-        <textarea class="kinput" id="aiMemo" placeholder="예) 강서점 사이즈 기준" rows="2" style="resize:vertical;font-size:14px;"></textarea>
-      </div>
       <button class="kadd-type-btn" onclick="aiAddType()">+ 타입 추가</button>
       <div class="kmodal-actions">
         <button class="kbtn-cancel" onclick="modalClose('modalAddImg')">취소</button>
@@ -867,48 +862,11 @@ html, body { height: 100%; overflow: hidden; overflow-x: hidden; max-width: 100%
       </div>
     </div>
 
-    <!-- 입고 방법 -->
-    <div class="kform-label" style="margin-bottom:8px;">입고 방법 <span style="color:#e03333;">*</span></div>
-    <div style="background:#f7f7f7;border-radius:12px;padding:16px;margin-bottom:16px;">
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
-        <div>
-          <div class="kform-label">입고 지점</div>
-          <input class="kinput" type="text" id="rq-branch" placeholder="예) 강서점" />
-        </div>
-        <div>
-          <div class="kform-label">입고일 <span style="color:#e03333;">*</span></div>
-          <div style="position:relative;">
-            <select class="kinput" id="rq-delivery-day" onchange="rqDeliveryDayChange(this.value)" style="-webkit-appearance:none;appearance:none;cursor:pointer;padding-right:36px;">
-              <option value="">선택해주세요</option>
-              <option value="화요일">화요일</option>
-              <option value="금요일">금요일</option>
-              <option value="별도지정일">별도 지정일 (퀵)</option>
-            </select>
-            <svg style="position:absolute;right:12px;top:50%;transform:translateY(-50%);pointer-events:none;" viewBox="0 0 24 24" fill="none" stroke="#999" stroke-width="2" width="16" height="16"><polyline points="6 9 12 15 18 9"/></svg>
-          </div>
-        </div>
-      </div>
-      <div id="rq-delivery-custom" style="display:none;margin-top:10px;">
-        <input class="kinput" type="date" id="rq-delivery-date" />
-        <div style="font-size:11px;color:#e03333;font-weight:600;margin-top:4px;">⚠ 퀵배송 이용 시 퀵비가 발생합니다</div>
-      </div>
-    </div>
-
-    <!-- 요청 제목 + 마감일 -->
-    <div class="kform-group">
-      <div class="kform-label">요청 제목 <span style="color:#e03333;">*</span></div>
-      <input class="kinput" type="text" id="rq-title" placeholder="예) 제주 딸기 행사 배너 제작" />
-    </div>
-    <div class="kform-group">
-      <div class="kform-label">마감 요청일 <span style="color:#e03333;">*</span></div>
-      <input class="kinput" type="date" id="rq-deadline" />
-    </div>
-
     <!-- 광고 종류 -->
     <div class="kform-group">
       <div class="kform-label" style="margin-bottom:10px;">광고 종류 <span style="color:#e03333;">*</span> <span style="color:#999;font-weight:400;font-size:10px;">(복수 선택 가능)</span></div>
-      <!-- 3개 카테고리 가로 탭 -->
-      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin-bottom:8px;">
+      <!-- 2개 카테고리 가로 탭 -->
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:8px;">
 
         <!-- 연출물 -->
         <div class="rq-adcat-col">
@@ -923,6 +881,13 @@ html, body { height: 100%; overflow: hidden; overflow-x: hidden; max-width: 100%
             <label class="rq-adcat-item" onclick="rqToggleItem(this,'연출물')" data-val="배너"><span class="rq-adcat-dot"></span>배너</label>
             <label class="rq-adcat-item" onclick="rqToggleItem(this,'연출물')" data-val="우드락 셀링"><span class="rq-adcat-dot"></span>우드락 셀링</label>
             <label class="rq-adcat-item" onclick="rqToggleItem(this,'연출물')" data-val="디바이더"><span class="rq-adcat-dot"></span>디바이더</label>
+            <label class="rq-adcat-item" onclick="rqToggleItem(this,'연출물')" data-val="평대자석"><span class="rq-adcat-dot"></span>평대자석</label>
+            <label class="rq-adcat-item" onclick="rqToggleItem(this,'연출물')" data-val="등신대"><span class="rq-adcat-dot"></span>등신대</label>
+            <label class="rq-adcat-item" onclick="rqToggleItem(this,'연출물')" data-val="현수막"><span class="rq-adcat-dot"></span>현수막</label>
+            <label class="rq-adcat-item" onclick="rqToggleItem(this,'연출물')" data-val="기타"><span class="rq-adcat-dot"></span>기타 (직접 입력)</label>
+            <div id="rq-custom-type-input" style="display:none;padding:8px 14px 10px;">
+              <input class="kinput" type="text" id="rq-custom-type-text" placeholder="연출물 종류를 직접 입력해주세요" />
+            </div>
           </div>
         </div>
 
@@ -940,25 +905,54 @@ html, body { height: 100%; overflow: hidden; overflow-x: hidden; max-width: 100%
           </div>
         </div>
 
-        <!-- 기타 -->
-        <div class="rq-adcat-col">
-          <button type="button" class="rq-adcat-tab" id="rqtab-기타" onclick="rqToggleCat(event,'기타')">
-            <span class="rq-adcat-badge" id="rqbadge-기타"></span>
-            기타
-            <svg class="rq-adcat-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="13" height="13"><polyline points="6 9 12 15 18 9"/></svg>
-          </button>
-          <div class="rq-adcat-dropdown" id="rqbody-기타" style="display:none;" onclick="event.stopPropagation()">
-            <label class="rq-adcat-item" onclick="rqToggleItem(this,'기타')" data-val="스티커"><span class="rq-adcat-dot"></span>스티커</label>
-            <label class="rq-adcat-item" onclick="rqToggleItem(this,'기타')" data-val="직접 작성"><span class="rq-adcat-dot"></span>직접 작성하기</label>
-            <div id="rq-custom-type-input" style="display:none;padding:8px 14px 10px;">
-              <input class="kinput" type="text" id="rq-custom-type-text" placeholder="광고 종류를 직접 입력해주세요" />
-            </div>
-          </div>
-        </div>
-
       </div>
       <!-- 선택 요약 표시 -->
       <div id="rq-adtype-details" style="margin-top:4px;"></div>
+    </div>
+
+    <!-- 입고 방법 (연출물 선택 시 표시) -->
+    <div id="rq-delivery-section" style="display:none;">
+      <div class="kform-label" style="margin-bottom:8px;">입고 방법 <span style="color:#e03333;">*</span></div>
+      <div style="background:#f7f7f7;border-radius:12px;padding:16px;margin-bottom:16px;">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+          <div>
+            <div class="kform-label">입고 지점 <span style="color:#e03333;">*</span></div>
+            <input class="kinput" type="text" id="rq-branch" placeholder="예) 강서점" />
+          </div>
+          <div>
+            <div class="kform-label">입고일 <span style="color:#e03333;">*</span></div>
+            <!-- 탭: 고정입고일(화/금) / 별도 지정일 -->
+            <div style="display:flex;border:1.5px solid rgba(0,0,0,0.13);border-radius:10px;overflow:hidden;background:#fff;margin-bottom:10px;">
+              <button type="button" id="rq-tab-fixed" onclick="rqSwitchDeliveryTab('fixed')"
+                style="flex:1;padding:9px 4px;background:#111;color:#fff;border:none;font-size:12px;font-weight:700;cursor:pointer;font-family:Pretendard,sans-serif;transition:all .15s;">고정입고일(화/금)</button>
+              <button type="button" id="rq-tab-custom" onclick="rqSwitchDeliveryTab('custom')"
+                style="flex:1;padding:9px 4px;background:none;color:#999;border:none;font-size:12px;font-weight:600;cursor:pointer;font-family:Pretendard,sans-serif;transition:all .15s;">별도 지정일</button>
+            </div>
+            <!-- 고정입고일 달력 (화/금만 선택 가능) -->
+            <div id="rq-fixed-area">
+              <input type="text" id="rq-fixed-calendar" class="kinput" readonly placeholder="화요일 · 금요일만 선택 가능" style="cursor:pointer;background:#fff;" />
+              <input type="hidden" id="rq-delivery-day" value="고정입고일" />
+              <input type="hidden" id="rq-delivery-date" value="" />
+            </div>
+            <!-- 별도 지정일 달력 (자유 선택) -->
+            <div id="rq-custom-area" style="display:none;">
+              <input type="text" id="rq-custom-calendar" class="kinput" readonly placeholder="날짜를 선택하세요" style="cursor:pointer;background:#fff;" />
+              <input type="hidden" id="rq-custom-date" value="" />
+              <div style="font-size:11px;color:#e03333;font-weight:600;margin-top:5px;">⚠ 퀵배송 이용 시 퀵비가 발생합니다</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 요청 제목 + 마감일 -->
+    <div class="kform-group">
+      <div class="kform-label">요청 제목 <span style="color:#e03333;">*</span></div>
+      <input class="kinput" type="text" id="rq-title" placeholder="예) 시즌 - 정월대보름 제작" />
+    </div>
+    <div class="kform-group">
+      <div class="kform-label">마감 요청일 <span style="color:#e03333;">*</span></div>
+      <input class="kinput" type="date" id="rq-deadline" />
     </div>
 
     <!-- 요청 내용 -->
@@ -972,31 +966,36 @@ html, body { height: 100%; overflow: hidden; overflow-x: hidden; max-width: 100%
         <div class="kform-label">셀링 문구 <span style="color:#e03333;">*</span></div>
         <textarea class="kinput" id="rq-selling" rows="2" placeholder="셀링 문구를 입력하세요" style="resize:vertical;min-height:60px;width:100%;"></textarea>
       </div>
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px;">
-        <div>
-          <div class="kform-label">행사 시작일</div>
-          <input class="kinput" type="date" id="rq-event-start" />
-        </div>
-        <div>
-          <div class="kform-label">행사 종료일</div>
-          <input class="kinput" type="date" id="rq-event-end" />
-        </div>
-      </div>
       <div>
         <div class="kform-label">행사 내용</div>
-        <textarea class="kinput" id="rq-event-desc" rows="3" placeholder="행사 내용을 상세하게 입력하세요" style="resize:vertical;min-height:80px;width:100%;"></textarea>
+        <textarea class="kinput" id="rq-event-desc" rows="3" placeholder="할인 내용 및 조건을 상세하게 입력하세요.&#10;(예: 신한카드 결제, 이멤버 적립, 000원 이상 구매 등)" style="resize:vertical;min-height:80px;width:100%;"></textarea>
       </div>
     </div>
 
-    <!-- 현장 사진 -->
-    <div class="kform-group">
-      <div class="kform-label">현장 사진 <span style="color:#999;font-weight:400;font-size:10px;text-transform:none;">(설치될 곳)</span></div>
-      <label class="kupload-label" style="min-height:90px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;position:relative;">
-        <input type="file" accept="image/*" multiple onchange="rqHandleFiles(this,'site')" style="position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%;" />
-        <svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.5" width="26" height="26" style="opacity:.3;"><rect x="6" y="14" width="36" height="26" rx="4"/><path d="M24 8v16m-6-6 6-6 6 6"/></svg>
-        <span style="font-size:12px;color:#aaa;">클릭하여 현장 사진 업로드 (복수 선택 가능)</span>
-      </label>
-      <div id="rq-site-preview" style="display:flex;flex-wrap:wrap;gap:8px;margin-top:8px;"></div>
+    <!-- 현장 사진 (연출물/기타 선택 시 필수) -->
+    <div id="rq-site-section" style="display:none;">
+      <div class="kform-group">
+        <div class="kform-label">현장 사진 <span style="color:#e03333;">*</span> <span style="color:#999;font-weight:400;font-size:10px;text-transform:none;">(설치될 곳)</span></div>
+        <label class="kupload-label" style="min-height:90px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;position:relative;">
+          <input type="file" accept="image/*" multiple onchange="rqHandleFiles(this,'site')" style="position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%;" />
+          <svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.5" width="26" height="26" style="opacity:.3;"><rect x="6" y="14" width="36" height="26" rx="4"/><path d="M24 8v16m-6-6 6-6 6 6"/></svg>
+          <span style="font-size:12px;color:#aaa;">클릭하여 현장 사진 업로드 (복수 선택 가능)</span>
+        </label>
+        <div id="rq-site-preview" style="display:flex;flex-wrap:wrap;gap:8px;margin-top:8px;"></div>
+      </div>
+    </div>
+
+    <!-- 상품 사진 (POP 선택 시 표시) -->
+    <div id="rq-product-photo-section" style="display:none;">
+      <div class="kform-group">
+        <div class="kform-label">상품 사진 업로드 <span style="color:#e03333;">*</span> <span style="color:#999;font-weight:400;font-size:10px;">(POP 제작용 상품 이미지)</span></div>
+        <label class="kupload-label" style="min-height:90px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;position:relative;">
+          <input type="file" accept="image/*" multiple onchange="rqHandleFiles(this,'product')" style="position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%;" />
+          <svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.5" width="26" height="26" style="opacity:.3;"><rect x="6" y="14" width="36" height="26" rx="4"/><circle cx="18" cy="24" r="4"/><path d="m6 38 10-8 8 8 6-5 12 9"/></svg>
+          <span style="font-size:12px;color:#aaa;">클릭하여 상품 사진 업로드 (복수 선택 가능)</span>
+        </label>
+        <div id="rq-product-preview" style="display:flex;flex-wrap:wrap;gap:8px;margin-top:8px;"></div>
+      </div>
     </div>
 
     <!-- 레퍼런스 이미지 -->
@@ -1274,7 +1273,7 @@ async function sbSaveAd(ad) {
 
 async function sbUpdateAd(ad) {
   try {
-    await sb.from('ads').update({title:ad.title, ad_date:ad.adDate, types:ad.types}).eq('id', ad.id);
+    await sb.from('ads').update({title:ad.title, ad_date:ad.adDate, types:ad.types, memo:ad.memo||''}).eq('id', ad.id);
   } catch(e) { console.warn('sbUpdateAd error:', e); }
 }
 
@@ -1336,7 +1335,7 @@ let curView = 'home';
 let homeScreen = 'A';
 let adminLoggedIn = false;
 let hState = {cat:'',sub:'',prod:'__all__'};
-let aState = {cat:'농산',sub:'채소',prod:'__all__',search:''};
+let aState = {cat:'농산', sub:'', prod:'__all__', search:''};
 let adminTab = 'archive'; // 'archive' | 'requests'
 let aiTypeCount = 0;
 let aiTypeSrcs = {};
@@ -1791,6 +1790,7 @@ function pinConfirm() {
   const val=document.getElementById('pinInput').value;
   if(val===ADMIN_PIN) {
     adminLoggedIn=true;
+    aState={cat:MAIN_CATS[0], sub:'', prod:'__all__', search:''};
     pinClose();
     renderAdmin();
   } else {
@@ -1820,7 +1820,7 @@ document.querySelectorAll('.kmodal-overlay').forEach(el=>{
   if(el.id === 'modalEditCat') return;
   if(el.id === 'modalAdRequest') return;
   if(el.id === 'modalCatMgr') return;
-  el.addEventListener('click', e=>{ if(e.target===el) el.classList.remove('open'); });
+  el.addEventListener('click', e=>{ if(e.target===el && !el._blockClose) el.classList.remove('open'); });
 });
 
 // ══════════════════════════════════════════════════════
@@ -1944,7 +1944,10 @@ function typeBlockInnerHTML(idx,prefix) {
       <svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.5" width="28" height="28" style="opacity:.3;margin:0 auto;display:block;"><rect x="6" y="14" width="36" height="26" rx="4"/><path d="M24 8v16m-6-6 6-6 6 6"/></svg>
       <p style="font-size:11px;color:var(--ktext3);margin-top:4px;">클릭하여 이미지 업로드</p>
     </div>
-  </label>`;
+  </label>
+  <div style="margin-top:8px;">
+    <input class="kinput" type="text" id="${prefix}TypeMemo_${idx}" placeholder="메모 (선택 · 특이사항, 적용 매장 등)" style="font-size:13px;" />
+  </div>`;
 }
 
 function typeNameChange(prefix,idx,val) {
@@ -1981,8 +1984,9 @@ function collectTypes(prefix) {
     const name=sel.value==='__custom__'?(document.getElementById(`${prefix}TypeCustomName_${idx}`)?.value.trim()||'기타'):sel.value;
     const width=document.getElementById(`${prefix}TypeW_${idx}`)?.value.trim()||'';
     const height=document.getElementById(`${prefix}TypeH_${idx}`)?.value.trim()||'';
+    const memo=document.getElementById(`${prefix}TypeMemo_${idx}`)?.value.trim()||'';
     const src=prefix==='ai'?(aiTypeSrcs[idx]||''):(editTypeSrcs[idx]!==undefined&&editTypeSrcs[idx]!==null?editTypeSrcs[idx]:(detailAd?.types?.find(t=>t.name===name)?.src||''));
-    return {name,width,height,src};
+    return {name,width,height,src,memo};
   });
 }
 
@@ -1995,15 +1999,15 @@ function aiConfirm() {
   if(!prod){alert('상품을 선택하세요');return;}
   const typesRaw=collectTypes('ai');
   // 이미지 Supabase에 업로드
-  processAdTypes(typesRaw).then(function(types) {
-    const memo = document.getElementById('aiMemo')?.value.trim()||'';
+  processAdTypes(typesRaw).then(async function(types) {
     const ad={
       id:nextId(), mainCat:cat, subCat:sub, product:prod,
-      title, adDate:new Date().toLocaleDateString('ko-KR'), types, memo,
+      title, adDate:new Date().toLocaleDateString('ko-KR'), types,
     };
     DB.ads.push(ad);
     saveData();
-    sbSaveAd(ad);
+    await sbSaveAd(ad);
+    saveData();
     modalClose('modalAddImg');
     aState={cat,sub,prod};
     renderAdmin();
@@ -2103,7 +2107,7 @@ var detailMode = 'admin';
 function openDetail(id, mode) {
   detailAd=DB.ads.find(a=>String(a.id)===String(id));
   if(!detailAd)return;
-  detailMode = mode || 'admin';
+  detailMode = adminLoggedIn ? 'admin' : 'home';
   detailTab='view';
   renderDetail();
   document.getElementById('modalDetail').classList.add('open');
@@ -2127,10 +2131,11 @@ function renderDetail() {
   `;
 
   if(detailMode === 'admin' && adminLoggedIn) {
-    html+=`<div class="kdetail-tabs">
-      <button class="kdetail-tab ${detailTab==='view'?'active':''}" onclick="detailTab='view';renderDetail()">보기</button>
-      <button class="kdetail-tab ${detailTab==='edit'?'active':''}" onclick="detailTab='edit';renderDetail()">수정</button>
-    </div>`;
+    // 수정 탭일 때 백그라운드 클릭 닫힘 방지
+    const overlay = document.getElementById('modalDetail');
+    if(overlay) {
+      overlay._blockClose = (detailTab === 'edit');
+    }
   }
 
   if(detailTab==='view') {
@@ -2150,11 +2155,27 @@ function renderDetail() {
           <div onclick="${t.src?`openLightbox('${t.src}')`:''}" style="width:100%;background:${t.src?'transparent':'#f0f0f0'};border-radius:10px;overflow:hidden;min-height:140px;display:flex;align-items:center;justify-content:center;cursor:${t.src?'zoom-in':'default'};">
             ${t.src?`<img src="${t.src}" style="width:100%;display:block;border-radius:10px;" />`:`<span style="color:#999;font-size:13px;">이미지 없음</span>`}
           </div>
+          ${t.memo?`<div style="margin-top:10px;padding:10px 14px;background:#f7f8f5;border-radius:10px;font-size:13px;color:#555;line-height:1.6;">${t.memo}</div>`:''}
         </div>
       `).join('');
       if(detailMode==='admin' && adminLoggedIn) {
-        html+=`<button onclick="detailTab='edit';renderDetail();" style="width:100%;margin-top:20px;padding:11px;background:none;border:1.5px dashed var(--kborder2);border-radius:var(--kr2);font-size:13px;font-weight:600;color:var(--ktext3);cursor:pointer;font-family:'Pretendard',sans-serif;">✎ 수정하기</button>`;
+        if(ad.memo) {
+          html+=`<div style="margin-top:20px;padding:14px 16px;background:#f7f8f5;border-radius:12px;">
+            <div style="font-size:11px;font-weight:700;color:#aaa;margin-bottom:6px;letter-spacing:0.02em;">메모</div>
+            <div style="font-size:13px;color:#555;line-height:1.6;white-space:pre-wrap;">${ad.memo}</div>
+          </div>`;
+        }
+        html+=`<div style="display:flex;gap:10px;margin-top:20px;">
+          <button onclick="modalClose('modalDetail')" style="flex:1;padding:13px;background:#f0f0f0;color:#111;border:none;border-radius:50px;font-size:14px;font-weight:700;cursor:pointer;font-family:'Pretendard',sans-serif;">닫기</button>
+          <button onclick="detailTab='edit';renderDetail();" style="flex:2;padding:13px;background:#111;color:#fff;border:none;border-radius:50px;font-size:14px;font-weight:700;cursor:pointer;font-family:'Pretendard',sans-serif;">✎ 수정하기</button>
+        </div>`;
       } else {
+        if(ad.memo) {
+          html+=`<div style="margin-top:20px;padding:14px 16px;background:#f7f8f5;border-radius:12px;">
+            <div style="font-size:11px;font-weight:700;color:#aaa;margin-bottom:6px;letter-spacing:0.02em;">메모</div>
+            <div style="font-size:13px;color:#555;line-height:1.6;white-space:pre-wrap;">${ad.memo}</div>
+          </div>`;
+        }
         html+=`<button onclick="openAdRequest(${ad.id})" style="width:100%;margin-top:20px;padding:14px;background:#111;color:#fff;border:none;border-radius:50px;font-size:15px;font-weight:700;cursor:pointer;font-family:'Pretendard',sans-serif;letter-spacing:-0.02em;">이 광고로 신청하기</button>`;
       }
     }
@@ -2193,6 +2214,9 @@ function renderDetail() {
           <img id="editTypePrev_${i}" style="width:100%;max-height:120px;object-fit:contain;border-radius:8px;display:none;" />
           <div id="editTypeIcon_${i}"><svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.5" width="28" height="28" style="opacity:.3;margin:0 auto;display:block;"><rect x="6" y="14" width="36" height="26" rx="4"/><path d="M24 8v16m-6-6 6-6 6 6"/></svg><p style="font-size:11px;color:var(--ktext3);margin-top:4px;">클릭해서 변경</p></div>`}
         </label>
+        <div style="margin-top:8px;">
+          <input class="kinput" type="text" id="editTypeMemo_${i}" value="${(t.memo||'').replace(/"/g,'&quot;')}" placeholder="메모 (선택 · 특이사항, 적용 매장 등)" style="font-size:13px;" />
+        </div>
       </div>`;
     });
     html+=`</div>
@@ -2233,6 +2257,7 @@ function editSave() {
     const src=newSrc!==null&&newSrc!==undefined?newSrc:origSrc;
     return {name,width,height,src};
   });
+  const memo=document.getElementById('editMemo')?.value.trim()||'';
   const idx=DB.ads.findIndex(a=>a.id===detailAd.id);
   if(idx===-1)return;
   DB.ads[idx]={...DB.ads[idx],title,types:finalTypes,adDate:new Date().toLocaleDateString('ko-KR')};
@@ -2272,16 +2297,36 @@ let rqRefFiles = [];
 let rqSelectedTypes = new Set(); // "카테고리::값" 형태로 저장
 
 function openRequestModal() {
-  ['rq-dept','rq-name','rq-tel','rq-branch','rq-title','rq-deadline',
-   'rq-ad-title','rq-selling','rq-event-start','rq-event-end','rq-event-desc'].forEach(id => {
+  ['rq-dept','rq-name','rq-tel','rq-title','rq-deadline',
+   'rq-ad-title','rq-selling','rq-event-desc'].forEach(id => {
     const el = document.getElementById(id); if(el) el.value = '';
   });
+  // 입고 관련 초기화
+  var branchEl = document.getElementById('rq-branch'); if(branchEl) branchEl.value='';
+  var dayEl = document.getElementById('rq-delivery-day'); if(dayEl) dayEl.value='고정입고일';
+  var dateEl = document.getElementById('rq-delivery-date'); if(dateEl) dateEl.value='';
+  var customDateEl = document.getElementById('rq-custom-date'); if(customDateEl) customDateEl.value='';
+  var calEl = document.getElementById('rq-fixed-calendar'); if(calEl) calEl.value='';
+  var calCusEl = document.getElementById('rq-custom-calendar'); if(calCusEl) calCusEl.value='';
+  if(rqFixedPicker){ rqFixedPicker.destroy(); rqFixedPicker=null; }
+  if(rqCustomPicker){ rqCustomPicker.destroy(); rqCustomPicker=null; }
+  rqDeliveryTab='fixed';
+  // 탭 초기 상태
+  var tf=document.getElementById('rq-tab-fixed'); if(tf){tf.style.background='#111';tf.style.color='#fff';}
+  var tc=document.getElementById('rq-tab-custom'); if(tc){tc.style.background='none';tc.style.color='#999';}
+  var fa=document.getElementById('rq-fixed-area'); if(fa) fa.style.display='';
+  var ca=document.getElementById('rq-custom-area'); if(ca) ca.style.display='none';
   var telEl = document.getElementById('rq-tel');
   if(telEl) telEl.oninput = function(){ formatTelInput(this); };
-  rqSiteFiles = []; rqRefFiles = []; rqSelectedTypes = new Set();
-  document.getElementById('rq-site-preview').innerHTML = '';
-  document.getElementById('rq-ref-preview').innerHTML = '';
+  rqSiteFiles = []; rqRefFiles = []; rqProductFiles = []; rqSelectedTypes = new Set();
+  var spEl = document.getElementById('rq-site-preview'); if(spEl) spEl.innerHTML='';
+  var rpEl = document.getElementById('rq-ref-preview'); if(rpEl) rpEl.innerHTML='';
+  var ppEl = document.getElementById('rq-product-preview'); if(ppEl) ppEl.innerHTML='';
   var det = document.getElementById('rq-adtype-details'); if(det) det.innerHTML = '';
+  // 조건부 섹션 숨김
+  var ds=document.getElementById('rq-delivery-section'); if(ds) ds.style.display='none';
+  var ss=document.getElementById('rq-site-section'); if(ss) ss.style.display='none';
+  var ps=document.getElementById('rq-product-photo-section'); if(ps) ps.style.display='none';
   // 아코디언 초기화
   ['연출물','POP','기타'].forEach(function(cat) {
     var tab = document.getElementById('rqtab-'+cat);
@@ -2314,13 +2359,108 @@ function rqDeliveryDayChange(val) {
   if(custom) custom.style.display = val === '별도지정일' ? '' : 'none';
 }
 
+// ── 입고일 탭 전환 (고정입고일(화/금) / 별도 지정일) ──
+var rqDeliveryTab = 'fixed';
+var rqFixedPicker = null;
+var rqCustomPicker = null;
+
+function rqInitFixedCalendar() {
+  var calInput = document.getElementById('rq-fixed-calendar');
+  if(!calInput) return;
+  if(rqFixedPicker) { rqFixedPicker.destroy(); rqFixedPicker = null; }
+  calInput.value = '';
+  var dateEl = document.getElementById('rq-delivery-date');
+  if(dateEl) dateEl.value = '';
+
+  if(typeof flatpickr !== 'undefined') {
+    rqFixedPicker = flatpickr(calInput, {
+      locale: 'ko',
+      dateFormat: 'Y-m-d',
+      minDate: 'today',
+      disable: [function(date) { var d = date.getDay(); return d !== 2 && d !== 5; }],
+      onChange: function(selectedDates, dateStr) {
+        var d = new Date(dateStr + 'T00:00:00');
+        var dayName = d.getDay() === 2 ? '화요일' : '금요일';
+        var dayEl = document.getElementById('rq-delivery-day');
+        if(dayEl) dayEl.value = dayName;
+        var dateEl2 = document.getElementById('rq-delivery-date');
+        if(dateEl2) dateEl2.value = dateStr;
+      }
+    });
+  }
+}
+
+function rqInitCustomCalendar() {
+  var calInput = document.getElementById('rq-custom-calendar');
+  if(!calInput) return;
+  if(rqCustomPicker) { rqCustomPicker.destroy(); rqCustomPicker = null; }
+  calInput.value = '';
+  var dateEl = document.getElementById('rq-custom-date');
+  if(dateEl) dateEl.value = '';
+
+  if(typeof flatpickr !== 'undefined') {
+    rqCustomPicker = flatpickr(calInput, {
+      locale: 'ko',
+      dateFormat: 'Y-m-d',
+      minDate: 'today',
+      onChange: function(selectedDates, dateStr) {
+        var dateEl2 = document.getElementById('rq-custom-date');
+        if(dateEl2) dateEl2.value = dateStr;
+      }
+    });
+  }
+}
+
+function rqSwitchDeliveryTab(tab) {
+  rqDeliveryTab = tab;
+  var tabFixed = document.getElementById('rq-tab-fixed');
+  var tabCustom = document.getElementById('rq-tab-custom');
+  var fixedArea = document.getElementById('rq-fixed-area');
+  var customArea = document.getElementById('rq-custom-area');
+  if(tab === 'fixed') {
+    if(tabFixed) { tabFixed.style.background='#111'; tabFixed.style.color='#fff'; }
+    if(tabCustom) { tabCustom.style.background='none'; tabCustom.style.color='#999'; }
+    if(fixedArea) fixedArea.style.display='';
+    if(customArea) customArea.style.display='none';
+    var dayEl = document.getElementById('rq-delivery-day');
+    if(dayEl) dayEl.value = '고정입고일';
+  } else {
+    if(tabFixed) { tabFixed.style.background='none'; tabFixed.style.color='#999'; }
+    if(tabCustom) { tabCustom.style.background='#111'; tabCustom.style.color='#fff'; }
+    if(fixedArea) fixedArea.style.display='none';
+    if(customArea) customArea.style.display='';
+    var dayEl2 = document.getElementById('rq-delivery-day');
+    if(dayEl2) dayEl2.value = '별도지정일';
+    rqInitCustomCalendar();
+  }
+}
+
+// ── 광고 종류 선택에 따른 조건부 섹션 표시 ──
+function rqUpdateConditionalSections() {
+  var hasPOP = Array.from(rqSelectedTypes).some(function(k){ return k.startsWith('POP::'); });
+  var has연출물 = Array.from(rqSelectedTypes).some(function(k){ return k.startsWith('연출물::'); });
+
+  var deliverySection = document.getElementById('rq-delivery-section');
+  var siteSection = document.getElementById('rq-site-section');
+  var productSection = document.getElementById('rq-product-photo-section');
+
+  if(deliverySection) deliverySection.style.display = has연출물 ? '' : 'none';
+  if(siteSection) siteSection.style.display = has연출물 ? '' : 'none';
+  if(productSection) productSection.style.display = hasPOP ? '' : 'none';
+
+  // 고정입고일 달력 초기화 (섹션 새로 열릴 때)
+  if(has연출물 && rqDeliveryTab === 'fixed' && !rqFixedPicker) {
+    setTimeout(rqInitFixedCalendar, 50);
+  }
+}
+
 function rqToggleCat(e, cat) {
   e.stopPropagation();
   var tab = document.getElementById('rqtab-'+cat);
   var body = document.getElementById('rqbody-'+cat);
   var isOpen = tab.classList.contains('open');
   // 다른 드롭다운 닫기
-  ['연출물','POP','기타'].forEach(function(c) {
+  ['연출물','POP'].forEach(function(c) {
     if(c !== cat) {
       var t = document.getElementById('rqtab-'+c);
       var b = document.getElementById('rqbody-'+c);
@@ -2332,9 +2472,9 @@ function rqToggleCat(e, cat) {
   body.style.display = isOpen ? 'none' : '';
 }
 
-// 외부 클릭 시 드롭다운 닫기 (stopPropagation 덕분에 내부 클릭은 무시)
+// 외부 클릭 시 드롭다운 닫기
 document.addEventListener('click', function() {
-  ['연출물','POP','기타'].forEach(function(c) {
+  ['연출물','POP'].forEach(function(c) {
     var t = document.getElementById('rqtab-'+c);
     var b = document.getElementById('rqbody-'+c);
     if(t) t.classList.remove('open');
@@ -2343,7 +2483,7 @@ document.addEventListener('click', function() {
 });
 
 // 사이즈 카드가 나오는 항목 (A3/A4는 사이즈 없이 수량만)
-var RQ_SIZE_ITEMS = ['중분류','시트','배너','우드락 셀링','디바이더','와블러','스티커','A3 가로형','A4 세로형'];
+var RQ_SIZE_ITEMS = ['중분류','시트','배너','우드락 셀링','디바이더','평대자석','등신대','현수막','기타','와블러','A3 가로형','A4 세로형'];
 
 function rqToggleItem(el, cat) {
   var val = el.dataset.val;
@@ -2358,8 +2498,8 @@ function rqToggleItem(el, cat) {
     rqSelectedTypes.add(key);
   }
 
-  // 직접 작성 입력란
-  if(val === '직접 작성') {
+  // 기타 직접 입력란 (연출물 기타)
+  if(val === '기타' && cat === '연출물') {
     var ci = document.getElementById('rq-custom-type-input');
     if(ci) ci.style.display = isSelected ? 'none' : '';
   }
@@ -2369,8 +2509,8 @@ function rqToggleItem(el, cat) {
   var badge = document.getElementById('rqbadge-'+cat);
   if(badge) { badge.textContent = catCount||''; badge.classList.toggle('visible', catCount>0); }
 
-  // 드롭다운 닫기 (직접 작성은 입력란이 드롭다운 안이라 유지)
-  if(val !== '직접 작성') {
+  // 드롭다운 닫기 (기타 직접입력 항목은 입력란이 드롭다운 안이라 유지)
+  if(!(val === '기타' && cat === '연출물')) {
     var tab = document.getElementById('rqtab-'+cat);
     var body = document.getElementById('rqbody-'+cat);
     if(tab) tab.classList.remove('open');
@@ -2378,6 +2518,7 @@ function rqToggleItem(el, cat) {
   }
 
   renderAdTypeDetails();
+  rqUpdateConditionalSections();
 }
 
 function renderAdTypeDetails() {
@@ -2417,11 +2558,14 @@ function renderAdTypeDetails() {
 }
 
 
+let rqProductFiles = [];
+
 function rqHandleFiles(input, type) {
   const files = Array.from(input.files);
   const previewEl = document.getElementById(`rq-${type}-preview`);
   files.forEach(file => {
     if(type === 'site') rqSiteFiles.push(file);
+    else if(type === 'product') rqProductFiles.push(file);
     else rqRefFiles.push(file);
     const reader = new FileReader();
     reader.onload = e => {
@@ -2437,6 +2581,7 @@ function rqHandleFiles(input, type) {
       del.style.cssText = 'position:absolute;top:2px;right:2px;width:18px;height:18px;border-radius:50%;background:rgba(0,0,0,0.6);color:#fff;border:none;cursor:pointer;font-size:12px;line-height:1;display:flex;align-items:center;justify-content:center;';
       del.onclick = () => {
         if(type==='site') rqSiteFiles = rqSiteFiles.filter(f=>f!==file);
+        else if(type==='product') rqProductFiles = rqProductFiles.filter(f=>f!==file);
         else rqRefFiles = rqRefFiles.filter(f=>f!==file);
         div.remove();
       };
@@ -2452,29 +2597,48 @@ function rqSubmit() {
   const dept = document.getElementById('rq-dept').value.trim();
   const name = document.getElementById('rq-name').value.trim();
   const tel = document.getElementById('rq-tel').value.trim();
-  const branch = (document.getElementById('rq-branch')?.value||'').trim();
+
   const title = document.getElementById('rq-title').value.trim();
   const deadline = document.getElementById('rq-deadline').value;
-  const deliveryDay = (document.getElementById('rq-delivery-day')?.value||'').trim();
-  const deliveryDate = (document.getElementById('rq-delivery-date')?.value||'').trim();
-
-  var adTitle = document.getElementById('rq-ad-title').value.trim();
-  var selling = document.getElementById('rq-selling').value.trim();
 
   // 광고 종류: key에서 값만 추출
   var adTypesArr = Array.from(rqSelectedTypes).map(function(k){ return k.split('::')[1]||k; });
-  // 직접 작성 처리
   var customTypeText = (document.getElementById('rq-custom-type-text')?.value||'').trim();
   if(adTypesArr.includes('직접 작성') && customTypeText) {
     adTypesArr = adTypesArr.map(function(v){ return v==='직접 작성'?customTypeText:v; });
   }
 
+  var hasPOP = Array.from(rqSelectedTypes).some(function(k){ return k.startsWith('POP::'); });
+  var has연출물 = Array.from(rqSelectedTypes).some(function(k){ return k.startsWith('연출물::'); });
+
+  // 입고 관련 (연출물 선택 시만)
+  var branch = '';
+  var deliveryDay = '';
+  var deliveryDate = '';
+  if(has연출물) {
+    branch = (document.getElementById('rq-branch')?.value||'').trim();
+    deliveryDay = (document.getElementById('rq-delivery-day')?.value||'').trim();
+    if(deliveryDay === '별도지정일') {
+      deliveryDate = (document.getElementById('rq-custom-date')?.value||'').trim();
+    } else {
+      deliveryDate = (document.getElementById('rq-delivery-date')?.value||'').trim();
+    }
+  }
+
+  var adTitle = document.getElementById('rq-ad-title').value.trim();
+  var selling = document.getElementById('rq-selling').value.trim();
+
   var missing = [];
   if(!dept || !name || !tel) missing.push('요청자 정보');
-  if(!deliveryDay) missing.push('입고일');
+  if(rqSelectedTypes.size === 0) missing.push('광고 종류');
+  if(has연출물) {
+    if(!branch) missing.push('입고 지점');
+    if(!deliveryDate) missing.push('입고일 날짜');
+    if(rqSiteFiles.length === 0) missing.push('현장 사진');
+  }
+  if(hasPOP && rqProductFiles.length === 0) missing.push('상품 사진');
   if(!title) missing.push('요청 제목');
   if(!deadline) missing.push('마감 요청일');
-  if(rqSelectedTypes.size === 0) missing.push('광고 종류');
   if(!adTitle) missing.push('타이틀');
   if(!selling) missing.push('셀링 문구');
 
@@ -2503,30 +2667,40 @@ function rqSubmit() {
   });
 
   // Build request object
+  var deliveryDayLabel = '';
+  if(has연출물) {
+    if(deliveryDay === '별도지정일') {
+      deliveryDayLabel = '별도 지정일 (퀵)' + (deliveryDate ? ' - '+deliveryDate : '');
+    } else {
+      deliveryDayLabel = deliveryDay + (deliveryDate ? ' ('+deliveryDate+')' : '');
+    }
+  }
   const request = {
     id: nextId(),
     submittedAt: new Date().toLocaleString('ko-KR'),
     status: '검토 중',
     dept, name, tel, branch,
-    deliveryDay: deliveryDay === '별도지정일' ? `별도 지정일 (${deliveryDate||'날짜 미입력'})` : deliveryDay,
+    deliveryDay: deliveryDayLabel,
     title, deadline,
     adTypes: adTypesArr,
     adTypeDetails,
     bannerType: '', customSize: '',
     adTitle: document.getElementById('rq-ad-title').value.trim(),
     selling: document.getElementById('rq-selling').value.trim(),
-    eventStart: document.getElementById('rq-event-start').value,
-    eventEnd: document.getElementById('rq-event-end').value,
+    eventStart: '',
+    eventEnd: '',
     eventDesc: document.getElementById('rq-event-desc').value.trim(),
     sitePhotos: rqSiteFiles.map(f=>({name:f.name, size:f.size})),
     refImages: rqRefFiles.map(f=>({name:f.name, size:f.size})),
   };
 
   // Save site photo previews (already loaded in DOM)
-  const sitePrevs = Array.from(document.getElementById('rq-site-preview').querySelectorAll('img'));
-  request.sitePhotoSrcs = sitePrevs.map(img=>img.src);
-  const refPrevs = Array.from(document.getElementById('rq-ref-preview').querySelectorAll('img'));
-  request.refImageSrcs = refPrevs.map(img=>img.src);
+  const sitePrevWrap = document.getElementById('rq-site-preview');
+  request.sitePhotoSrcs = sitePrevWrap ? Array.from(sitePrevWrap.querySelectorAll('img')).map(img=>img.src) : [];
+  const refPrevWrap = document.getElementById('rq-ref-preview');
+  request.refImageSrcs = refPrevWrap ? Array.from(refPrevWrap.querySelectorAll('img')).map(img=>img.src) : [];
+  const prodPrevWrap = document.getElementById('rq-product-preview');
+  request.productPhotoSrcs = prodPrevWrap ? Array.from(prodPrevWrap.querySelectorAll('img')).map(img=>img.src) : [];
 
   // 신청 번호 생성
   var today = new Date();
@@ -2842,7 +3016,7 @@ function openCatMgr() {
     tabsEl.style.display = 'grid';
     tabsEl.style.gridTemplateColumns = 'repeat('+MAIN_CATS.length+',1fr)';
     tabsEl.innerHTML = MAIN_CATS.map(function(c) {
-      return '<button onclick="catMgrSelectCat(\''+c+'\')" id="catmgr-tab-'+c+'" style="padding:10px 4px;background:none;border:none;border-bottom:2px solid transparent;font-size:14px;font-weight:600;color:#aaa;cursor:pointer;font-family:Pretendard,sans-serif;white-space:nowrap;margin-bottom:-1px;text-align:center;transition: background .15s, color .15s, border-color .15s;">'+c+'</button>';
+      return '<button onclick="catMgrSelectCat(\''+c+'\')" id="catmgr-tab-'+c+'" style="padding:10px 4px;background:none;border:none;border-bottom:2px solid transparent;font-size:14px;font-weight:600;color:#aaa;cursor:pointer;font-family:Pretendard,sans-serif;white-space:nowrap;margin-bottom:-1px;text-align:center;transition:all .15s;">'+c+'</button>';
     }).join('');
   }
 
@@ -3382,16 +3556,11 @@ function adminTabUI() {
   var isArchive = adminTab === 'archive';
   var isReq = adminTab === 'requests';
   var cnt = (DB.requests||[]).filter(function(x){return x.status==='검토 중' || x.status==='진행 중';}).length;
-  var badge = cnt > 0 ? '<span class="req-badge">'+cnt+'</span>' : '';
+  var badge = cnt > 0 ? '<span style="background:#e03333;color:#fff;font-size:10px;font-weight:700;border-radius:50px;padding:2px 7px;line-height:1.4;margin-left:6px;">'+cnt+'</span>' : '';
   return '<button class="ktab-btn'+(isArchive?' active':'')+'" onclick="adminTab=\'archive\';renderAdmin();">'
       + '광고 아카이브</button>'
     + '<button class="ktab-btn'+(isReq?' active':'')+'" onclick="adminTab=\'requests\';renderAdmin();">'
       + '광고 신청서 관리'+badge+'</button>';
-}
-
-function refreshAdminTabBadge() {
-  var bar = document.querySelector('.kadmin-top-tabs');
-  if(bar) bar.innerHTML = adminTabUI();
 }
 
 function renderAdminRequests() {
@@ -3437,7 +3606,7 @@ function renderAdminRequests() {
 
   function makeCard(r, i, total) {
   var card = document.createElement('div');
-  card.style.cssText = 'background:#fff;border:1.5px solid rgba(0,0,0,0.1);border-radius:14px;padding:18px 20px;cursor:pointer;transition: border-color .2s, box-shadow .2s;display:flex;align-items:center;gap:16px;';
+  card.style.cssText = 'background:#fff;border:1.5px solid rgba(0,0,0,0.1);border-radius:14px;padding:18px 20px;cursor:pointer;transition:all .2s;display:flex;align-items:center;gap:16px;';
   card.addEventListener('mouseenter', function(){ this.style.borderColor='#111'; this.style.boxShadow='0 4px 16px rgba(0,0,0,0.1)'; });
   card.addEventListener('mouseleave', function(){ this.style.borderColor='rgba(0,0,0,0.1)'; this.style.boxShadow='none'; });
   card.addEventListener('click', function(){ openRequestDetail(r.id); });
@@ -3502,7 +3671,6 @@ function renderAdminRequests() {
     }
     el.appendChild(section);
   });
-  refreshAdminTabBadge();
 }
 
 function updateRequestStatus(id, status) {
