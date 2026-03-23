@@ -130,7 +130,7 @@ html, body { height: 100%; overflow: hidden; overflow-x: hidden; max-width: 100%
 }
 
 /* ── Sub pills ── */
-.ksub-row { padding: 18px 40px 0; flex-shrink: 0; background: #fff; }
+.ksub-row { padding: 18px 40px 0; flex-shrink: 0; background: #fff; border-bottom: 1px solid var(--kborder); }
 .ksub-scroll { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 4px; scrollbar-width: none; }
 .ksub-scroll::-webkit-scrollbar { display: none; }
 .ksub-pill {
@@ -168,7 +168,7 @@ html, body { height: 100%; overflow: hidden; overflow-x: hidden; max-width: 100%
 /* ── Search bar (home) ── */
 .ksearch-row {
   padding: 12px 40px; flex-shrink: 0;
-  border-bottom: 1px solid var(--kborder); background: #fff;
+  background: #fff;
 }
 @media(max-width:600px) {
   .ksearch-row { padding: 10px 16px; }
@@ -240,12 +240,13 @@ html, body { height: 100%; overflow: hidden; overflow-x: hidden; max-width: 100%
 }
 .kad-ov-btn:hover { background: rgba(255,255,255,0.3); }
 .kad-ov-btn.del:hover { background: rgba(224,51,51,0.7); }
-.kad-meta { padding: 12px 14px 16px; }
+.kad-meta { padding: 10px 14px 14px; }
 .kad-tag {
-  display: inline-flex; align-items: center; gap: 5px; font-size: 10px; color: #777;
-  background: #f2f2f2; border-radius: 20px; padding: 3px 9px; margin-bottom: 5px;
+  display: inline-flex; align-items: center; gap: 4px; font-size: 11px; font-weight: 700;
+  color: #fff; background: #111; border-radius: 20px; padding: 3px 10px; margin-bottom: 7px;
+  letter-spacing: -0.01em;
 }
-.kad-title { font-size: 18px; font-weight: 700; margin-bottom: 10px; letter-spacing: -0.4px; color: #111; line-height: 1.3; }
+.kad-title { font-size: 15px; font-weight: 700; margin-bottom: 6px; letter-spacing: -0.4px; color: #111; line-height: 1.35; }
 .kad-date { font-size: 10px; color: #c0c0c0; font-weight: 300; }
 
 /* ── Upload zone ── */
@@ -553,6 +554,49 @@ html, body { height: 100%; overflow: hidden; overflow-x: hidden; max-width: 100%
   background: #111; color: #fff; border-color: #111;
 }
 #adreq-type-tabs::-webkit-scrollbar { display: none; }
+
+/* ── Ad category horizontal tabs + dropdown overlay ── */
+.rq-adcat-tab {
+  width:100%; display:flex; align-items:center; justify-content:center; gap:5px;
+  padding:10px 8px; background:#fff; border:1.5px solid rgba(0,0,0,0.12);
+  border-radius:10px; cursor:pointer; font-size:13px; font-weight:700; color:#555;
+  font-family:'Pretendard',sans-serif; transition:all .15s; white-space:nowrap;
+}
+.rq-adcat-tab.open { background:#111; color:#fff; border-color:#111; }
+.rq-adcat-tab.open .rq-adcat-arrow { filter:invert(1); transform:rotate(180deg); }
+.rq-adcat-arrow { transition:transform .2s; flex-shrink:0; }
+.rq-adcat-col { position:relative; }
+.rq-adcat-dropdown {
+  position:absolute; left:0; right:0; top:calc(100% + 3px);
+  background:#fff; border:1.5px solid rgba(0,0,0,0.13); border-radius:12px;
+  overflow:hidden; z-index:100; box-shadow:0 8px 28px rgba(0,0,0,0.13);
+  max-height:260px; overflow-y:auto;
+}
+.rq-adcat-badge {
+  display:none; min-width:16px; height:16px; border-radius:50px;
+  background:#facc15; color:#111; font-size:10px; font-weight:800;
+  align-items:center; justify-content:center; padding:0 4px; flex-shrink:0;
+}
+.rq-adcat-badge.visible { display:inline-flex; }
+.rq-adcat-item {
+  display:flex; align-items:center; gap:10px; padding:10px 14px;
+  cursor:pointer; font-size:13px; font-weight:500; color:#333;
+  transition:background .12s; user-select:none; border-bottom:1px solid rgba(0,0,0,0.05);
+}
+.rq-adcat-item:last-of-type { border-bottom:none; }
+.rq-adcat-item:hover { background:#f5f5f5; }
+.rq-adcat-item.selected { background:#111; color:#fff; font-weight:700; }
+.rq-adcat-dot {
+  width:15px; height:15px; border-radius:50%; border:1.5px solid #ccc;
+  flex-shrink:0; display:flex; align-items:center; justify-content:center; transition:all .12s;
+}
+.rq-adcat-item.selected .rq-adcat-dot { background:#fff; border-color:#fff; box-shadow:inset 0 0 0 3px #111; }
+.rq-inline-size {
+  background:#f0f0ee; padding:8px 14px;
+  display:flex; align-items:center; gap:6px; flex-wrap:wrap;
+  border-bottom:1px solid rgba(0,0,0,0.05);
+}
+.rq-inline-size input { width:80px; font-size:13px; }
 .kinline-add { display: flex; gap: 6px; flex-shrink: 0; align-items: center; }
 .kinline-input {
   flex: 1; background: var(--bg); border: 1.5px solid #111;
@@ -684,7 +728,6 @@ html, body { height: 100%; overflow: hidden; overflow-x: hidden; max-width: 100%
   <!-- Ad Detail Modal -->
   <div class="kmodal-overlay center" id="modalDetail">
     <div class="kdetail-modal">
-      <button onclick="modalClose('modalDetail')" style="position:absolute;top:16px;right:16px;background:none;border:none;cursor:pointer;color:var(--ktext3);font-size:20px;line-height:1;padding:4px 8px;">✕</button>
       <div id="detailContent"></div>
     </div>
   </div>
@@ -710,9 +753,19 @@ html, body { height: 100%; overflow: hidden; overflow-x: hidden; max-width: 100%
 
 <!-- REQUEST MODAL -->
 <div class="kmodal-overlay center" id="modalRequest">
-  <div class="kmodal-sheet" style="max-width:600px;border-radius:20px;max-height:92vh;overflow-y:auto;">
-    <div class="kmodal-handle"></div>
-    <div style="display:flex;align-items:baseline;justify-content:space-between;gap:12px;margin-bottom:8px;flex-wrap:wrap;"><div style="font-size:20px;font-weight:900;">광고 신청서</div><div style="font-size:11px;color:#999;font-weight:500;white-space:nowrap;">*광고물 고정 입고일은 화, 금요일입니다.</div></div><div style="font-size:12px;color:#999;margin-bottom:20px;"><span style="color:#e03333;font-weight:700;">*</span> 표시는 필수 입력 항목입니다.</div>
+  <div class="kmodal-sheet" style="max-width:600px;border-radius:20px;max-height:92vh;overflow:hidden;padding:0;display:flex;flex-direction:column;">
+    <!-- 공지 바 (상단 고정) -->
+    <div style="background:#111;border-radius:20px 20px 0 0;padding:12px 20px;display:flex;align-items:center;gap:10px;flex-shrink:0;">
+      <svg viewBox="0 0 24 24" fill="none" stroke="#facc15" stroke-width="2" width="16" height="16" style="flex-shrink:0;"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+      <span style="font-size:12px;font-weight:700;color:#fff;letter-spacing:-0.01em;">광고물 고정 입고일은 <span style="color:#facc15;">화요일 · 금요일</span>입니다</span>
+    </div>
+    <!-- 스크롤 영역 -->
+    <div id="rq-scroll-area" style="overflow-y:auto;padding:24px 24px 40px;flex:1;">
+      <div class="kmodal-handle" style="margin-bottom:20px;"></div>
+      <div style="display:flex;align-items:baseline;justify-content:space-between;gap:12px;margin-bottom:20px;flex-wrap:wrap;">
+        <div style="font-size:20px;font-weight:900;">광고 신청서</div>
+        <div style="font-size:11px;color:#999;white-space:nowrap;"><span style="color:#e03333;font-weight:700;">*</span> 필수 입력 항목</div>
+      </div>
 
     <!-- 요청자 정보 -->
     <div class="kform-label" style="margin-bottom:8px;">요청자 정보 <span style="color:#e03333;">*</span></div>
@@ -733,6 +786,33 @@ html, body { height: 100%; overflow: hidden; overflow-x: hidden; max-width: 100%
       </div>
     </div>
 
+    <!-- 입고 방법 -->
+    <div class="kform-label" style="margin-bottom:8px;">입고 방법 <span style="color:#e03333;">*</span></div>
+    <div style="background:#f7f7f7;border-radius:12px;padding:16px;margin-bottom:16px;">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+        <div>
+          <div class="kform-label">입고 지점</div>
+          <input class="kinput" type="text" id="rq-branch" placeholder="예) 강서점" />
+        </div>
+        <div>
+          <div class="kform-label">입고일 <span style="color:#e03333;">*</span></div>
+          <div style="position:relative;">
+            <select class="kinput" id="rq-delivery-day" onchange="rqDeliveryDayChange(this.value)" style="-webkit-appearance:none;appearance:none;cursor:pointer;padding-right:36px;">
+              <option value="">선택해주세요</option>
+              <option value="화요일">화요일</option>
+              <option value="금요일">금요일</option>
+              <option value="별도지정일">별도 지정일 (퀵)</option>
+            </select>
+            <svg style="position:absolute;right:12px;top:50%;transform:translateY(-50%);pointer-events:none;" viewBox="0 0 24 24" fill="none" stroke="#999" stroke-width="2" width="16" height="16"><polyline points="6 9 12 15 18 9"/></svg>
+          </div>
+        </div>
+      </div>
+      <div id="rq-delivery-custom" style="display:none;margin-top:10px;">
+        <input class="kinput" type="date" id="rq-delivery-date" />
+        <div style="font-size:11px;color:#e03333;font-weight:600;margin-top:4px;">⚠ 퀵배송 이용 시 퀵비가 발생합니다</div>
+      </div>
+    </div>
+
     <!-- 요청 제목 + 마감일 -->
     <div class="kform-group">
       <div class="kform-label">요청 제목 <span style="color:#e03333;">*</span></div>
@@ -745,70 +825,59 @@ html, body { height: 100%; overflow: hidden; overflow-x: hidden; max-width: 100%
 
     <!-- 광고 종류 -->
     <div class="kform-group">
-      <div class="kform-label" style="margin-bottom:10px;">광고 종류 <span style="color:#e03333;">*</span> <span style="color:#999;font-weight:400;font-size:10px;text-transform:none;">(복수 선택 가능)</span></div>
-      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:8px;">
-        
-        <label id="rq-type-0" onclick="rqToggleType(this)" style="display:flex;align-items:center;gap:8px;padding:10px 12px;border:1.5px solid rgba(0,0,0,0.12);border-radius:10px;cursor:pointer;font-size:13px;font-weight:500;background:#fff;transition:all .15s;user-select:none;">
-          <div style="width:16px;height:16px;border-radius:50%;border:1.5px solid #ccc;flex-shrink:0;display:flex;align-items:center;justify-content:center;" class="rq-type-dot"></div>
-          매장 연출
-        </label>
-        <label id="rq-type-1" onclick="rqToggleType(this)" style="display:flex;align-items:center;gap:8px;padding:10px 12px;border:1.5px solid rgba(0,0,0,0.12);border-radius:10px;cursor:pointer;font-size:13px;font-weight:500;background:#fff;transition:all .15s;user-select:none;">
-          <div style="width:16px;height:16px;border-radius:50%;border:1.5px solid #ccc;flex-shrink:0;display:flex;align-items:center;justify-content:center;" class="rq-type-dot"></div>
-          중분류
-        </label>
-        <label id="rq-type-2" onclick="rqToggleType(this)" style="display:flex;align-items:center;gap:8px;padding:10px 12px;border:1.5px solid rgba(0,0,0,0.12);border-radius:10px;cursor:pointer;font-size:13px;font-weight:500;background:#fff;transition:all .15s;user-select:none;">
-          <div style="width:16px;height:16px;border-radius:50%;border:1.5px solid #ccc;flex-shrink:0;display:flex;align-items:center;justify-content:center;" class="rq-type-dot"></div>
-          시트 작업
-        </label>
-        <label id="rq-type-3" onclick="rqToggleType(this)" style="display:flex;align-items:center;gap:8px;padding:10px 12px;border:1.5px solid rgba(0,0,0,0.12);border-radius:10px;cursor:pointer;font-size:13px;font-weight:500;background:#fff;transition:all .15s;user-select:none;">
-          <div style="width:16px;height:16px;border-radius:50%;border:1.5px solid #ccc;flex-shrink:0;display:flex;align-items:center;justify-content:center;" class="rq-type-dot"></div>
-          배너
-        </label>
-        <label id="rq-type-4" onclick="rqToggleType(this)" style="display:flex;align-items:center;gap:8px;padding:10px 12px;border:1.5px solid rgba(0,0,0,0.12);border-radius:10px;cursor:pointer;font-size:13px;font-weight:500;background:#fff;transition:all .15s;user-select:none;">
-          <div style="width:16px;height:16px;border-radius:50%;border:1.5px solid #ccc;flex-shrink:0;display:flex;align-items:center;justify-content:center;" class="rq-type-dot"></div>
-          디바이더
-        </label>
-        <label id="rq-type-5" onclick="rqToggleType(this)" style="display:flex;align-items:center;gap:8px;padding:10px 12px;border:1.5px solid rgba(0,0,0,0.12);border-radius:10px;cursor:pointer;font-size:13px;font-weight:500;background:#fff;transition:all .15s;user-select:none;">
-          <div style="width:16px;height:16px;border-radius:50%;border:1.5px solid #ccc;flex-shrink:0;display:flex;align-items:center;justify-content:center;" class="rq-type-dot"></div>
-          규격 POP (A3)
-        </label>
-        <label id="rq-type-6" onclick="rqToggleType(this)" style="display:flex;align-items:center;gap:8px;padding:10px 12px;border:1.5px solid rgba(0,0,0,0.12);border-radius:10px;cursor:pointer;font-size:13px;font-weight:500;background:#fff;transition:all .15s;user-select:none;">
-          <div style="width:16px;height:16px;border-radius:50%;border:1.5px solid #ccc;flex-shrink:0;display:flex;align-items:center;justify-content:center;" class="rq-type-dot"></div>
-          규격 POP (A4)
-        </label>
-        <label id="rq-type-7" onclick="rqToggleType(this)" style="display:flex;align-items:center;gap:8px;padding:10px 12px;border:1.5px solid rgba(0,0,0,0.12);border-radius:10px;cursor:pointer;font-size:13px;font-weight:500;background:#fff;transition:all .15s;user-select:none;">
-          <div style="width:16px;height:16px;border-radius:50%;border:1.5px solid #ccc;flex-shrink:0;display:flex;align-items:center;justify-content:center;" class="rq-type-dot"></div>
-          비규격 POP
-        </label>
-        <label id="rq-type-8" onclick="rqToggleType(this)" style="display:flex;align-items:center;gap:8px;padding:10px 12px;border:1.5px solid rgba(0,0,0,0.12);border-radius:10px;cursor:pointer;font-size:13px;font-weight:500;background:#fff;transition:all .15s;user-select:none;">
-          <div style="width:16px;height:16px;border-radius:50%;border:1.5px solid #ccc;flex-shrink:0;display:flex;align-items:center;justify-content:center;" class="rq-type-dot"></div>
-          와블러
-        </label>
-        <label id="rq-type-9" onclick="rqToggleType(this)" style="display:flex;align-items:center;gap:8px;padding:10px 12px;border:1.5px solid rgba(0,0,0,0.12);border-radius:10px;cursor:pointer;font-size:13px;font-weight:500;background:#fff;transition:all .15s;user-select:none;">
-          <div style="width:16px;height:16px;border-radius:50%;border:1.5px solid #ccc;flex-shrink:0;display:flex;align-items:center;justify-content:center;" class="rq-type-dot"></div>
-          스티커
-        </label>
-        <label id="rq-type-10" onclick="rqToggleType(this)" style="display:flex;align-items:center;gap:8px;padding:10px 12px;border:1.5px solid rgba(0,0,0,0.12);border-radius:10px;cursor:pointer;font-size:13px;font-weight:500;background:#fff;transition:all .15s;user-select:none;">
-          <div style="width:16px;height:16px;border-radius:50%;border:1.5px solid #ccc;flex-shrink:0;display:flex;align-items:center;justify-content:center;" class="rq-type-dot"></div>
-          기타
-        </label>
-      </div>
-      <div id="rq-custom-size-row" style="display:none;margin-top:10px;">
-        <input class="kinput" type="text" id="rq-custom-size" placeholder="비규격 POP 사이즈 입력 (예: 297×500mm)" />
-      </div>
-      <div id="rq-banner-type-row" style="display:none;margin-top:10px;">
-        <div class="kform-label" style="margin-bottom:8px;">배너 형태</div>
-        <div style="display:flex;gap:16px;">
-          <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:13px;font-weight:500;">
-            <input type="radio" name="rq-banner-type" value="행잉형" style="accent-color:#111;width:16px;height:16px;" /> 행잉형
-          </label>
-          <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:13px;font-weight:500;">
-            <input type="radio" name="rq-banner-type" value="스탠드형" style="accent-color:#111;width:16px;height:16px;" /> 스탠드형
-          </label>
+      <div class="kform-label" style="margin-bottom:10px;">광고 종류 <span style="color:#e03333;">*</span> <span style="color:#999;font-weight:400;font-size:10px;">(복수 선택 가능)</span></div>
+      <!-- 3개 카테고리 가로 탭 -->
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin-bottom:8px;">
+
+        <!-- 연출물 -->
+        <div class="rq-adcat-col">
+          <button type="button" class="rq-adcat-tab" id="rqtab-연출물" onclick="rqToggleCat(event,'연출물')">
+            <span class="rq-adcat-badge" id="rqbadge-연출물"></span>
+            연출물
+            <svg class="rq-adcat-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="13" height="13"><polyline points="6 9 12 15 18 9"/></svg>
+          </button>
+          <div class="rq-adcat-dropdown" id="rqbody-연출물" style="display:none;" onclick="event.stopPropagation()">
+            <label class="rq-adcat-item" onclick="rqToggleItem(this,'연출물')" data-val="중분류"><span class="rq-adcat-dot"></span>중분류</label>
+            <label class="rq-adcat-item" onclick="rqToggleItem(this,'연출물')" data-val="시트"><span class="rq-adcat-dot"></span>시트</label>
+            <label class="rq-adcat-item" onclick="rqToggleItem(this,'연출물')" data-val="배너"><span class="rq-adcat-dot"></span>배너</label>
+            <label class="rq-adcat-item" onclick="rqToggleItem(this,'연출물')" data-val="우드락 셀링"><span class="rq-adcat-dot"></span>우드락 셀링</label>
+            <label class="rq-adcat-item" onclick="rqToggleItem(this,'연출물')" data-val="디바이더"><span class="rq-adcat-dot"></span>디바이더</label>
+          </div>
         </div>
+
+        <!-- POP -->
+        <div class="rq-adcat-col">
+          <button type="button" class="rq-adcat-tab" id="rqtab-POP" onclick="rqToggleCat(event,'POP')">
+            <span class="rq-adcat-badge" id="rqbadge-POP"></span>
+            POP
+            <svg class="rq-adcat-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="13" height="13"><polyline points="6 9 12 15 18 9"/></svg>
+          </button>
+          <div class="rq-adcat-dropdown" id="rqbody-POP" style="display:none;" onclick="event.stopPropagation()">
+            <label class="rq-adcat-item" onclick="rqToggleItem(this,'POP')" data-val="A3 가로형"><span class="rq-adcat-dot"></span>A3 가로형</label>
+            <label class="rq-adcat-item" onclick="rqToggleItem(this,'POP')" data-val="A4 세로형"><span class="rq-adcat-dot"></span>A4 세로형</label>
+            <label class="rq-adcat-item" onclick="rqToggleItem(this,'POP')" data-val="와블러"><span class="rq-adcat-dot"></span>와블러</label>
+          </div>
+        </div>
+
+        <!-- 기타 -->
+        <div class="rq-adcat-col">
+          <button type="button" class="rq-adcat-tab" id="rqtab-기타" onclick="rqToggleCat(event,'기타')">
+            <span class="rq-adcat-badge" id="rqbadge-기타"></span>
+            기타
+            <svg class="rq-adcat-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="13" height="13"><polyline points="6 9 12 15 18 9"/></svg>
+          </button>
+          <div class="rq-adcat-dropdown" id="rqbody-기타" style="display:none;" onclick="event.stopPropagation()">
+            <label class="rq-adcat-item" onclick="rqToggleItem(this,'기타')" data-val="스티커"><span class="rq-adcat-dot"></span>스티커</label>
+            <label class="rq-adcat-item" onclick="rqToggleItem(this,'기타')" data-val="직접 작성"><span class="rq-adcat-dot"></span>직접 작성하기</label>
+            <div id="rq-custom-type-input" style="display:none;padding:8px 14px 10px;">
+              <input class="kinput" type="text" id="rq-custom-type-text" placeholder="광고 종류를 직접 입력해주세요" />
+            </div>
+          </div>
+        </div>
+
       </div>
-      <!-- 선택된 타입별 사이즈/수량 입력 -->
-      <div id="rq-adtype-details" style="margin-top:10px;"></div>
+      <!-- 선택 요약 표시 -->
+      <div id="rq-adtype-details" style="margin-top:4px;"></div>
     </div>
 
     <!-- 요청 내용 -->
@@ -864,6 +933,7 @@ html, body { height: 100%; overflow: hidden; overflow-x: hidden; max-width: 100%
       <button class="kbtn-cancel" style="flex:1;" onclick="modalClose('modalRequest')">취소</button>
       <button class="kbtn-confirm" style="flex:1;" onclick="rqSubmit()">신청하기</button>
     </div>
+    </div><!-- end scroll area -->
   </div>
 </div>
 
@@ -1385,9 +1455,9 @@ function renderHomeContent() {
   } else {
     el.innerHTML = withAds.map(p=>{
       const ads=getAds(hState.cat, p.subCat||hState.sub, p.name);
-      const subLabel = !hState.sub ? `<span style="font-size:13px;color:#999;font-weight:400;"> · ${p.subCat}</span>` : '';
+      const subLabel = !hState.sub ? `<span style="font-size:12px;color:#aaa;font-weight:500;margin-left:6px;">${p.subCat}</span>` : '';
       return `<div style="margin-bottom:36px;">
-        <div class="ksect-title">${p.name}${subLabel} <span>광고</span></div>
+        <div class="ksect-title">${p.name}${subLabel}</div>
         <div class="kad-grid">${ads.map(ad=>adCardHTML(ad,'home')).join('')}</div>
       </div>`;
     }).join('');
@@ -1419,7 +1489,7 @@ function adCardHTML(ad, mode) {
         </div>
       </div>
       <div class="kad-meta">
-        <div class="kad-tag"><span>${ad.mainCat}</span><span style="color:#ccc">|</span><span>${ad.subCat}</span></div>
+        <div class="kad-tag">${ad.subCat}</div>
         <div class="kad-title">${ad.title}</div>
         <div class="kad-date">등록일: ${ad.adDate}</div>
       </div>
@@ -1471,6 +1541,20 @@ function renderAdmin() {
           <button class="ktab-btn ${aState.cat===cat?'active':''}" onclick="adminCatSelect('${cat}')">${cat}</button>
         `).join('')}
       </div>
+      <!-- Search bar -->
+      <div class="ksearch-row">
+        <div class="ksearch-wrap">
+          <span class="ksearch-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          </span>
+          <input class="ksearch-input" id="adminSearchInput" type="text" placeholder="광고 검색..." value="${aState.search||''}"
+            oninput="adminSearchChange(this.value)"
+            onkeydown="if(event.key==='Escape'){adminSearchChange('');this.value='';}"/>
+          <button class="ksearch-clear ${aState.search?'visible':''}" id="adminSearchClear" onclick="adminSearchChange('');document.getElementById('adminSearchInput').value='';document.getElementById('adminSearchInput').focus();">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="14" height="14"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+          </button>
+        </div>
+      </div>
       <!-- Sub pills -->
       <div class="ksub-row" id="adminSubRow">
         <div class="ksub-scroll" id="adminSubScroll">
@@ -1484,20 +1568,6 @@ function renderAdmin() {
             </div>
           `).join('')}
           <button class="kadd-sub-btn" onclick="openEditCatModal(\'sub\')">✎ 세부 편집</button>
-        </div>
-      </div>
-      <!-- Search bar -->
-      <div class="ksearch-row">
-        <div class="ksearch-wrap">
-          <span class="ksearch-icon">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-          </span>
-          <input class="ksearch-input" id="adminSearchInput" type="text" placeholder="광고 검색..." value="${aState.search||''}"
-            oninput="adminSearchChange(this.value)"
-            onkeydown="if(event.key==='Escape'){adminSearchChange('');this.value='';}"/>
-          <button class="ksearch-clear ${aState.search?'visible':''}" id="adminSearchClear" onclick="adminSearchChange('');document.getElementById('adminSearchInput').value='';document.getElementById('adminSearchInput').focus();">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="14" height="14"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-          </button>
         </div>
       </div>
       <!-- Content -->
@@ -1581,10 +1651,10 @@ function renderAdminContent() {
       const gridOrEmpty = ads.length > 0
         ? '<div class="kad-grid">' + ads.map(ad=>adCardHTML(ad,'admin')).join('') + '</div>'
         : emptyAdMsg();
-      const subLabel = !aState.sub ? ` <span style="font-size:13px;color:#999;font-weight:400;">· ${p.subCat}</span>` : '';
+      const subLabel = !aState.sub ? `<span style="font-size:12px;color:#aaa;font-weight:500;margin-left:6px;">${p.subCat}</span>` : '';
       return `<div style="margin-bottom:36px;padding-bottom:36px;border-bottom:1px solid rgba(0,0,0,0.06);">
         <div class="ksect-title">
-          ${p.name}${subLabel} <span>광고</span>
+          ${p.name}${subLabel}
           <button class="ksect-add-btn" onclick="openAddImg('${p.name}')">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="16" height="16"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
           </button>
@@ -1664,6 +1734,7 @@ document.querySelectorAll('.kmodal-overlay').forEach(el=>{
   if(el.id === 'modalAddImg') return;
   if(el.id === 'modalDetail') return;
   if(el.id === 'modalEditCat') return;
+  if(el.id === 'modalAdRequest') return;
   el.addEventListener('click', e=>{ if(e.target===el) el.classList.remove('open'); });
 });
 
@@ -1959,11 +2030,14 @@ function renderDetail() {
   if(!container)return;
 
   let html=`
-    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;flex-wrap:wrap;gap:8px;">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;gap:8px;">
       <span class="kdetail-tag">${ad.mainCat} &gt; ${ad.subCat}</span>
-      <span style="font-size:12px;color:var(--ktext3);">등록일: ${ad.adDate}</span>
+      <div style="display:flex;align-items:center;gap:10px;flex-shrink:0;">
+        <span style="font-size:12px;color:var(--ktext3);">등록일: ${ad.adDate}</span>
+        <button onclick="modalClose('modalDetail')" style="background:none;border:none;cursor:pointer;color:var(--ktext3);font-size:20px;line-height:1;padding:2px 4px;flex-shrink:0;">✕</button>
+      </div>
     </div>
-    <h2 style="font-size:26px;font-weight:800;letter-spacing:-0.5px;margin-bottom:${adminLoggedIn?16:20}px;">${ad.title}</h2>
+    <h2 style="font-size:26px;font-weight:800;letter-spacing:-0.5px;margin-bottom:${(detailMode==='admin'&&adminLoggedIn)?16:20}px;">${ad.title}</h2>
   `;
 
   if(detailMode === 'admin' && adminLoggedIn) {
@@ -2109,126 +2183,151 @@ function openLightbox(src) {
 // ══════════════════════════════════════════════════════
 let rqSiteFiles = [];
 let rqRefFiles = [];
-let rqSelectedTypes = new Set();
+let rqSelectedTypes = new Set(); // "카테고리::값" 형태로 저장
 
 function openRequestModal() {
-  // Reset
-  ['rq-dept','rq-name','rq-tel','rq-title','rq-deadline',
-   'rq-ad-title','rq-selling','rq-event-start','rq-event-end','rq-event-desc','rq-custom-size'].forEach(id => {
-    const el = document.getElementById(id);
-    if(el) el.value = '';
+  ['rq-dept','rq-name','rq-tel','rq-branch','rq-title','rq-deadline',
+   'rq-ad-title','rq-selling','rq-event-start','rq-event-end','rq-event-desc'].forEach(id => {
+    const el = document.getElementById(id); if(el) el.value = '';
   });
-  // 연락처 자동 대시 바인딩
   var telEl = document.getElementById('rq-tel');
-  if(telEl) {
-    telEl.oninput = function(){ formatTelInput(this); };
-  }
+  if(telEl) telEl.oninput = function(){ formatTelInput(this); };
   rqSiteFiles = []; rqRefFiles = []; rqSelectedTypes = new Set();
   document.getElementById('rq-site-preview').innerHTML = '';
   document.getElementById('rq-ref-preview').innerHTML = '';
-  document.getElementById('rq-custom-size-row').style.display = 'none';
-  document.getElementById('rq-banner-type-row').style.display = 'none';
   var det = document.getElementById('rq-adtype-details'); if(det) det.innerHTML = '';
-  // Reset type buttons
-  document.querySelectorAll('[id^="rq-type-"]').forEach(el => {
-    el.style.background = '#fff';
-    el.style.borderColor = 'rgba(0,0,0,0.12)';
-    el.style.fontWeight = '500';
-    const dot = el.querySelector('.rq-type-dot');
-    if(dot) { dot.style.background = 'transparent'; dot.style.borderColor = '#ccc'; }
+  // 아코디언 초기화
+  ['연출물','POP','기타'].forEach(function(cat) {
+    var tab = document.getElementById('rqtab-'+cat);
+    var body = document.getElementById('rqbody-'+cat);
+    var badge = document.getElementById('rqbadge-'+cat);
+    if(tab) tab.classList.remove('open');
+    if(body) body.style.display = 'none';
+    if(badge) { badge.textContent=''; badge.classList.remove('visible'); }
+    // 선택 항목 초기화
+    var items = document.querySelectorAll('#rqbody-'+cat+' .rq-adcat-item');
+    items.forEach(function(item){ item.classList.remove('selected'); });
+    // 인라인 사이즈 초기화
+    var sizeDivs = document.querySelectorAll('#rqbody-'+cat+' .rq-inline-size');
+    sizeDivs.forEach(function(d){ d.innerHTML=''; d.style.display='none'; });
   });
+  var deliveryDay = document.getElementById('rq-delivery-day');
+  if(deliveryDay) deliveryDay.value='';
+  var deliveryCustom = document.getElementById('rq-delivery-custom');
+  if(deliveryCustom) deliveryCustom.style.display='none';
   document.getElementById('modalRequest').classList.add('open');
+  // 모달이 표시된 후 스크롤 상단으로
+  setTimeout(function() {
+    var scrollArea = document.getElementById('rq-scroll-area');
+    if(scrollArea) scrollArea.scrollTop = 0;
+  }, 0);
 }
 
-function rqToggleType(el) {
-  const label = el.textContent.trim();
-  const dot = el.querySelector('.rq-type-dot');
-  const SIZE_TYPES = ['중분류', '시트 작업', '배너', '디바이더', '비규격 POP', '스티커'];
-  const needsSize = SIZE_TYPES.some(function(t){ return label.indexOf(t) !== -1; });
-  const isEtc = label.indexOf('기타') !== -1;
-  const isBanner = label.indexOf('배너') !== -1;
+function rqDeliveryDayChange(val) {
+  var custom = document.getElementById('rq-delivery-custom');
+  if(custom) custom.style.display = val === '별도지정일' ? '' : 'none';
+}
 
-  if(rqSelectedTypes.has(label)) {
-    rqSelectedTypes.delete(label);
-    el.style.background = '#fff';
-    el.style.borderColor = 'rgba(0,0,0,0.12)';
-    el.style.color = '#111';
-    el.style.fontWeight = '500';
-    if(dot) { dot.style.background = 'transparent'; dot.style.borderColor = '#ccc'; dot.innerHTML = ''; }
+function rqToggleCat(e, cat) {
+  e.stopPropagation();
+  var tab = document.getElementById('rqtab-'+cat);
+  var body = document.getElementById('rqbody-'+cat);
+  var isOpen = tab.classList.contains('open');
+  // 다른 드롭다운 닫기
+  ['연출물','POP','기타'].forEach(function(c) {
+    if(c !== cat) {
+      var t = document.getElementById('rqtab-'+c);
+      var b = document.getElementById('rqbody-'+c);
+      if(t) t.classList.remove('open');
+      if(b) b.style.display='none';
+    }
+  });
+  tab.classList.toggle('open', !isOpen);
+  body.style.display = isOpen ? 'none' : '';
+}
+
+// 외부 클릭 시 드롭다운 닫기 (stopPropagation 덕분에 내부 클릭은 무시)
+document.addEventListener('click', function() {
+  ['연출물','POP','기타'].forEach(function(c) {
+    var t = document.getElementById('rqtab-'+c);
+    var b = document.getElementById('rqbody-'+c);
+    if(t) t.classList.remove('open');
+    if(b) b.style.display='none';
+  });
+});
+
+// 사이즈 카드가 나오는 항목 (A3/A4는 사이즈 없이 수량만)
+var RQ_SIZE_ITEMS = ['중분류','시트','배너','우드락 셀링','디바이더','와블러','스티커','A3 가로형','A4 세로형'];
+
+function rqToggleItem(el, cat) {
+  var val = el.dataset.val;
+  var key = cat+'::'+val;
+  var isSelected = el.classList.contains('selected');
+
+  if(isSelected) {
+    el.classList.remove('selected');
+    rqSelectedTypes.delete(key);
   } else {
-    rqSelectedTypes.add(label);
-    el.style.background = '#111';
-    el.style.borderColor = '#111';
-    el.style.color = '#fff';
-    el.style.fontWeight = '600';
-    if(dot) { dot.style.background = '#fff'; dot.style.borderColor = '#fff'; dot.innerHTML = '<div style="width:7px;height:7px;border-radius:50%;background:#111;"></div>'; }
+    el.classList.add('selected');
+    rqSelectedTypes.add(key);
   }
 
-  // 배너 라디오
-  document.getElementById('rq-banner-type-row').style.display = rqSelectedTypes.has('배너') ? 'block' : 'none';
+  // 직접 작성 입력란
+  if(val === '직접 작성') {
+    var ci = document.getElementById('rq-custom-type-input');
+    if(ci) ci.style.display = isSelected ? 'none' : '';
+  }
 
-  // 하단 상세 입력 섹션 전체 재렌더
+  // 배지 업데이트
+  var catCount = Array.from(rqSelectedTypes).filter(function(k){ return k.startsWith(cat+'::'); }).length;
+  var badge = document.getElementById('rqbadge-'+cat);
+  if(badge) { badge.textContent = catCount||''; badge.classList.toggle('visible', catCount>0); }
+
+  // 드롭다운 닫기 (직접 작성은 입력란이 드롭다운 안이라 유지)
+  if(val !== '직접 작성') {
+    var tab = document.getElementById('rqtab-'+cat);
+    var body = document.getElementById('rqbody-'+cat);
+    if(tab) tab.classList.remove('open');
+    if(body) body.style.display = 'none';
+  }
+
   renderAdTypeDetails();
 }
 
 function renderAdTypeDetails() {
   var container = document.getElementById('rq-adtype-details');
   if(!container) return;
-  container.innerHTML = '';
 
-  var SIZE_TYPES = ['중분류', '시트 작업', '배너', '디바이더', '비규격 POP', '스티커'];
+  // 사이즈/수량 입력이 필요한 선택 항목만 카드로 렌더
+  var sizeItems = Array.from(rqSelectedTypes).map(function(k){ return k.split('::')[1]||k; })
+    .filter(function(v){ return RQ_SIZE_ITEMS.indexOf(v) !== -1; });
 
-  rqSelectedTypes.forEach(function(label) {
-    var needsSize = SIZE_TYPES.some(function(t){ return label.indexOf(t) !== -1; });
-    var isEtc = label.indexOf('기타') !== -1;
-    var noQty = label === '매장 연출';
-    var safeLabel = label.replace(/[^a-zA-Z0-9가-힣]/g,'_');
+  if(sizeItems.length === 0) {
+    container.innerHTML = '';
+    return;
+  }
 
-    var block = document.createElement('div');
-    block.style.cssText = 'padding:12px 14px;background:#f7f7f7;border-radius:10px;margin-bottom:8px;';
-
-    var title = document.createElement('div');
-    title.style.cssText = 'font-size:12px;font-weight:700;color:#111;margin-bottom:8px;';
-    title.textContent = label;
-    block.appendChild(title);
-
-    if(isEtc) {
-      var ta = document.createElement('textarea');
-      ta.className = 'kinput';
-      ta.id = 'rq-etc-text';
-      ta.placeholder = '기타 사항을 입력해주세요';
-      ta.rows = 2;
-      ta.style.cssText = 'width:100%;resize:vertical;';
-      block.appendChild(ta);
-    } else {
-      var row = document.createElement('div');
-      row.style.cssText = 'display:flex;align-items:center;gap:10px;flex-wrap:wrap;';
-
-      if(needsSize) {
-        var sizeWrap = document.createElement('div');
-        sizeWrap.style.cssText = 'display:flex;align-items:center;gap:6px;';
-        sizeWrap.innerHTML =
-          '<span style="font-size:12px;color:#555;font-weight:600;white-space:nowrap;">사이즈</span>'
-          + '<input class="kinput" type="number" placeholder="가로(mm)" style="width:120px;" id="rq-w-'+safeLabel+'" />'
-          + '<span style="color:#999;font-size:13px;">×</span>'
-          + '<input class="kinput" type="number" placeholder="세로(mm)" style="width:120px;" id="rq-h-'+safeLabel+'" />';
-        row.appendChild(sizeWrap);
-      }
-
-      if(!noQty) {
-        var qtyWrap = document.createElement('div');
-        qtyWrap.style.cssText = 'display:flex;align-items:center;gap:6px;' + (needsSize ? 'margin-left:16px;padding-left:16px;border-left:1.5px solid rgba(0,0,0,0.1);' : '');
-        qtyWrap.innerHTML =
-          '<span style="font-size:12px;color:#555;font-weight:600;white-space:nowrap;">수량</span>'
-          + '<input class="kinput" type="number" placeholder="수량" style="width:90px;" id="rq-qty-'+safeLabel+'" min="1" />';
-        row.appendChild(qtyWrap);
-      }
-
-      block.appendChild(row);
-    }
-
-    container.appendChild(block);
-  });
+  container.innerHTML = '<div style="margin-top:12px;display:flex;flex-direction:column;gap:8px;">'
+    + sizeItems.map(function(label) {
+        var safeLabel = label.replace(/\s/g,'_');
+        var isQtyOnly = label === 'A3 가로형' || label === 'A4 세로형';
+        return '<div style="background:#f7f8f5;border-radius:10px;padding:12px 14px;">'
+          + '<div style="font-size:12px;font-weight:700;color:#555;margin-bottom:8px;">'+label+'</div>'
+          + '<div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">'
+          + (!isQtyOnly
+              ? '<span style="font-size:12px;color:#777;font-weight:600;">가로</span>'
+                + '<input class="kinput" type="number" placeholder="mm" id="rq-w-'+safeLabel+'" style="width:80px;" />'
+                + '<span style="font-size:13px;color:#bbb;">×</span>'
+                + '<span style="font-size:12px;color:#777;font-weight:600;">세로</span>'
+                + '<input class="kinput" type="number" placeholder="mm" id="rq-h-'+safeLabel+'" style="width:80px;" />'
+                + '<span style="width:1px;height:20px;background:rgba(0,0,0,0.1);flex-shrink:0;margin:0 4px;"></span>'
+              : '')
+          + '<span style="font-size:12px;color:#777;font-weight:600;">수량</span>'
+          + '<input class="kinput" type="number" placeholder="개" id="rq-qty-'+safeLabel+'" min="1" style="width:72px;" />'
+          + '</div>'
+          + '</div>';
+      }).join('')
+    + '</div>';
 }
 
 
@@ -2267,14 +2366,26 @@ function rqSubmit() {
   const dept = document.getElementById('rq-dept').value.trim();
   const name = document.getElementById('rq-name').value.trim();
   const tel = document.getElementById('rq-tel').value.trim();
+  const branch = (document.getElementById('rq-branch')?.value||'').trim();
   const title = document.getElementById('rq-title').value.trim();
   const deadline = document.getElementById('rq-deadline').value;
+  const deliveryDay = (document.getElementById('rq-delivery-day')?.value||'').trim();
+  const deliveryDate = (document.getElementById('rq-delivery-date')?.value||'').trim();
 
   var adTitle = document.getElementById('rq-ad-title').value.trim();
   var selling = document.getElementById('rq-selling').value.trim();
 
+  // 광고 종류: key에서 값만 추출
+  var adTypesArr = Array.from(rqSelectedTypes).map(function(k){ return k.split('::')[1]||k; });
+  // 직접 작성 처리
+  var customTypeText = (document.getElementById('rq-custom-type-text')?.value||'').trim();
+  if(adTypesArr.includes('직접 작성') && customTypeText) {
+    adTypesArr = adTypesArr.map(function(v){ return v==='직접 작성'?customTypeText:v; });
+  }
+
   var missing = [];
   if(!dept || !name || !tel) missing.push('요청자 정보');
+  if(!deliveryDay) missing.push('입고일');
   if(!title) missing.push('요청 제목');
   if(!deadline) missing.push('마감 요청일');
   if(rqSelectedTypes.size === 0) missing.push('광고 종류');
@@ -2290,50 +2401,37 @@ function rqSubmit() {
     return;
   }
 
-  // Collect banner type
-  const bannerTypeEl = document.querySelector('input[name="rq-banner-type"]:checked');
-  const bannerType = bannerTypeEl ? bannerTypeEl.value : '';
-  const customSize = document.getElementById('rq-custom-size') ? document.getElementById('rq-custom-size').value.trim() : '';
-  
-  // 타입별 사이즈/수량/기타 수집
+  // 타입별 사이즈/수량 수집
   const adTypeDetails = {};
-  rqSelectedTypes.forEach(function(label) {
+  Array.from(rqSelectedTypes).forEach(function(key) {
+    var label = key.split('::')[1]||key;
     var safeLabel = label.replace(/[^a-zA-Z0-9가-힣]/g,'_');
     var detail = {};
     var wEl = document.getElementById('rq-w-'+safeLabel);
     var hEl = document.getElementById('rq-h-'+safeLabel);
     var qEl = document.getElementById('rq-qty-'+safeLabel);
-    var etcEl = document.getElementById('rq-etc-text');
     if(wEl && wEl.value) detail.width = wEl.value;
     if(hEl && hEl.value) detail.height = hEl.value;
     if(qEl && qEl.value) detail.qty = qEl.value;
-    if(label === '기타' && etcEl && etcEl.value) detail.etc = etcEl.value;
     if(Object.keys(detail).length > 0) adTypeDetails[label] = detail;
   });
-  // (기존 detail 수집 로직 유지)
 
   // Build request object
   const request = {
     id: nextId(),
     submittedAt: new Date().toLocaleString('ko-KR'),
     status: '검토 중',
-    // 요청자
-    dept, name, tel,
-    // 기본
-    title,
-    deadline,
-    // 광고 종류
-    adTypes: [...rqSelectedTypes],
+    dept, name, tel, branch,
+    deliveryDay: deliveryDay === '별도지정일' ? `별도 지정일 (${deliveryDate||'날짜 미입력'})` : deliveryDay,
+    title, deadline,
+    adTypes: adTypesArr,
     adTypeDetails,
-    bannerType,
-    customSize,
-    // 요청 내용
+    bannerType: '', customSize: '',
     adTitle: document.getElementById('rq-ad-title').value.trim(),
     selling: document.getElementById('rq-selling').value.trim(),
     eventStart: document.getElementById('rq-event-start').value,
     eventEnd: document.getElementById('rq-event-end').value,
     eventDesc: document.getElementById('rq-event-desc').value.trim(),
-    // 파일 (base64 미리보기 src)
     sitePhotos: rqSiteFiles.map(f=>({name:f.name, size:f.size})),
     refImages: rqRefFiles.map(f=>({name:f.name, size:f.size})),
   };
