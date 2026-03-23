@@ -181,13 +181,13 @@ html, body { height: 100%; overflow: hidden; overflow-x: hidden; max-width: 100%
   display: flex; align-items: center;
 }
 .ksearch-input {
-  width: 100%; background: var(--bg); border: 1.5px solid var(--kborder2);
-  border-radius: 50px; padding: 10px 40px 10px 42px;
+  width: 100%; background: #f5f5f5; border: none;
+  border-radius: 6px; padding: 10px 40px 10px 42px;
   font-family: 'Pretendard', sans-serif; font-size: 14px; color: var(--ktext);
-  outline: none; transition: border-color .15s, box-shadow .15s;
+  outline: none; transition: background .15s;
   -webkit-appearance: none;
 }
-.ksearch-input:focus { border-color: #111; box-shadow: 0 0 0 3px var(--kaccent-glow); }
+.ksearch-input:focus { background: #efefef; box-shadow: none; }
 .ksearch-input::placeholder { color: #bbb; }
 .ksearch-clear {
   position: absolute; right: 14px; background: none; border: none; cursor: pointer;
@@ -756,6 +756,61 @@ html, body { height: 100%; overflow: hidden; overflow-x: hidden; max-width: 100%
       <button onclick="editCatAdd()" style="padding:10px 18px;background:#111;color:#fff;border:none;border-radius:10px;font-size:13px;font-weight:700;cursor:pointer;font-family:Pretendard,sans-serif;flex-shrink:0;">추가</button>
     </div>
     <button onclick="modalClose('modalEditCat')" style="width:100%;margin-top:12px;padding:13px;background:#f0f0f0;color:#111;border:none;border-radius:50px;font-size:14px;font-weight:700;cursor:pointer;font-family:Pretendard,sans-serif;">닫기</button>
+  </div>
+</div>
+
+<!-- 통합 카테고리 관리 모달 -->
+<div class="kmodal-overlay center" id="modalCatMgr">
+  <div class="kmodal-sheet" style="max-width:520px;border-radius:20px;max-height:88vh;overflow:hidden;padding:0;display:flex;flex-direction:column;">
+    <!-- 헤더 -->
+    <div style="padding:28px 28px 0;flex-shrink:0;">
+      <div class="kmodal-handle"></div>
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;">
+        <div style="font-size:22px;font-weight:900;letter-spacing:-0.04em;">카테고리 관리</div>
+        <button onclick="modalClose('modalCatMgr')" style="background:none;border:none;cursor:pointer;color:#bbb;font-size:22px;line-height:1;padding:2px;">✕</button>
+      </div>
+      <!-- 대분류 탭 -->
+      <div style="border-bottom:1.5px solid var(--kborder);" id="catmgr-cattabs"></div>
+    </div>
+    <!-- 스크롤 영역 -->
+    <div style="flex:1;overflow-y:auto;padding:24px 28px 36px;">
+
+      <!-- 세부 카테고리 섹션 -->
+      <div style="margin-bottom:32px;">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;">
+          <div style="font-size:16px;font-weight:800;color:#111;letter-spacing:-0.03em;">세부 카테고리</div>
+          <button id="catmgr-sub-add-btn" style="width:36px;height:36px;border-radius:50%;background:#111;color:#fff;border:none;cursor:pointer;font-size:22px;line-height:1;display:flex;align-items:center;justify-content:center;">+</button>
+        </div>
+        <div id="catmgr-sub-input-row" style="display:none;margin-bottom:10px;">
+          <div style="display:flex;gap:8px;">
+            <input class="kinput" id="catmgr-sub-input" placeholder="새 세부 카테고리 이름" style="flex:1;" />
+            <button id="catmgr-sub-add-confirm" style="padding:10px 18px;background:#111;color:#fff;border:none;border-radius:10px;font-size:13px;font-weight:700;cursor:pointer;font-family:Pretendard,sans-serif;white-space:nowrap;">추가</button>
+          </div>
+        </div>
+        <div id="catmgr-sub-list" style="display:flex;flex-direction:column;gap:6px;"></div>
+      </div>
+
+      <!-- 상품 카테고리 섹션 -->
+      <div>
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;">
+          <div style="display:flex;align-items:baseline;gap:8px;">
+            <div style="font-size:16px;font-weight:800;color:#111;letter-spacing:-0.03em;">상품 카테고리</div>
+            <div style="font-size:12px;color:#aaa;font-weight:500;" id="catmgr-prod-sub-label"></div>
+          </div>
+          <button id="catmgr-prod-add-btn" style="width:36px;height:36px;border-radius:50%;background:#111;color:#fff;border:none;cursor:pointer;font-size:22px;line-height:1;display:none;align-items:center;justify-content:center;">+</button>
+        </div>
+        <div id="catmgr-prod-input-row" style="display:none;margin-bottom:10px;">
+          <div style="display:flex;gap:8px;">
+            <input class="kinput" id="catmgr-prod-input" placeholder="새 상품 이름" style="flex:1;" />
+            <button id="catmgr-prod-add-confirm" style="padding:10px 18px;background:#111;color:#fff;border:none;border-radius:10px;font-size:13px;font-weight:700;cursor:pointer;font-family:Pretendard,sans-serif;white-space:nowrap;">추가</button>
+          </div>
+        </div>
+        <div id="catmgr-prod-list" style="display:flex;flex-direction:column;gap:6px;">
+          <div style="font-size:13px;color:#ccc;text-align:center;padding:20px 0;">세부 카테고리를 선택하면 상품 목록이 표시됩니다</div>
+        </div>
+      </div>
+
+    </div>
   </div>
 </div>
 
@@ -1549,19 +1604,21 @@ function renderAdmin() {
           <button class="ktab-btn ${aState.cat===cat?'active':''}" onclick="adminCatSelect('${cat}')">${cat}</button>
         `).join('')}
       </div>
-      <!-- Search bar -->
-      <div class="ksearch-row">
-        <div class="ksearch-wrap">
+      <!-- Search bar + 카테고리 관리 -->
+      <div id="adminSearchRow" style="display:flex;align-items:center;gap:8px;padding:10px 40px;background:#fff;flex-shrink:0;">
+        <div class="ksearch-wrap" style="flex:1;">
           <span class="ksearch-icon">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
           </span>
           <input class="ksearch-input" id="adminSearchInput" type="text" placeholder="광고 검색..." value="${aState.search||''}"
             oninput="adminSearchChange(this.value)"
-            onkeydown="if(event.key==='Escape'){adminSearchChange('');this.value='';}"/>
+            onkeydown="if(event.key==='Escape'){adminSearchChange('');this.value='';}"
+            style="background:#f5f5f5;border:none;border-radius:6px;" />
           <button class="ksearch-clear ${aState.search?'visible':''}" id="adminSearchClear" onclick="adminSearchChange('');document.getElementById('adminSearchInput').value='';document.getElementById('adminSearchInput').focus();">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="14" height="14"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
           </button>
         </div>
+        <button onclick="openCatMgr()" style="flex-shrink:0;padding:10px 16px;background:#111;border:none;border-radius:6px;font-size:13px;font-weight:700;color:#fff;cursor:pointer;font-family:Pretendard,sans-serif;white-space:nowrap;letter-spacing:-0.02em;">카테고리 관리</button>
       </div>
       <!-- Sub pills -->
       <div class="ksub-row" id="adminSubRow">
@@ -1616,10 +1673,12 @@ function adminSearchChange(val) {
 }
 
 function renderAdminContent() {
-  ['adminSubRow','adminCatBar'].forEach(function(id){
+  ['adminSubRow','adminCatBar','adminSearchRow'].forEach(function(id){
     var el=document.getElementById(id);
     if(el) el.style.display='';
   });
+  var searchRow = document.getElementById('adminSearchRow');
+  if(searchRow) searchRow.style.display='flex';
 
   const el = document.getElementById('adminContent');
   if(!el) return;
@@ -1743,6 +1802,7 @@ document.querySelectorAll('.kmodal-overlay').forEach(el=>{
   if(el.id === 'modalDetail') return;
   if(el.id === 'modalEditCat') return;
   if(el.id === 'modalAdRequest') return;
+  if(el.id === 'modalCatMgr') return;
   el.addEventListener('click', e=>{ if(e.target===el) el.classList.remove('open'); });
 });
 
@@ -2748,6 +2808,308 @@ function adminRenameProd(id, oldName) {
 }
 
 
+// ══════════════════════════════════════════════════════
+//  통합 카테고리 관리 모달
+// ══════════════════════════════════════════════════════
+var catMgrCat = '';
+var catMgrSub = '';
+
+function openCatMgr() {
+  catMgrCat = aState.cat || MAIN_CATS[0];
+  catMgrSub = '';
+
+  // 대분류 탭 렌더
+  var tabsEl = document.getElementById('catmgr-cattabs');
+  if(tabsEl) {
+    tabsEl.style.display = 'grid';
+    tabsEl.style.gridTemplateColumns = 'repeat('+MAIN_CATS.length+',1fr)';
+    tabsEl.innerHTML = MAIN_CATS.map(function(c) {
+      return '<button onclick="catMgrSelectCat(\''+c+'\')" id="catmgr-tab-'+c+'" style="padding:10px 4px;background:none;border:none;border-bottom:2px solid transparent;font-size:14px;font-weight:600;color:#aaa;cursor:pointer;font-family:Pretendard,sans-serif;white-space:nowrap;margin-bottom:-1px;text-align:center;transition:all .15s;">'+c+'</button>';
+    }).join('');
+  }
+
+  // 버튼 이벤트 바인딩
+  var subAddBtn = document.getElementById('catmgr-sub-add-btn');
+  if(subAddBtn) { subAddBtn.onclick = function(){ catMgrToggleSubInput(); }; }
+
+  var subConfirm = document.getElementById('catmgr-sub-add-confirm');
+  if(subConfirm) { subConfirm.onclick = function(){ catMgrAddSub(); }; }
+
+  var subInput = document.getElementById('catmgr-sub-input');
+  if(subInput) {
+    subInput.onkeydown = function(e) {
+      if(e.key === 'Enter') catMgrAddSub();
+      if(e.key === 'Escape') catMgrToggleSubInput();
+    };
+  }
+
+  var prodAddBtn = document.getElementById('catmgr-prod-add-btn');
+  if(prodAddBtn) { prodAddBtn.onclick = function(){ catMgrToggleProdInput(); }; }
+
+  var prodConfirm = document.getElementById('catmgr-prod-add-confirm');
+  if(prodConfirm) { prodConfirm.onclick = function(){ catMgrAddProd(); }; }
+
+  var prodInput = document.getElementById('catmgr-prod-input');
+  if(prodInput) {
+    prodInput.onkeydown = function(e) {
+      if(e.key === 'Enter') catMgrAddProd();
+      if(e.key === 'Escape') catMgrToggleProdInput();
+    };
+  }
+
+  document.getElementById('modalCatMgr').classList.add('open');
+  catMgrSelectCat(catMgrCat);
+}
+
+function catMgrSelectCat(cat) {
+  catMgrCat = cat;
+  catMgrSub = '';
+  // 탭 활성화
+  MAIN_CATS.forEach(function(c) {
+    var t = document.getElementById('catmgr-tab-'+c);
+    if(t) {
+      t.style.color = c===cat ? '#111' : '#aaa';
+      t.style.borderBottomColor = c===cat ? '#111' : 'transparent';
+      t.style.fontWeight = c===cat ? '800' : '600';
+    }
+  });
+  catMgrRenderSubs();
+  catMgrRenderProds();
+}
+
+function catMgrToggleSubInput() {
+  var row = document.getElementById('catmgr-sub-input-row');
+  var isHidden = row.style.display === 'none';
+  row.style.display = isHidden ? '' : 'none';
+  if(isHidden) setTimeout(function(){ document.getElementById('catmgr-sub-input').focus(); }, 50);
+}
+
+function catMgrToggleProdInput() {
+  var row = document.getElementById('catmgr-prod-input-row');
+  var isHidden = row.style.display === 'none';
+  row.style.display = isHidden ? '' : 'none';
+  if(isHidden) setTimeout(function(){ document.getElementById('catmgr-prod-input').focus(); }, 50);
+}
+
+function catMgrRenderSubs() {
+  var list = document.getElementById('catmgr-sub-list');
+  var subs = getSubs(catMgrCat);
+  if(subs.length === 0) {
+    list.innerHTML = '<div style="font-size:13px;color:#ccc;text-align:center;padding:16px 0;">등록된 세부 카테고리가 없습니다</div>';
+    return;
+  }
+  list.innerHTML = '';
+  subs.forEach(function(s) {
+    var isSelected = s.name === catMgrSub;
+    var row = document.createElement('div');
+    row.id = 'catmgr-sub-row-' + s.id;
+    row.style.cssText = 'display:flex;align-items:center;gap:8px;padding:14px 16px;border-radius:12px;cursor:pointer;transition:background .15s,border .15s;'
+      + (isSelected ? 'background:#111;border:1.5px solid #111;' : 'background:#fff;border:1.5px solid rgba(0,0,0,0.1);');
+    var nameSpan = document.createElement('span');
+    nameSpan.id = 'catmgr-sub-name-' + s.id;
+    nameSpan.textContent = s.name;
+    nameSpan.style.cssText = 'flex:1;font-size:15px;font-weight:700;letter-spacing:-0.02em;color:'+(isSelected?'#fff':'#111')+';';
+    var renameBtn = document.createElement('button');
+    renameBtn.id = 'catmgr-sub-rename-' + s.id;
+    renameBtn.textContent = '수정';
+    renameBtn.style.cssText = 'padding:5px 14px;background:'+(isSelected?'rgba(255,255,255,0.15)':'#f0f0f0')+';border:none;border-radius:7px;font-size:12px;font-weight:600;cursor:pointer;font-family:Pretendard,sans-serif;color:'+(isSelected?'#fff':'#555')+';';
+    var deleteBtn = document.createElement('button');
+    deleteBtn.textContent = '삭제';
+    deleteBtn.style.cssText = 'padding:5px 14px;background:#e03333;border:none;border-radius:7px;font-size:12px;font-weight:700;cursor:pointer;font-family:Pretendard,sans-serif;color:#fff;';
+    renameBtn.addEventListener('click', function(e){ e.stopPropagation(); catMgrRenameSub(s.id, s.name); });
+    deleteBtn.addEventListener('click', function(e){ e.stopPropagation(); catMgrDeleteSub(s.id, s.name); });
+    row.addEventListener('click', function(){ catMgrSelectSub(s.name); });
+    row.appendChild(nameSpan); row.appendChild(renameBtn); row.appendChild(deleteBtn);
+    list.appendChild(row);
+  });
+}
+
+function catMgrSelectSub(sub) {
+  catMgrSub = sub === catMgrSub ? '' : sub;
+  var subs = getSubs(catMgrCat);
+  subs.forEach(function(s) {
+    var row = document.getElementById('catmgr-sub-row-' + s.id);
+    var nameSpan = document.getElementById('catmgr-sub-name-' + s.id);
+    var renameBtn = document.getElementById('catmgr-sub-rename-' + s.id);
+    if(!row || !nameSpan) return;
+    var isSel = s.name === catMgrSub;
+    row.style.background = isSel ? '#111' : '#fff';
+    row.style.border = isSel ? '1.5px solid #111' : '1.5px solid rgba(0,0,0,0.1)';
+    nameSpan.style.color = isSel ? '#fff' : '#111';
+    if(renameBtn) { renameBtn.style.background = isSel ? 'rgba(255,255,255,0.15)' : '#f0f0f0'; renameBtn.style.color = isSel ? '#fff' : '#555'; }
+  });
+  catMgrRenderProds();
+}
+
+function catMgrRenderProds() {
+  var labelEl = document.getElementById('catmgr-prod-sub-label');
+  var addBtn = document.getElementById('catmgr-prod-add-btn');
+  var inputRow = document.getElementById('catmgr-prod-input-row');
+  var list = document.getElementById('catmgr-prod-list');
+  if(!catMgrSub) {
+    if(labelEl) labelEl.textContent = '';
+    if(addBtn) addBtn.style.display='none';
+    if(inputRow) inputRow.style.display='none';
+    list.innerHTML = '<div style="font-size:13px;color:#ccc;text-align:center;padding:20px 0;">세부 카테고리를 선택하면 상품 목록이 표시됩니다</div>';
+    return;
+  }
+  if(labelEl) labelEl.textContent = catMgrCat + ' › ' + catMgrSub;
+  if(addBtn) addBtn.style.display='flex';
+  var prods = getProds(catMgrCat, catMgrSub);
+  list.innerHTML = '';
+  if(prods.length === 0) {
+    list.innerHTML = '<div style="font-size:13px;color:#ccc;text-align:center;padding:16px 0;">등록된 상품이 없습니다</div>';
+  } else {
+    prods.forEach(function(p) {
+      var row = document.createElement('div');
+      row.id = 'catmgr-prod-row-' + p.id;
+      row.style.cssText = 'display:flex;align-items:center;gap:8px;padding:14px 16px;border-radius:12px;background:#fff;border:1.5px solid rgba(0,0,0,0.1);';
+      var nameSpan = document.createElement('span');
+      nameSpan.id = 'catmgr-prod-name-' + p.id;
+      nameSpan.textContent = p.name;
+      nameSpan.style.cssText = 'flex:1;font-size:15px;font-weight:700;letter-spacing:-0.02em;color:#111;';
+      var renameBtn = document.createElement('button');
+      renameBtn.id = 'catmgr-prod-rename-' + p.id;
+      renameBtn.textContent = '수정';
+      renameBtn.style.cssText = 'padding:5px 14px;background:#f0f0f0;border:none;border-radius:7px;font-size:12px;font-weight:600;cursor:pointer;font-family:Pretendard,sans-serif;color:#555;';
+      var deleteBtn = document.createElement('button');
+      deleteBtn.textContent = '삭제';
+      deleteBtn.style.cssText = 'padding:5px 14px;background:#e03333;border:none;border-radius:7px;font-size:12px;font-weight:700;cursor:pointer;font-family:Pretendard,sans-serif;color:#fff;';
+      renameBtn.addEventListener('click', function(){ catMgrRenameProd(p.id, p.name); });
+      deleteBtn.addEventListener('click', function(){ catMgrDeleteProd(p.id, p.name); });
+      row.appendChild(nameSpan); row.appendChild(renameBtn); row.appendChild(deleteBtn);
+      list.appendChild(row);
+    });
+  }
+}
+
+function catMgrAddSub() {
+  var input = document.getElementById('catmgr-sub-input');
+  var name = (input ? input.value : '').trim();
+  if(!name) return;
+  if(DB.subs.find(function(s){ return s.mainCat===catMgrCat && s.name===name; })) { alert('이미 존재합니다'); return; }
+  var newSub = {id:nextId(), mainCat:catMgrCat, name:name};
+  DB.subs.push(newSub);
+  saveData(); sbSaveSub(newSub);
+  input.value = '';
+  document.getElementById('catmgr-sub-input-row').style.display = 'none';
+  catMgrRenderSubs();
+  renderAdmin();
+}
+
+function catMgrAddProd() {
+  var input = document.getElementById('catmgr-prod-input');
+  var name = (input ? input.value : '').trim();
+  if(!name || !catMgrSub) return;
+  if(DB.products.find(function(p){ return p.mainCat===catMgrCat && p.subCat===catMgrSub && p.name===name; })) { alert('이미 존재합니다'); return; }
+  var newProd = {id:nextId(), mainCat:catMgrCat, subCat:catMgrSub, name:name};
+  DB.products.push(newProd);
+  saveData(); sbSaveProd(newProd);
+  input.value = '';
+  document.getElementById('catmgr-prod-input-row').style.display = 'none';
+  catMgrRenderProds();
+}
+
+function catMgrRenameSub(id, oldName) {
+  var row = document.getElementById('catmgr-sub-row-' + id);
+  var nameSpan = document.getElementById('catmgr-sub-name-' + id);
+  var renameBtn = document.getElementById('catmgr-sub-rename-' + id);
+  if(!row || !nameSpan || !renameBtn) return;
+  var input = document.createElement('input');
+  input.className = 'kinput'; input.value = oldName;
+  input.style.cssText = 'flex:1;font-size:14px;padding:6px 10px;';
+  nameSpan.replaceWith(input);
+  renameBtn.textContent = '저장';
+  input.focus(); input.select();
+  function doSave() {
+    var newName = input.value.trim();
+    if(!newName || newName===oldName) { catMgrRenderSubs(); return; }
+    var idx = DB.subs.findIndex(function(s){ return s.id===id; });
+    if(idx !== -1) {
+      DB.ads.forEach(function(a){ if(a.subCat===oldName && a.mainCat===catMgrCat) a.subCat=newName; });
+      DB.products.forEach(function(p){ if(p.subCat===oldName && p.mainCat===catMgrCat) p.subCat=newName; });
+      DB.subs[idx].name = newName;
+      saveData(); sb.from('subs').update({name:newName}).eq('id',id);
+    }
+    if(catMgrSub===oldName) catMgrSub=newName;
+    catMgrRenderSubs(); catMgrRenderProds(); renderAdmin();
+  }
+  renameBtn.onclick = doSave;
+  input.addEventListener('keydown', function(e){ if(e.key==='Enter') doSave(); if(e.key==='Escape') catMgrRenderSubs(); });
+}
+
+function catMgrRenameProd(id, oldName) {
+  var row = document.getElementById('catmgr-prod-row-' + id);
+  var nameSpan = document.getElementById('catmgr-prod-name-' + id);
+  var renameBtn = document.getElementById('catmgr-prod-rename-' + id);
+  if(!row || !nameSpan || !renameBtn) return;
+  var input = document.createElement('input');
+  input.className = 'kinput'; input.value = oldName;
+  input.style.cssText = 'flex:1;font-size:14px;padding:6px 10px;';
+  nameSpan.replaceWith(input);
+  renameBtn.textContent = '저장';
+  input.focus(); input.select();
+  function doSave() {
+    var newName = input.value.trim();
+    if(!newName || newName===oldName) { catMgrRenderProds(); return; }
+    var idx = DB.products.findIndex(function(p){ return p.id===id; });
+    if(idx !== -1) {
+      DB.ads.forEach(function(a){ if(a.product===oldName && a.subCat===catMgrSub && a.mainCat===catMgrCat) a.product=newName; });
+      DB.products[idx].name = newName;
+      saveData(); sb.from('products').update({name:newName}).eq('id',id);
+    }
+    catMgrRenderProds();
+  }
+  renameBtn.onclick = doSave;
+  input.addEventListener('keydown', function(e){ if(e.key==='Enter') doSave(); if(e.key==='Escape') catMgrRenderProds(); });
+}
+
+function catMgrDeleteSub(id, name) {
+  var list = document.getElementById('catmgr-sub-list');
+  var targetRow = null;
+  list.querySelectorAll('div').forEach(function(r) {
+    if(r.querySelector && r.querySelector('span') && r.querySelector('span').textContent===name) targetRow=r;
+  });
+  if(!targetRow) return;
+  targetRow.style.background = '#fff0f0';
+  targetRow.style.border = '1.5px solid #e03333';
+  targetRow.innerHTML =
+    '<span style="flex:1;font-size:13px;font-weight:600;color:#e03333;">\''+name+'\' 삭제할까요?</span>'
+    +'<button id="catdel-confirm-'+id+'" style="padding:5px 16px;background:#e03333;border:none;border-radius:7px;font-size:12px;font-weight:700;cursor:pointer;color:#fff;font-family:Pretendard,sans-serif;">삭제</button>'
+    +'<button id="catdel-cancel-'+id+'" style="padding:5px 16px;background:#f0f0f0;border:none;border-radius:7px;font-size:12px;font-weight:600;cursor:pointer;color:#555;font-family:Pretendard,sans-serif;">취소</button>';
+  document.getElementById('catdel-confirm-'+id).addEventListener('click', function() {
+    DB.ads = DB.ads.filter(function(a){ return !(a.mainCat===catMgrCat && a.subCat===name); });
+    DB.products = DB.products.filter(function(p){ return !(p.mainCat===catMgrCat && p.subCat===name); });
+    DB.subs = DB.subs.filter(function(s){ return s.id!==id; });
+    saveData(); sbDeleteSub(id);
+    if(catMgrSub===name) catMgrSub='';
+    catMgrRenderSubs(); catMgrRenderProds(); renderAdmin();
+  });
+  document.getElementById('catdel-cancel-'+id).addEventListener('click', function() { catMgrRenderSubs(); });
+}
+
+function catMgrDeleteProd(id, name) {
+  var list = document.getElementById('catmgr-prod-list');
+  var targetRow = null;
+  list.querySelectorAll('div').forEach(function(r) {
+    if(r.querySelector && r.querySelector('span') && r.querySelector('span').textContent===name) targetRow=r;
+  });
+  if(!targetRow) return;
+  targetRow.style.background = '#fff0f0';
+  targetRow.style.border = '1.5px solid #e03333';
+  targetRow.innerHTML =
+    '<span style="flex:1;font-size:13px;font-weight:600;color:#e03333;">\''+name+'\' 삭제할까요?</span>'
+    +'<button id="proddel-confirm-'+id+'" style="padding:5px 16px;background:#e03333;border:none;border-radius:7px;font-size:12px;font-weight:700;cursor:pointer;color:#fff;font-family:Pretendard,sans-serif;">삭제</button>'
+    +'<button id="proddel-cancel-'+id+'" style="padding:5px 16px;background:#f0f0f0;border:none;border-radius:7px;font-size:12px;font-weight:600;cursor:pointer;color:#555;font-family:Pretendard,sans-serif;">취소</button>';
+  document.getElementById('proddel-confirm-'+id).addEventListener('click', function() {
+    DB.ads = DB.ads.filter(function(a){ return !(a.product===name && a.subCat===catMgrSub && a.mainCat===catMgrCat); });
+    DB.products = DB.products.filter(function(p){ return p.id!==id; });
+    saveData(); sbDeleteProd(id);
+    catMgrRenderProds(); renderAdmin();
+  });
+  document.getElementById('proddel-cancel-'+id).addEventListener('click', function() { catMgrRenderProds(); });
+}
+
 // ── Category Edit Modal ──
 var editCatMode = ''; // 'sub' or 'prod'
 
@@ -2836,13 +3198,31 @@ function editCatStartRename(id, oldName) {
 }
 
 function editCatDelete(id, name) {
-  if(!confirm(name + ' 을(를) 삭제할까요?')) return;
-  if(editCatMode === 'sub') {
-    adminDeleteSub(id, name);
-  } else {
-    adminDeleteProd(id, name);
-  }
-  renderEditCatList();
+  var row = document.getElementById('kedit-row-'+id);
+  if(!row) return;
+  row.innerHTML =
+    '<span style="flex:1;font-size:12px;color:#e03333;font-weight:600;">\''+name+'\' 삭제할까요?</span>'
+    +'<button id="editdel-confirm-'+id+'" style="padding:4px 12px;background:#e03333;border:none;border-radius:6px;font-size:11px;font-weight:700;cursor:pointer;color:#fff;font-family:Pretendard,sans-serif;">삭제</button>'
+    +'<button id="editdel-cancel-'+id+'" style="padding:4px 12px;background:#e8e8e8;border:none;border-radius:6px;font-size:11px;font-weight:600;cursor:pointer;color:#555;font-family:Pretendard,sans-serif;">취소</button>';
+  document.getElementById('editdel-confirm-'+id).addEventListener('click', function() {
+    if(editCatMode === 'sub') {
+      DB.ads = DB.ads.filter(function(a){ return !(a.mainCat===aState.cat && a.subCat===name); });
+      DB.products = DB.products.filter(function(p){ return !(p.mainCat===aState.cat && p.subCat===name); });
+      DB.subs = DB.subs.filter(function(s){ return s.id!==id; });
+      saveData(); sbDeleteSub(id);
+      if(aState.sub===name) aState.sub='';
+    } else {
+      DB.ads = DB.ads.filter(function(a){ return !(a.mainCat===aState.cat && a.subCat===aState.sub && a.product===name); });
+      DB.products = DB.products.filter(function(p){ return p.id!==id; });
+      saveData(); sbDeleteProd(id);
+      if(aState.prod===name) aState.prod='__all__';
+    }
+    renderEditCatList();
+    renderAdmin();
+  });
+  document.getElementById('editdel-cancel-'+id).addEventListener('click', function() {
+    renderEditCatList();
+  });
 }
 
 function editCatAdd() {
@@ -2992,7 +3372,7 @@ function adminTabUI() {
 }
 
 function renderAdminRequests() {
-  ['adminSubRow','adminProdRow','adminCatBar'].forEach(function(id){
+  ['adminSubRow','adminProdRow','adminCatBar','adminSearchRow'].forEach(function(id){
     var el=document.getElementById(id);
     if(el) el.style.display='none';
   });
@@ -3012,15 +3392,14 @@ function renderAdminRequests() {
     + '<div class="kdash-grid" style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;">';
   DASH_STATUS.forEach(function(s) {
     var cnt = requests.filter(function(r){ return r.status === s.label; }).length;
-    var isColored = s.label !== '요청';
-    dashHTML += '<div style="background:' + s.bg + ';border-radius:14px;padding:18px 16px;">'
-      + '<div style="display:flex;align-items:center;gap:6px;margin-bottom:10px;">'
-        + '<span style="width:8px;height:8px;border-radius:50%;background:' + s.dot + ';flex-shrink:0;display:inline-block;"></span>'
-        + '<span style="font-size:13px;font-weight:700;color:' + s.color + ';">' + s.label + '</span>'
+    dashHTML += '<div style="background:' + s.bg + ';border-radius:14px;padding:14px 16px;display:flex;align-items:center;justify-content:space-between;">'
+      + '<div style="display:flex;align-items:center;gap:6px;">'
+        + '<span style="width:7px;height:7px;border-radius:50%;background:' + s.dot + ';flex-shrink:0;display:inline-block;"></span>'
+        + '<span style="font-size:13px;font-weight:700;color:' + s.color + ';font-family:Pretendard,sans-serif;">' + s.label + '</span>'
       + '</div>'
-      + '<div style="display:flex;align-items:baseline;gap:4px;">'
-        + '<span style="font-size:28px;font-weight:800;color:' + s.color + ';">' + cnt + '</span>'
-        + '<span style="font-size:13px;font-weight:500;color:' + s.color + ';">건</span>'
+      + '<div style="display:flex;align-items:baseline;gap:3px;">'
+        + '<span style="font-size:22px;font-weight:700;color:' + s.color + ';font-family:\'Gmarket Sans\',sans-serif;letter-spacing:-0.03em;line-height:1;">' + cnt + '</span>'
+        + '<span style="font-size:11px;font-weight:500;color:' + s.color + ';opacity:0.7;font-family:Pretendard,sans-serif;">건</span>'
       + '</div>'
     + '</div>';
   });
