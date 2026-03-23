@@ -530,6 +530,14 @@ html, body { height: 100%; overflow: hidden; overflow-x: hidden; max-width: 100%
 .kedit-rename-btn.saving { background: #111; color: #fff; }
 .kedit-del-btn { background: #fff0f0; color: #e03333; }
 
+/* ── Admin Dashboard grid ── */
+@media(max-width:700px) {
+  .kdash-grid { grid-template-columns: repeat(3,1fr) !important; }
+}
+@media(max-width:420px) {
+  .kdash-grid { grid-template-columns: repeat(2,1fr) !important; }
+}
+
 /* ── Add sub inline btn ── */
 .kadd-sub-btn {
   flex-shrink: 0; padding: 4px 12px;
@@ -2922,7 +2930,7 @@ function updateRequestManager(reqId, manager) {
 
 
 // ── Custom Status Dropdown ──
-var STATUS_COLORS = {'검토 중':'#111','진행 중':'#555','완료':'#aaa','반려':'#e03333'};
+var STATUS_COLORS = {'검토 중':'#F97316','진행 중':'#3B82F6','완료':'#1C6B3A','반려':'#EF4444'};
 var STATUS_LIST = ['검토 중','진행 중','완료','반려'];
 
 function makeStatusDropdown(reqId, currentStatus, onChangeFn) {
@@ -2992,8 +3000,35 @@ function renderAdminRequests() {
   if(!el) return;
   var requests = DB.requests||[];
 
+  // ── 대시보드 ──
+  var DASH_STATUS = [
+    { label: '요청',   color: '#555',    bg: '#F0F0F0', dot: '#999' },
+    { label: '검토 중', color: '#92400E', bg: '#FFF3E0', dot: '#F97316' },
+    { label: '진행 중', color: '#1E40AF', bg: '#DBEAFE', dot: '#3B82F6' },
+    { label: '완료',   color: '#065F46', bg: '#D1FAE5', dot: '#1C6B3A' },
+    { label: '반려',   color: '#991B1B', bg: '#FEE2E2', dot: '#EF4444' },
+  ];
+  var dashHTML = '<div style="margin-bottom:32px;">'
+    + '<h2 style="font-size:20px;font-weight:800;color:#111;margin-bottom:20px;letter-spacing:-0.4px;">대시보드</h2>'
+    + '<div class="kdash-grid" style="display:grid;grid-template-columns:repeat(5,1fr);gap:12px;">';
+  DASH_STATUS.forEach(function(s) {
+    var cnt = requests.filter(function(r){ return r.status === s.label; }).length;
+    var isColored = s.label !== '요청';
+    dashHTML += '<div style="background:' + s.bg + ';border-radius:14px;padding:18px 16px;">'
+      + '<div style="display:flex;align-items:center;gap:6px;margin-bottom:10px;">'
+        + '<span style="width:8px;height:8px;border-radius:50%;background:' + s.dot + ';flex-shrink:0;display:inline-block;"></span>'
+        + '<span style="font-size:13px;font-weight:700;color:' + s.color + ';">' + s.label + '</span>'
+      + '</div>'
+      + '<div style="display:flex;align-items:baseline;gap:4px;">'
+        + '<span style="font-size:28px;font-weight:800;color:' + s.color + ';">' + cnt + '</span>'
+        + '<span style="font-size:13px;font-weight:500;color:' + s.color + ';">건</span>'
+      + '</div>'
+    + '</div>';
+  });
+  dashHTML += '</div></div>';
+
   if(requests.length === 0) {
-    el.innerHTML = '<div class="kempty"><div class="kempty-title">접수된 신청서가 없습니다</div><div class="kempty-sub">광고 신청하기를 통해 제출된 신청서가 여기 표시됩니다</div></div>';
+    el.innerHTML = dashHTML + '<div class="kempty"><div class="kempty-title">접수된 신청서가 없습니다</div><div class="kempty-sub">광고 신청하기를 통해 제출된 신청서가 여기 표시됩니다</div></div>';
     return;
   }
 
@@ -3032,13 +3067,13 @@ function renderAdminRequests() {
 }
 
   var sections = [
-    { label: '검토 중', statuses: ['검토 중'], color: '#111' },
-    { label: '진행 중', statuses: ['진행 중'], color: '#555' },
-    { label: '완료', statuses: ['완료'], color: '#aaa' },
-    { label: '반려', statuses: ['반려'], color: '#e03333' },
+    { label: '검토 중', statuses: ['검토 중'], color: '#92400E', bg: '#FFF3E0', dot: '#F97316' },
+    { label: '진행 중', statuses: ['진행 중'], color: '#1E40AF', bg: '#DBEAFE', dot: '#3B82F6' },
+    { label: '완료',   statuses: ['완료'],   color: '#065F46', bg: '#D1FAE5', dot: '#1C6B3A' },
+    { label: '반려',   statuses: ['반려'],   color: '#991B1B', bg: '#FEE2E2', dot: '#EF4444' },
   ];
 
-  el.innerHTML = '';
+  el.innerHTML = dashHTML;
 
   sections.forEach(function(sec) {
     var items = requests.filter(function(r){ return sec.statuses.indexOf(r.status) !== -1; });
@@ -3048,7 +3083,8 @@ function renderAdminRequests() {
 
     var header = document.createElement('div');
     header.style.cssText = 'display:flex;align-items:center;gap:8px;margin-bottom:12px;';
-    header.innerHTML = '<span style="font-size:18px;font-weight:700;letter-spacing:-0.4px;color:'+sec.color+';">'+sec.label+'</span>'
+    header.innerHTML = '<span style="width:8px;height:8px;border-radius:50%;background:'+sec.dot+';display:inline-block;flex-shrink:0;"></span>'
+      + '<span style="font-size:18px;font-weight:700;letter-spacing:-0.4px;color:'+sec.color+';">'+sec.label+'</span>'
       + (items.length > 0 ? '<span style="font-size:12px;color:#bbb;">'+items.length+'건</span>' : '');
     section.appendChild(header);
 
@@ -3280,7 +3316,7 @@ function searchReqStatus() {
       + '<div style="font-size:13px;color:#bbb;">입력한 연락처로 등록된 신청이 없습니다</div></div>';
     return;
   }
-  var statusColors = {'검토 중':'#555','진행 중':'#111','완료':'#2d7a2d','반려':'#e03333'};
+  var statusColors = {'검토 중':'#F97316','진행 중':'#3B82F6','완료':'#1C6B3A','반려':'#EF4444'};
   var cards = matched.map(function(req) {
     var sc = statusColors[req.status]||'#111';
     return '<div style="border:1.5px solid rgba(0,0,0,0.08);border-radius:14px;overflow:hidden;margin-bottom:10px;">'
