@@ -195,15 +195,22 @@ html, body { height: 100%; overflow: hidden; overflow-x: hidden; max-width: 100%
   .ksearch-row { padding: 8px 16px; }
   .admin-search-row {
     padding: 8px 16px;
-    flex-direction: column;
-    align-items: stretch;
+    flex-direction: row;
+    align-items: center;
     gap: 8px;
   }
+  .admin-search-row .ksearch-wrap {
+    flex: 1;
+    min-width: 0;
+  }
   .admin-catmgr-btn {
-    width: 100%;
+    width: auto;
     min-height: 40px;
-    border-radius: 8px;
+    border-radius: 6px;
     font-size: 12px;
+    flex-shrink: 0;
+    padding: 10px 12px;
+    white-space: nowrap;
   }
 }
 .ksearch-wrap {
