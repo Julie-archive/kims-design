@@ -5,6 +5,9 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
 <title>Kim's Club Design Archive</title>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+<script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/ko.js"></script>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" crossorigin />
 <style>
 @font-face {
@@ -580,6 +583,31 @@ html, body { height: 100%; overflow: hidden; overflow-x: hidden; max-width: 100%
   background: #111; color: #fff; border-color: #111;
 }
 #adreq-type-tabs::-webkit-scrollbar { display: none; }
+
+/* ── flatpickr 커스텀 ── */
+.flatpickr-calendar {
+  font-family: 'Pretendard', sans-serif !important;
+  border-radius: 16px !important;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.13) !important;
+  border: 1px solid rgba(0,0,0,0.08) !important;
+}
+.flatpickr-day.selected,
+.flatpickr-day.selected:hover {
+  background: #111 !important;
+  border-color: #111 !important;
+}
+.flatpickr-day:hover { background: #f0f0f0 !important; }
+.flatpickr-day.disabled,
+.flatpickr-day.disabled:hover {
+  color: #ddd !important;
+  background: transparent !important;
+  cursor: not-allowed !important;
+}
+.flatpickr-months .flatpickr-month { color: #111 !important; }
+.flatpickr-current-month { font-weight: 700 !important; font-size: 14px !important; }
+.flatpickr-weekday { color: #999 !important; font-weight: 600 !important; font-size: 11px !important; }
+.flatpickr-day.today { border-color: #111 !important; }
+.flatpickr-day.today:hover { background: #f0f0f0 !important; }
 
 /* ── Ad category horizontal tabs + dropdown overlay ── */
 .rq-adcat-tab {
@@ -1649,7 +1677,7 @@ function renderAdmin() {
               <button class="ksub-pill-del" title="${s.name} 삭제" onclick="adminDeleteSub(${s.id},'${s.name}')">×</button>
             </div>
           `).join('')}
-          <button class="kadd-sub-btn" onclick="openEditCatModal(\'sub\')">✎ 세부 편집</button>
+
         </div>
       </div>
       <!-- Content -->
@@ -2374,7 +2402,7 @@ function rqInitFixedCalendar() {
 
   if(typeof flatpickr !== 'undefined') {
     rqFixedPicker = flatpickr(calInput, {
-      locale: 'ko',
+      locale: flatpickr.l10ns.ko || 'ko',
       dateFormat: 'Y-m-d',
       minDate: 'today',
       disable: [function(date) { var d = date.getDay(); return d !== 2 && d !== 5; }],
@@ -2400,7 +2428,7 @@ function rqInitCustomCalendar() {
 
   if(typeof flatpickr !== 'undefined') {
     rqCustomPicker = flatpickr(calInput, {
-      locale: 'ko',
+      locale: flatpickr.l10ns.ko || 'ko',
       dateFormat: 'Y-m-d',
       minDate: 'today',
       onChange: function(selectedDates, dateStr) {
