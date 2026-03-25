@@ -1297,10 +1297,12 @@ async function sbLoadAll() {
     DB.requests = reqsRes.data.map(function(r){ return {
       id:r.id, reqCode:r.req_code, submittedAt:r.submitted_at, status:r.status,
       dept:r.dept, name:r.name, tel:r.tel, title:r.title, deadline:r.deadline,
-      adTypes:r.ad_types||[], bannerType:r.banner_type, customSize:r.custom_size,
-      adTitle:r.ad_title, selling:r.selling, eventStart:r.event_start, eventEnd:r.event_end,
+      adTypes:r.ad_types||[], bannerType:r.banner_type||'', customSize:r.custom_size||'',
+      adTitle:r.ad_title, selling:r.selling, eventStart:r.event_start||'', eventEnd:r.event_end||'',
       eventDesc:r.event_desc, sitePhotoSrcs:r.site_photo_srcs||[], refImageSrcs:r.ref_image_srcs||[],
-      manager:r.manager, dueDate:r.due_date
+      manager:r.manager, dueDate:r.due_date,
+      branch:r.branch||'', deliveryDay:r.delivery_day||'',
+      adTypeDetails:r.ad_type_details||{}, productPhotoSrcs:r.product_photo_srcs||[]
     }; });
     // localStorage에 저장하지 않음 - 항상 Supabase가 원본
     return true;
@@ -1356,20 +1358,34 @@ async function sbDeleteAd(id) {
 
 async function sbSaveRequest(req) {
   try {
-    const res = await sb.from('requests').insert({
+    const insertData = {
       req_code:req.reqCode, submitted_at:req.submittedAt, status:req.status,
       dept:req.dept, name:req.name, tel:req.tel, title:req.title, deadline:req.deadline,
-      ad_types:req.adTypes, banner_type:req.bannerType, custom_size:req.customSize,
-      ad_title:req.adTitle, selling:req.selling, event_start:req.eventStart, event_end:req.eventEnd,
-      event_desc:req.eventDesc, site_photo_srcs:req.sitePhotoSrcs, ref_image_srcs:req.refImageSrcs,
-      manager:req.manager||'', due_date:req.dueDate||''
-    }).select().single();
+      ad_types:req.adTypes, banner_type:req.bannerType||'', custom_size:req.customSize||'',
+      ad_title:req.adTitle, selling:req.selling, event_start:req.eventStart||'', event_end:req.eventEnd||'',
+      event_desc:req.eventDesc, site_photo_srcs:req.sitePhotoSrcs||[], ref_image_srcs:req.refImageSrcs||[],
+      manager:req.manager||'', due_date:req.dueDate||'',
+      branch:req.branch||'', delivery_day:req.deliveryDay||'',
+      ad_type_details:req.adTypeDetails||{}, product_photo_srcs:req.productPhotoSrcs||[]
+    };
+    var res = await sb.from('requests').insert(insertData).select().single();
+    // 새 컬럼 없을 때 fallback: 새 필드 제외하고 재시도
+    if(res.error && res.error.code === '42703') {
+      var fallbackData = {
+        req_code:req.reqCode, submitted_at:req.submittedAt, status:req.status,
+        dept:req.dept, name:req.name, tel:req.tel, title:req.title, deadline:req.deadline,
+        ad_types:req.adTypes, banner_type:req.bannerType||'', custom_size:req.customSize||'',
+        ad_title:req.adTitle, selling:req.selling, event_start:req.eventStart||'', event_end:req.eventEnd||'',
+        event_desc:req.eventDesc, site_photo_srcs:req.sitePhotoSrcs||[], ref_image_srcs:req.refImageSrcs||[],
+        manager:req.manager||'', due_date:req.dueDate||''
+      };
+      res = await sb.from('requests').insert(fallbackData).select().single();
+    }
     if(res.error) throw res.error;
     req.id = res.data.id;
     return true;
   } catch(e) {
     console.warn('sbSaveRequest error:', e);
-    // 저장 실패 알림
     var t = document.createElement('div');
     t.style.cssText = 'position:fixed;top:20px;left:50%;transform:translateX(-50%);background:#e03333;color:#fff;padding:12px 24px;border-radius:50px;font-size:13px;font-weight:600;z-index:9999;font-family:Pretendard,sans-serif;';
     t.textContent = '⚠️ 서버 저장 실패 — 잠시 후 다시 시도해주세요';
@@ -3903,21 +3919,6 @@ function deleteRequest(id) {
 // ══════════════════════════════════════════════════════
 //  REQUEST STATUS
 // ══════════════════════════════════════════════════════
-function openRequestSuccess(code) {
-  document.getElementById('successReqCode').textContent = code;
-  document.getElementById('modalReqSuccess').classList.add('open');
-}
-
-function copyReqCode() {
-  var code = document.getElementById('successReqCode').textContent;
-  navigator.clipboard.writeText(code).then(function(){
-    var btn = event.target;
-    btn.textContent = '복사됨!';
-    btn.style.borderColor = '#111';
-    btn.style.color = '#111';
-    setTimeout(function(){ btn.textContent = '복사'; btn.style.borderColor = '#ddd'; btn.style.color = '#555'; }, 1500);
-  });
-}
 
 function formatTelInput(el) {
   var v = el.value.replace(/[^0-9]/g,'');
