@@ -2704,6 +2704,8 @@ function rqSwitchDeliveryTab(tab) {
     if(customArea) customArea.style.display='none';
     var dayEl = document.getElementById('rq-delivery-day');
     if(dayEl) dayEl.value = '고정입고일';
+    // 항상 flatpickr 재초기화 (탭 전환 후 캘린더가 사라지는 버그 방지)
+    setTimeout(rqInitFixedCalendar, 50);
   } else {
     if(tabFixed) { tabFixed.style.background='none'; tabFixed.style.color='#999'; }
     if(tabCustom) { tabCustom.style.background='#111'; tabCustom.style.color='#fff'; }
@@ -3064,6 +3066,10 @@ function rqEditSave() {
   var deliveryDayLabel = deliveryDay;
   if(deliveryDate) deliveryDayLabel += ' (' + deliveryDate + ')';
 
+  // idx 먼저 선언 (이후 사진 수집에서 기존 데이터 참조에 사용)
+  var idx = (DB.requests||[]).findIndex(function(r){ return String(r.id)===String(rqEditTargetId); });
+  if(idx===-1) return;
+
   // 현장 사진 수집 (DOM 미리보기에서)
   var sitePrevWrap = document.getElementById('rq-site-preview');
   var newSitePhotoSrcs = sitePrevWrap ? Array.from(sitePrevWrap.querySelectorAll('img')).map(function(img){ return img.src; }) : [];
@@ -3077,9 +3083,6 @@ function rqEditSave() {
   var prodPrevWrap = document.getElementById('rq-product-preview');
   var newProductPhotoSrcs = prodPrevWrap ? Array.from(prodPrevWrap.querySelectorAll('img')).map(function(img){ return img.src; }) : [];
   var finalProductPhotoSrcs = newProductPhotoSrcs.length > 0 ? newProductPhotoSrcs : (DB.requests[idx].productPhotoSrcs||[]);
-
-  var idx = (DB.requests||[]).findIndex(function(r){ return String(r.id)===String(rqEditTargetId); });
-  if(idx===-1) return;
 
   // Storage 업로드 후 저장
   processRequestFiles(finalSitePhotoSrcs, 'site_edit').then(async function(uploadedSite) {
@@ -3195,7 +3198,7 @@ function openReqEdit(reqId) {
       if(req.deliveryDay) {
         var dateMatch = req.deliveryDay.match(/(\d{4}-\d{2}-\d{2})/);
         var isCustom = req.deliveryDay.indexOf('별도') !== -1;
-        rqDeliveryTypeChange(isCustom ? 'custom' : 'fixed');
+        rqSwitchDeliveryTab(isCustom ? 'custom' : 'fixed');
         if(dateMatch) setTimeout(function(){ if(rqDeliveryPicker) rqDeliveryPicker.setDate(dateMatch[1]); }, 100);
       }
     }, 100);
@@ -3399,7 +3402,7 @@ function adminRenameSub(id, oldName) {
   input.select();
   function save() {
     var newName = input.value.trim();
-    if(!newName || newName === oldName) { renderAdminSubRow(); return; }
+    if(!newName || newName === oldName) { renderAdmin(); return; }
     var idx = DB.subs.findIndex(function(s){ return s.id===id; });
     if(idx !== -1) {
       // 관련 ads, products도 업데이트
@@ -3409,12 +3412,12 @@ function adminRenameSub(id, oldName) {
       saveData();
       // Supabase 업데이트
       sb.from('subs').update({name:newName}).eq('id',id);
+      if(aState.sub === oldName) aState.sub = newName;
     }
-    renderAdminSubRow();
-    renderAdminProdRow();
+    renderAdmin();
   }
   input.addEventListener('blur', save);
-  input.addEventListener('keydown', function(e){ if(e.key==='Enter') { input.blur(); } if(e.key==='Escape') { renderAdminSubRow(); } });
+  input.addEventListener('keydown', function(e){ if(e.key==='Enter') { input.removeEventListener('blur', save); input.blur(); save(); } if(e.key==='Escape') { input.removeEventListener('blur', save); renderAdmin(); } });
 }
 
 function adminRenameProd(id, oldName) {
@@ -3428,18 +3431,19 @@ function adminRenameProd(id, oldName) {
   input.select();
   function save() {
     var newName = input.value.trim();
-    if(!newName || newName === oldName) { renderAdminProdRow(); return; }
+    if(!newName || newName === oldName) { renderAdmin(); return; }
     var idx = DB.products.findIndex(function(p){ return p.id===id; });
     if(idx !== -1) {
       DB.ads.forEach(function(a){ if(a.product===oldName) a.product=newName; });
       DB.products[idx].name = newName;
       saveData();
       sb.from('products').update({name:newName}).eq('id',id);
+      if(aState.prod === oldName) aState.prod = newName;
     }
-    renderAdminProdRow();
+    renderAdmin();
   }
   input.addEventListener('blur', save);
-  input.addEventListener('keydown', function(e){ if(e.key==='Enter') { input.blur(); } if(e.key==='Escape') { renderAdminProdRow(); } });
+  input.addEventListener('keydown', function(e){ if(e.key==='Enter') { input.removeEventListener('blur', save); input.blur(); save(); } if(e.key==='Escape') { input.removeEventListener('blur', save); renderAdmin(); } });
 }
 
 
@@ -3865,12 +3869,22 @@ function editCatAdd() {
   var name = input.value.trim();
   if(!name) return;
   if(editCatMode === 'sub') {
-    addSubConfirm(aState.cat, name);
+    if(DB.subs.find(function(s){ return s.mainCat===aState.cat && s.name===name; })) { alert('이미 존재하는 카테고리입니다'); return; }
+    var newSub = {id:nextId(), mainCat:aState.cat, name:name};
+    DB.subs.push(newSub);
+    saveData();
+    sbSaveSub(newSub);
   } else {
-    addProdConfirm(aState.cat, aState.sub, name);
+    if(!aState.sub) { alert('세부 카테고리를 먼저 선택하세요'); return; }
+    if(DB.products.find(function(p){ return p.mainCat===aState.cat && p.subCat===aState.sub && p.name===name; })) { alert('이미 존재하는 상품입니다'); return; }
+    var newProd = {id:nextId(), mainCat:aState.cat, subCat:aState.sub, name:name};
+    DB.products.push(newProd);
+    saveData();
+    sbSaveProd(newProd);
   }
   input.value = '';
   setTimeout(renderEditCatList, 100);
+  renderAdmin();
 }
 
 // ══════════════════════════════════════════════════════
