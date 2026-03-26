@@ -3052,34 +3052,57 @@ function rqEditSave() {
   var deliveryDayLabel = deliveryDay;
   if(deliveryDate) deliveryDayLabel += ' (' + deliveryDate + ')';
 
+  // 현장 사진 수집 (DOM 미리보기에서)
+  var sitePrevWrap = document.getElementById('rq-site-preview');
+  var newSitePhotoSrcs = sitePrevWrap ? Array.from(sitePrevWrap.querySelectorAll('img')).map(function(img){ return img.src; }) : [];
+  // 기존 사진 유지 + 새로 추가된 것 (빈 경우 기존 유지)
+  var finalSitePhotoSrcs = newSitePhotoSrcs.length > 0 ? newSitePhotoSrcs : (DB.requests[idx].sitePhotoSrcs||[]);
+
+  var refPrevWrap = document.getElementById('rq-ref-preview');
+  var newRefImageSrcs = refPrevWrap ? Array.from(refPrevWrap.querySelectorAll('img')).map(function(img){ return img.src; }) : [];
+  var finalRefImageSrcs = newRefImageSrcs.length > 0 ? newRefImageSrcs : (DB.requests[idx].refImageSrcs||[]);
+
+  var prodPrevWrap = document.getElementById('rq-product-preview');
+  var newProductPhotoSrcs = prodPrevWrap ? Array.from(prodPrevWrap.querySelectorAll('img')).map(function(img){ return img.src; }) : [];
+  var finalProductPhotoSrcs = newProductPhotoSrcs.length > 0 ? newProductPhotoSrcs : (DB.requests[idx].productPhotoSrcs||[]);
+
   var idx = (DB.requests||[]).findIndex(function(r){ return String(r.id)===String(rqEditTargetId); });
   if(idx===-1) return;
-  DB.requests[idx] = Object.assign({}, DB.requests[idx], {
-    dept, name, tel, title, deadline, adTitle, selling, eventDesc,
-    adTypes: adTypesArr, adTypeDetails, branch, deliveryDay: deliveryDayLabel
+
+  // Storage 업로드 후 저장
+  processRequestFiles(finalSitePhotoSrcs, 'site_edit').then(async function(uploadedSite) {
+    var uploadedRef = await processRequestFiles(finalRefImageSrcs, 'ref_edit');
+    var uploadedProd = await processRequestFiles(finalProductPhotoSrcs, 'prod_edit');
+
+    DB.requests[idx] = Object.assign({}, DB.requests[idx], {
+      dept, name, tel, title, deadline, adTitle, selling, eventDesc,
+      adTypes: adTypesArr, adTypeDetails, branch, deliveryDay: deliveryDayLabel,
+      sitePhotoSrcs: uploadedSite, refImageSrcs: uploadedRef, productPhotoSrcs: uploadedProd
+    });
+    var updated = DB.requests[idx];
+    saveData();
+
+    sb.from('requests').update({
+      dept:updated.dept, name:updated.name, tel:updated.tel,
+      title:updated.title, deadline:updated.deadline,
+      ad_title:updated.adTitle, selling:updated.selling, event_desc:updated.eventDesc,
+      ad_types:updated.adTypes, ad_type_details:updated.adTypeDetails,
+      branch:updated.branch, delivery_day:updated.deliveryDay,
+      site_photo_srcs:updated.sitePhotoSrcs, ref_image_srcs:updated.refImageSrcs,
+      product_photo_srcs:updated.productPhotoSrcs
+    }).eq('id', updated.id).then(function(res){
+      if(res.error) console.warn('수정 저장 실패:', res.error);
+    });
+
+    rqEditTargetId = null;
+    modalClose('modalRequest');
+
+    var toast2 = document.createElement('div');
+    toast2.style.cssText = 'position:fixed;top:24px;left:50%;transform:translateX(-50%);background:#111;color:#fff;padding:12px 28px;border-radius:50px;font-size:13px;font-weight:700;z-index:9999;';
+    toast2.textContent = '✓ 신청 내용이 수정되었습니다';
+    document.body.appendChild(toast2);
+    setTimeout(function(){ toast2.remove(); }, 2500);
   });
-  var updated = DB.requests[idx];
-  saveData();
-
-  // Supabase 업데이트
-  sb.from('requests').update({
-    dept:updated.dept, name:updated.name, tel:updated.tel,
-    title:updated.title, deadline:updated.deadline,
-    ad_title:updated.adTitle, selling:updated.selling, event_desc:updated.eventDesc,
-    ad_types:updated.adTypes, ad_type_details:updated.adTypeDetails,
-    branch:updated.branch, delivery_day:updated.deliveryDay
-  }).eq('id', updated.id).then(function(res){
-    if(res.error) console.warn('수정 저장 실패:', res.error);
-  });
-
-  rqEditTargetId = null;
-  modalClose('modalRequest');
-
-  var toast2 = document.createElement('div');
-  toast2.style.cssText = 'position:fixed;top:24px;left:50%;transform:translateX(-50%);background:#111;color:#fff;padding:12px 28px;border-radius:50px;font-size:13px;font-weight:700;z-index:9999;';
-  toast2.textContent = '✓ 신청 내용이 수정되었습니다';
-  document.body.appendChild(toast2);
-  setTimeout(function(){ toast2.remove(); }, 2500);
 }
 
 function openReqEdit(reqId) {
@@ -4245,6 +4268,61 @@ function openReqStatusModal() {
   setTimeout(function(){ document.getElementById('statusCodeInput').focus(); }, 200);
 }
 
+function openReqUserDetail(reqId) {
+  var req = (DB.requests||[]).find(function(r){ return String(r.id)===String(reqId); });
+  if(!req) return;
+  var statusColors = {'검토 중':'#F97316','진행 중':'#3B82F6','완료':'#1C6B3A','반려':'#EF4444'};
+  var sc = statusColors[req.status]||'#111';
+
+  // 광고 종류 + 사이즈
+  var adTypePills = (req.adTypes||[]).map(function(t){
+    var d = (req.adTypeDetails||{})[t];
+    var dStr = '';
+    if(d){ if(d.w&&d.h) dStr+=' '+d.w+'×'+d.h+'mm'; if(d.qty) dStr+=' ×'+d.qty+'개'; }
+    return '<span style="background:#111;color:#fff;font-size:12px;font-weight:600;padding:4px 12px;border-radius:50px;display:inline-block;margin:2px;">'+t+dStr+'</span>';
+  }).join('');
+
+  var rows = [
+    ['소속', req.dept], ['이름', req.name], ['연락처', req.tel],
+    ['마감 요청일', req.deadline], ['입고 지점', req.branch], ['입고 요청일', req.deliveryDay],
+    ['타이틀', req.adTitle], ['셀링 문구', req.selling], ['행사 내용', req.eventDesc]
+  ].filter(function(r){ return r[1]; }).map(function(r){
+    return '<div style="margin-bottom:10px;"><div style="font-size:10px;font-weight:700;color:#aaa;margin-bottom:3px;text-transform:uppercase;">'+r[0]+'</div>'
+      +'<div style="font-size:14px;color:#111;white-space:pre-wrap;line-height:1.5;">'+r[1]+'</div></div>';
+  }).join('');
+
+  // 사진 미리보기
+  var sitePics = (req.sitePhotoSrcs||[]).map(function(src){
+    return '<img src="'+src+'" onclick="openLightbox(\''+src+'\')" style="width:80px;height:80px;object-fit:cover;border-radius:8px;cursor:zoom-in;border:1px solid rgba(0,0,0,0.08);" />';
+  }).join('');
+
+  var html = '<div style="padding:0;">'
+    +'<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;">'
+      +'<span style="background:'+sc+';color:#fff;font-size:12px;font-weight:700;padding:4px 12px;border-radius:50px;">'+req.status+'</span>'
+      +'<span style="font-size:11px;color:#aaa;font-weight:600;">'+( req.reqCode||'')+'</span>'
+    +'</div>'
+    +'<div style="font-size:18px;font-weight:900;letter-spacing:-0.03em;margin-bottom:4px;">'+req.title+'</div>'
+    +'<div style="font-size:12px;color:#bbb;margin-bottom:20px;">신청: '+req.submittedAt+'</div>'
+    + (adTypePills ? '<div style="margin-bottom:16px;"><div style="font-size:10px;font-weight:700;color:#aaa;margin-bottom:6px;text-transform:uppercase;">광고 종류</div><div>'+adTypePills+'</div></div>' : '')
+    +'<div style="background:#f7f8f5;border-radius:12px;padding:16px;margin-bottom:16px;">'+rows+'</div>'
+    + (sitePics ? '<div style="margin-bottom:16px;"><div style="font-size:10px;font-weight:700;color:#aaa;margin-bottom:8px;text-transform:uppercase;">현장 사진</div><div style="display:flex;flex-wrap:wrap;gap:8px;">'+sitePics+'</div></div>' : '')
+    +'<button onclick="this.closest(\'.kmodal-overlay\').classList.remove(\'open\')" style="width:100%;padding:13px;background:#111;color:#fff;border:none;border-radius:50px;font-size:14px;font-weight:700;cursor:pointer;font-family:Pretendard,sans-serif;">닫기</button>'
+  +'</div>';
+
+  // 팝업 모달 동적 생성
+  var overlay = document.getElementById('modalReqUserDetail');
+  if(!overlay) {
+    overlay = document.createElement('div');
+    overlay.id = 'modalReqUserDetail';
+    overlay.className = 'kmodal-overlay center';
+    overlay.innerHTML = '<div class="kmodal-sheet" style="max-width:480px;border-radius:20px;max-height:90vh;overflow-y:auto;"><div class="kmodal-handle"></div><div id="modalReqUserDetailContent"></div></div>';
+    overlay.addEventListener('click', function(e){ if(e.target===overlay) overlay.classList.remove('open'); });
+    document.body.appendChild(overlay);
+  }
+  document.getElementById('modalReqUserDetailContent').innerHTML = html;
+  overlay.classList.add('open');
+}
+
 function searchReqStatus() {
   var tel = document.getElementById('statusCodeInput').value.trim().replace(/[^0-9]/g,'');
   var result = document.getElementById('statusResult');
@@ -4280,8 +4358,9 @@ function searchReqStatus() {
     var sc = statusColors[req.status]||'#111';
     var editBtn = '';
     var statusNote = '';
+    var detailBtn = '<button onclick="openReqUserDetail(\''+req.id+'\')" style="width:100%;margin-top:8px;padding:10px;background:#f7f7f7;border:1.5px solid rgba(0,0,0,0.1);border-radius:10px;font-size:13px;font-weight:600;color:#555;cursor:pointer;font-family:Pretendard,sans-serif;">📋 신청 내용 보기</button>';
     if(req.status === '검토 중') {
-      editBtn = '<button onclick="openReqEdit(\''+req.id+'\')" style="width:100%;margin-top:12px;padding:10px;background:#fff;border:1.5px solid #111;border-radius:10px;font-size:13px;font-weight:700;color:#111;cursor:pointer;font-family:Pretendard,sans-serif;">✎ 신청 내용 수정</button>';
+      editBtn = '<button onclick="openReqEdit(\''+req.id+'\')" style="width:100%;margin-top:8px;padding:10px;background:#111;border:none;border-radius:10px;font-size:13px;font-weight:700;color:#fff;cursor:pointer;font-family:Pretendard,sans-serif;">✎ 신청 내용 수정</button>';
     } else if(req.status === '진행 중') {
       statusNote = '<div style="margin-top:10px;background:#eff6ff;border-radius:8px;padding:10px 12px;font-size:12px;color:#1d4ed8;line-height:1.6;">진행 중인 신청은 수정할 수 없습니다.<br>변경이 필요하면 담당자 <strong>'+(req.manager||'')+'</strong>에게 문의해주세요.</div>';
     } else if(req.status === '반려') {
@@ -4303,6 +4382,7 @@ function searchReqStatus() {
         + '</div>'
         + '<div style="font-size:12px;color:#bbb;">마감: '+(req.deadline||'미정')+' · 신청: '+req.submittedAt+'</div>'
         + statusNote
+        + detailBtn
         + editBtn
       + '</div>'
     + '</div>';
