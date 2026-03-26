@@ -3151,45 +3151,6 @@ function openReqEdit(reqId) {
   }, 150);
 }
 
-function rqSubmit() {
-  const dept = (document.getElementById('dtRqDept')?.value||'').trim();
-  const name = (document.getElementById('dtRqName')?.value||'').trim();
-  const tel  = (document.getElementById('dtRqTel')?.value||'').trim();
-  const title = (document.getElementById('dtRqTitle')?.value||'').trim();
-  const deadline = (document.getElementById('dtRqDeadline')?.value||'');
-  const desc = (document.getElementById('dtRqDesc')?.value||'').trim();
-
-  var missing = [];
-  if(!dept||!name||!tel) missing.push('요청자 정보');
-  if(!title) missing.push('요청 제목');
-  if(!deadline) missing.push('마감 요청일');
-  if(missing.length > 0) {
-    var toast = document.createElement('div');
-    toast.style.cssText = 'position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:#fff;border:1.5px solid #e03333;color:#e03333;padding:20px 28px;border-radius:16px;font-size:14px;font-weight:700;z-index:9999;box-shadow:0 8px 32px rgba(0,0,0,0.15);text-align:center;line-height:1.6;';
-    toast.innerHTML = '<div style="font-size:16px;margin-bottom:6px;">필수 항목을 작성해주세요</div><div style="font-size:12px;font-weight:500;color:#999;">'+missing.join(', ')+'</div>';
-    document.body.appendChild(toast);
-    setTimeout(function(){ toast.remove(); }, 2500);
-    return;
-  }
-  var today = new Date();
-  var dateStr = today.getFullYear().toString()+String(today.getMonth()+1).padStart(2,'0')+String(today.getDate()).padStart(2,'0');
-  var sameDayCount = (DB.requests||[]).filter(function(r){ return r.reqCode && r.reqCode.indexOf('KD-'+dateStr)===0; }).length;
-  var reqCode = 'KD-'+dateStr+'-'+String(sameDayCount+1).padStart(3,'0');
-  var request = {
-    id:nextId(), reqCode, submittedAt:new Date().toLocaleString('ko-KR'),
-    status:'검토 중', dept, name, tel, title, deadline,
-    adTypes:[], bannerType:'', customSize:'',
-    adTitle:detailAd?.title||'', selling:'', eventStart:'', eventEnd:'',
-    eventDesc:desc, sitePhotoSrcs:[], refImageSrcs:[], manager:'', dueDate:''
-  };
-  if(!DB.requests) DB.requests=[];
-  DB.requests.unshift(request);
-  saveData();
-  sbSaveRequest(request);
-  modalClose('modalDetail');
-  openRequestSuccess(reqCode);
-}
-
 // ══════════════════════════════════════════════════════
 //  AD REQUEST (기존 광고 기반 간략 신청)
 // ══════════════════════════════════════════════════════
