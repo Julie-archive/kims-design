@@ -192,25 +192,7 @@ html, body { height: 100%; overflow: hidden; overflow-x: hidden; max-width: 100%
   background: #fff;
 }
 @media(max-width:600px) {
-  .ksearch-row { padding: 8px 16px 6px; }
-  .admin-search-row {
-    flex-direction: row;
-    align-items: center;
-    gap: 8px;
-  }
-  .admin-search-row .ksearch-wrap {
-    flex: 1;
-    min-width: 0;
-  }
-  .admin-catmgr-btn {
-    width: auto;
-    min-height: 40px;
-    border-radius: 6px;
-    font-size: 12px;
-    flex-shrink: 0;
-    padding: 10px 12px;
-    white-space: nowrap;
-  }
+  .ksearch-row { padding: 8px 16px; }
 }
 .ksearch-wrap {
   position: relative; display: flex; align-items: center;
@@ -235,33 +217,6 @@ html, body { height: 100%; overflow: hidden; overflow-x: hidden; max-width: 100%
 }
 .ksearch-clear.visible { opacity: 1; pointer-events: auto; }
 .ksearch-clear:hover { color: #555; }
-
-/* ── Admin search row ── */
-.admin-search-row {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  width: 100%;
-}
-.admin-search-row .ksearch-wrap {
-  flex: 1;
-  min-width: 0;
-}
-.admin-catmgr-btn {
-  flex-shrink: 0;
-  padding: 10px 16px;
-  background: #111;
-  border: none;
-  border-radius: 6px;
-  font-size: 13px;
-  font-weight: 700;
-  color: #fff;
-  cursor: pointer;
-  font-family: 'Pretendard', sans-serif;
-  white-space: nowrap;
-  letter-spacing: -0.02em;
-}
-.admin-catmgr-btn:hover { background: #333; }
 
 /* ── Content area ── */
 .kcontent { flex: 1; overflow-y: auto; padding: 24px 40px 60px; }
@@ -501,8 +456,8 @@ html, body { height: 100%; overflow: hidden; overflow-x: hidden; max-width: 100%
 @media(max-width:600px) {
   .kheader { padding: 12px 16px; }
   .ktab-bar { padding: 0; gap: 0; }
-  .ksub-row { padding: 6px 16px 10px; }
-  .kprod-row { padding: 8px 16px 12px; }
+  .ksub-row { padding: 10px 16px 0; }
+  .kprod-row { padding: 8px 16px; }
   .kcontent { padding: 16px 16px 60px; }
   .khero { padding: 40px 24px 40px; }
   .kcat-grid { padding: 0 24px 40px; gap: 8px; }
@@ -511,10 +466,10 @@ html, body { height: 100%; overflow: hidden; overflow-x: hidden; max-width: 100%
   /* 세부/상품 스크롤 - 사이즈 고정 */
   .ksub-pill { flex-shrink: 0 !important; white-space: nowrap; font-size: 13px; padding: 5px 14px; }
   .kprod-btn { flex-shrink: 0 !important; white-space: nowrap; }
-  .ksub-scroll { -webkit-overflow-scrolling: touch; padding-bottom: 0; align-items: center; }
+  .ksub-scroll { -webkit-overflow-scrolling: touch; }
   .kprod-scroll { -webkit-overflow-scrolling: touch; gap: 20px; }
   /* 관리자 헤더 광고아카이브 탭 모바일 */
-  .kheader-logo { width: 150px; }
+  .kheader-logo { width: 120px; }
   .kheader-btn { padding: 8px 14px; font-size: 12px; min-width: 80px; }
 }
 
@@ -1297,12 +1252,10 @@ async function sbLoadAll() {
     DB.requests = reqsRes.data.map(function(r){ return {
       id:r.id, reqCode:r.req_code, submittedAt:r.submitted_at, status:r.status,
       dept:r.dept, name:r.name, tel:r.tel, title:r.title, deadline:r.deadline,
-      adTypes:r.ad_types||[], bannerType:r.banner_type||'', customSize:r.custom_size||'',
-      adTitle:r.ad_title, selling:r.selling, eventStart:r.event_start||'', eventEnd:r.event_end||'',
+      adTypes:r.ad_types||[], bannerType:r.banner_type, customSize:r.custom_size,
+      adTitle:r.ad_title, selling:r.selling, eventStart:r.event_start, eventEnd:r.event_end,
       eventDesc:r.event_desc, sitePhotoSrcs:r.site_photo_srcs||[], refImageSrcs:r.ref_image_srcs||[],
-      manager:r.manager, dueDate:r.due_date,
-      branch:r.branch||'', deliveryDay:r.delivery_day||'',
-      adTypeDetails:r.ad_type_details||{}, productPhotoSrcs:r.product_photo_srcs||[]
+      manager:r.manager, dueDate:r.due_date
     }; });
     // localStorage에 저장하지 않음 - 항상 Supabase가 원본
     return true;
@@ -1368,9 +1321,19 @@ async function sbSaveRequest(req) {
       branch:req.branch||'', delivery_day:req.deliveryDay||'',
       ad_type_details:req.adTypeDetails||{}, product_photo_srcs:req.productPhotoSrcs||[]
     };
+
     var res = await sb.from('requests').insert(insertData).select().single();
-    // 새 컬럼 없을 때 fallback: 새 필드 제외하고 재시도
-    if(res.error && res.error.code === '42703') {
+
+    // requests 테이블에 신규 컬럼이 아직 없을 때 기본 필드만으로 재시도
+    var schemaMismatch =
+      !!res.error && (
+        res.error.code === '42703' ||
+        res.error.code === 'PGRST204' ||
+        /column|schema cache|Could not find the .* column/i.test(res.error.message || '') ||
+        /column|schema cache|Could not find the .* column/i.test(res.error.details || '')
+      );
+
+    if(schemaMismatch) {
       var fallbackData = {
         req_code:req.reqCode, submitted_at:req.submittedAt, status:req.status,
         dept:req.dept, name:req.name, tel:req.tel, title:req.title, deadline:req.deadline,
@@ -1381,6 +1344,7 @@ async function sbSaveRequest(req) {
       };
       res = await sb.from('requests').insert(fallbackData).select().single();
     }
+
     if(res.error) throw res.error;
     req.id = res.data.id;
     return true;
@@ -1388,9 +1352,9 @@ async function sbSaveRequest(req) {
     console.warn('sbSaveRequest error:', e);
     var t = document.createElement('div');
     t.style.cssText = 'position:fixed;top:20px;left:50%;transform:translateX(-50%);background:#e03333;color:#fff;padding:12px 24px;border-radius:50px;font-size:13px;font-weight:600;z-index:9999;font-family:Pretendard,sans-serif;';
-    t.textContent = '⚠️ 서버 저장 실패 — 잠시 후 다시 시도해주세요';
+    t.textContent = '⚠️ 신청서 저장 실패 — Supabase 컬럼 또는 권한 설정을 확인해주세요';
     document.body.appendChild(t);
-    setTimeout(function(){ t.remove(); }, 4000);
+    setTimeout(function(){ t.remove(); }, 4500);
     return false;
   }
 }
@@ -1711,22 +1675,20 @@ function renderAdmin() {
         `).join('')}
       </div>
       <!-- Search bar + 카테고리 관리 -->
-      <div class="ksearch-row">
-        <div id="adminSearchRow" class="admin-search-row">
-          <div class="ksearch-wrap">
-            <span class="ksearch-icon">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-            </span>
-            <input class="ksearch-input" id="adminSearchInput" type="text" placeholder="광고 검색..." value="${aState.search||''}"
-              oninput="adminSearchChange(this.value)"
-              onkeydown="if(event.key==='Escape'){adminSearchChange('');this.value='';}"
-              style="background:#f5f5f5;border:none;border-radius:6px;" />
-            <button class="ksearch-clear ${aState.search?'visible':''}" id="adminSearchClear" onclick="adminSearchChange('');document.getElementById('adminSearchInput').value='';document.getElementById('adminSearchInput').focus();">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="14" height="14"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-            </button>
-          </div>
-          <button onclick="openCatMgr()" class="admin-catmgr-btn">카테고리 관리</button>
+      <div id="adminSearchRow" style="display:flex;align-items:center;gap:8px;padding:10px 40px;background:#fff;flex-shrink:0;">
+        <div class="ksearch-wrap" style="flex:1;">
+          <span class="ksearch-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          </span>
+          <input class="ksearch-input" id="adminSearchInput" type="text" placeholder="광고 검색..." value="${aState.search||''}"
+            oninput="adminSearchChange(this.value)"
+            onkeydown="if(event.key==='Escape'){adminSearchChange('');this.value='';}"
+            style="background:#f5f5f5;border:none;border-radius:6px;" />
+          <button class="ksearch-clear ${aState.search?'visible':''}" id="adminSearchClear" onclick="adminSearchChange('');document.getElementById('adminSearchInput').value='';document.getElementById('adminSearchInput').focus();">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="14" height="14"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+          </button>
         </div>
+        <button onclick="openCatMgr()" style="flex-shrink:0;padding:10px 16px;background:#111;border:none;border-radius:6px;font-size:13px;font-weight:700;color:#fff;cursor:pointer;font-family:Pretendard,sans-serif;white-space:nowrap;letter-spacing:-0.02em;">카테고리 관리</button>
       </div>
       <!-- Sub pills -->
       <div class="ksub-row" id="adminSubRow">
@@ -2684,7 +2646,7 @@ function rqHandleFiles(input, type) {
   input.value = '';
 }
 
-function rqSubmit() {
+async function rqSubmit() {
   const dept = document.getElementById('rq-dept').value.trim();
   const name = document.getElementById('rq-name').value.trim();
   const tel = document.getElementById('rq-tel').value.trim();
@@ -2757,7 +2719,6 @@ function rqSubmit() {
     if(Object.keys(detail).length > 0) adTypeDetails[label] = detail;
   });
 
-  // Build request object
   var deliveryDayLabel = '';
   if(has연출물) {
     if(deliveryDay === '별도지정일') {
@@ -2766,6 +2727,7 @@ function rqSubmit() {
       deliveryDayLabel = deliveryDay + (deliveryDate ? ' ('+deliveryDate+')' : '');
     }
   }
+
   const request = {
     id: nextId(),
     submittedAt: new Date().toLocaleString('ko-KR'),
@@ -2785,7 +2747,6 @@ function rqSubmit() {
     refImages: rqRefFiles.map(f=>({name:f.name, size:f.size})),
   };
 
-  // Save site photo previews (already loaded in DOM)
   const sitePrevWrap = document.getElementById('rq-site-preview');
   request.sitePhotoSrcs = sitePrevWrap ? Array.from(sitePrevWrap.querySelectorAll('img')).map(img=>img.src) : [];
   const refPrevWrap = document.getElementById('rq-ref-preview');
@@ -2793,7 +2754,6 @@ function rqSubmit() {
   const prodPrevWrap = document.getElementById('rq-product-preview');
   request.productPhotoSrcs = prodPrevWrap ? Array.from(prodPrevWrap.querySelectorAll('img')).map(img=>img.src) : [];
 
-  // 신청 번호 생성
   var today = new Date();
   var dateStr = today.getFullYear().toString()
     + String(today.getMonth()+1).padStart(2,'0')
@@ -2803,20 +2763,17 @@ function rqSubmit() {
   }).length;
   request.reqCode = 'KD-' + dateStr + '-' + String(sameDayCount+1).padStart(3,'0');
 
+  var ok = await sbSaveRequest(request);
+  if(!ok) return;
+
   if(!DB.requests) DB.requests = [];
   DB.requests.unshift(request);
   saveData();
-
-  // Supabase에 저장
-  sbSaveRequest(request).then(function(ok) {
-    if(!ok) console.warn('Supabase 저장 실패');
-  });
-
   modalClose('modalRequest');
   openRequestSuccess(request.reqCode);
 }
 
-function dtRqSubmit() {
+async async function dtRqSubmit() {
   const dept = (document.getElementById('dtRqDept')?.value||'').trim();
   const name = (document.getElementById('dtRqName')?.value||'').trim();
   const tel  = (document.getElementById('dtRqTel')?.value||'').trim();
@@ -2836,6 +2793,7 @@ function dtRqSubmit() {
     setTimeout(function(){ toast.remove(); }, 2500);
     return;
   }
+
   var today = new Date();
   var dateStr = today.getFullYear().toString()+String(today.getMonth()+1).padStart(2,'0')+String(today.getDate()).padStart(2,'0');
   var sameDayCount = (DB.requests||[]).filter(function(r){ return r.reqCode && r.reqCode.indexOf('KD-'+dateStr)===0; }).length;
@@ -2847,10 +2805,13 @@ function dtRqSubmit() {
     adTitle:detailAd?.title||'', selling:'', eventStart:'', eventEnd:'',
     eventDesc:desc, sitePhotoSrcs:[], refImageSrcs:[], manager:'', dueDate:''
   };
+
+  var ok = await sbSaveRequest(request);
+  if(!ok) return;
+
   if(!DB.requests) DB.requests=[];
   DB.requests.unshift(request);
   saveData();
-  sbSaveRequest(request);
   modalClose('modalDetail');
   openRequestSuccess(reqCode);
 }
@@ -2922,7 +2883,7 @@ function adreqHandlePhotos(input) {
   input.value = '';
 }
 
-function adreqSubmit() {
+async function adreqSubmit() {
   const dept     = (document.getElementById('adreq-dept')?.value||'').trim();
   const name     = (document.getElementById('adreq-name')?.value||'').trim();
   const tel      = (document.getElementById('adreq-tel')?.value||'').trim();
@@ -2977,9 +2938,12 @@ function adreqSubmit() {
     eventDesc: descLines,
     sitePhotoSrcs, refImageSrcs:[], manager:'', dueDate:''
   };
+  var ok = await sbSaveRequest(request);
+  if(!ok) return;
+
   if(!DB.requests) DB.requests=[];
   DB.requests.unshift(request);
-  saveData(); sbSaveRequest(request);
+  saveData();
   modalClose('modalAdRequest');
   openRequestSuccess(reqCode);
 }
@@ -3919,6 +3883,21 @@ function deleteRequest(id) {
 // ══════════════════════════════════════════════════════
 //  REQUEST STATUS
 // ══════════════════════════════════════════════════════
+function openRequestSuccess(code) {
+  document.getElementById('successReqCode').textContent = code;
+  document.getElementById('modalReqSuccess').classList.add('open');
+}
+
+function copyReqCode() {
+  var code = document.getElementById('successReqCode').textContent;
+  navigator.clipboard.writeText(code).then(function(){
+    var btn = event.target;
+    btn.textContent = '복사됨!';
+    btn.style.borderColor = '#111';
+    btn.style.color = '#111';
+    setTimeout(function(){ btn.textContent = '복사'; btn.style.borderColor = '#ddd'; btn.style.color = '#555'; }, 1500);
+  });
+}
 
 function formatTelInput(el) {
   var v = el.value.replace(/[^0-9]/g,'');
@@ -3944,13 +3923,19 @@ function searchReqStatus() {
   result.innerHTML = '<div style="text-align:center;padding:20px 0;font-size:13px;color:#aaa;">조회 중...</div>';
   // Supabase에서 직접 조회
   sb.from('requests').select('*').order('id', {ascending:false}).then(function(res) {
-    if(!res.error && res.data) DB.requests = res.data.map(function(r){ return {
+    if(res.error) {
+      result.innerHTML = '<div style="color:#e03333;font-size:13px;text-align:center;padding:12px 0;">조회에 실패했습니다. Supabase 연결을 확인해주세요</div>';
+      return;
+    }
+    if(res.data) DB.requests = res.data.map(function(r){ return {
       id:r.id, reqCode:r.req_code, submittedAt:r.submitted_at, status:r.status,
       dept:r.dept, name:r.name, tel:r.tel, title:r.title, deadline:r.deadline,
       adTypes:r.ad_types||[], bannerType:r.banner_type, customSize:r.custom_size,
       adTitle:r.ad_title, selling:r.selling, eventStart:r.event_start, eventEnd:r.event_end,
       eventDesc:r.event_desc, sitePhotoSrcs:r.site_photo_srcs||[], refImageSrcs:r.ref_image_srcs||[],
-      manager:r.manager, dueDate:r.due_date
+      manager:r.manager, dueDate:r.due_date,
+      branch:r.branch||'', deliveryDay:r.delivery_day||'',
+      adTypeDetails:r.ad_type_details||{}, productPhotoSrcs:r.product_photo_srcs||[]
     }; });
     var matched = (DB.requests||[]).filter(function(r){
       return r.tel && r.tel.replace(/[^0-9]/g,'') === tel;
