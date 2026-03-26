@@ -2912,9 +2912,14 @@ function rqSubmit() {
   if(has연출물) {
     if(!branch) missing.push('입고 지점');
     if(!deliveryDate) missing.push('입고일 날짜');
-    if(rqSiteFiles.length === 0) missing.push('현장 사진');
+    // 수정 모드: 기존 사진(DOM img) 또는 새 파일 있으면 OK
+    var siteImgCount = (document.getElementById('rq-site-preview')?.querySelectorAll('img')||[]).length;
+    if(rqSiteFiles.length === 0 && siteImgCount === 0) missing.push('현장 사진');
   }
-  if(hasPOP && rqProductFiles.length === 0) missing.push('상품 사진');
+  if(hasPOP) {
+    var prodImgCount = (document.getElementById('rq-product-preview')?.querySelectorAll('img')||[]).length;
+    if(rqProductFiles.length === 0 && prodImgCount === 0) missing.push('상품 사진');
+  }
   if(!title) missing.push('요청 제목');
   if(!deadline) missing.push('마감 요청일');
   if(!adTitle) missing.push('타이틀');
@@ -3126,49 +3131,69 @@ function openReqEdit(reqId) {
     set('rq-selling', req.selling);
     set('rq-event-desc', req.eventDesc);
 
+    // 기존 현장 사진 미리보기 복원
+    var spEl = document.getElementById('rq-site-preview');
+    if(spEl && (req.sitePhotoSrcs||[]).length > 0) {
+      spEl.innerHTML = (req.sitePhotoSrcs||[]).map(function(src, i) {
+        return '<div style="position:relative;display:inline-block;">'
+          + '<img src="'+src+'" data-existing="true" style="width:80px;height:80px;object-fit:cover;border-radius:8px;border:1px solid rgba(0,0,0,0.1);" />'
+          + '</div>';
+      }).join('');
+    }
+
+    // 기존 레퍼런스 이미지 복원
+    var rpEl = document.getElementById('rq-ref-preview');
+    if(rpEl && (req.refImageSrcs||[]).length > 0) {
+      rpEl.innerHTML = (req.refImageSrcs||[]).map(function(src) {
+        return '<div style="position:relative;display:inline-block;">'
+          + '<img src="'+src+'" data-existing="true" style="width:80px;height:80px;object-fit:cover;border-radius:8px;border:1px solid rgba(0,0,0,0.1);" />'
+          + '</div>';
+      }).join('');
+    }
+
+    // 기존 상품 사진 복원
+    var ppEl = document.getElementById('rq-product-preview');
+    if(ppEl && (req.productPhotoSrcs||[]).length > 0) {
+      ppEl.innerHTML = (req.productPhotoSrcs||[]).map(function(src) {
+        return '<div style="position:relative;display:inline-block;">'
+          + '<img src="'+src+'" data-existing="true" style="width:80px;height:80px;object-fit:cover;border-radius:8px;border:1px solid rgba(0,0,0,0.1);" />'
+          + '</div>';
+      }).join('');
+    }
+
     // 광고 종류 복원
     (req.adTypes||[]).forEach(function(val) {
-      // 어느 카테고리인지 판단
       var cat = ['A3 가로형','A4 세로형','와블러'].indexOf(val) !== -1 ? 'POP' : '연출물';
-      var key = cat+'::'+val;
-      rqSelectedTypes.add(key);
-      // UI 체크 표시
-      var items = document.querySelectorAll('.rq-adcat-item');
-      items.forEach(function(item) {
+      rqSelectedTypes.add(cat+'::'+val);
+      document.querySelectorAll('.rq-adcat-item').forEach(function(item) {
         if(item.dataset.val === val) item.classList.add('selected');
       });
     });
 
-    // 사이즈 입력란 렌더 후 값 채우기
     renderAdTypeDetails();
     rqUpdateConditionalSections();
 
     setTimeout(function() {
+      // 사이즈 복원
       var details = req.adTypeDetails || {};
       Object.keys(details).forEach(function(label) {
-        var safeLabel = label.replace(/\s/g,'_');
+        var safe = label.replace(/\s/g,'_');
         var d = details[label];
-        if(d.w) { var el = document.getElementById('rq-w-'+safeLabel); if(el) el.value = d.w; }
-        if(d.h) { var el2 = document.getElementById('rq-h-'+safeLabel); if(el2) el2.value = d.h; }
-        if(d.qty) { var el3 = document.getElementById('rq-qty-'+safeLabel); if(el3) el3.value = d.qty; }
+        var w=document.getElementById('rq-w-'+safe); if(w&&d.w) w.value=d.w;
+        var h=document.getElementById('rq-h-'+safe); if(h&&d.h) h.value=d.h;
+        var q=document.getElementById('rq-qty-'+safe); if(q&&d.qty) q.value=d.qty;
       });
-
-      // 입고 관련 복원
-      if(req.branch) { var brEl = document.getElementById('rq-branch'); if(brEl) brEl.value = req.branch; }
-      // 입고 날짜 복원 (deliveryDay 형식: "화요일 (2026-03-31)" 등)
+      // 입고 복원
+      if(req.branch) { var b=document.getElementById('rq-branch'); if(b) b.value=req.branch; }
       if(req.deliveryDay) {
         var dateMatch = req.deliveryDay.match(/(\d{4}-\d{2}-\d{2})/);
         var isCustom = req.deliveryDay.indexOf('별도') !== -1;
         rqDeliveryTypeChange(isCustom ? 'custom' : 'fixed');
-        if(dateMatch) {
-          setTimeout(function() {
-            if(rqDeliveryPicker) rqDeliveryPicker.setDate(dateMatch[1]);
-          }, 100);
-        }
+        if(dateMatch) setTimeout(function(){ if(rqDeliveryPicker) rqDeliveryPicker.setDate(dateMatch[1]); }, 100);
       }
     }, 100);
 
-    // 제출 버튼 텍스트 변경
+    // 제출 버튼 텍스트
     var submitBtn = document.querySelector('#modalRequest .kbtn-confirm');
     if(submitBtn) submitBtn.textContent = '수정 저장';
   }, 150);
@@ -4358,9 +4383,9 @@ function searchReqStatus() {
     var sc = statusColors[req.status]||'#111';
     var editBtn = '';
     var statusNote = '';
-    var detailBtn = '<button onclick="openReqUserDetail(\''+req.id+'\')" style="width:100%;margin-top:8px;padding:10px;background:#f7f7f7;border:1.5px solid rgba(0,0,0,0.1);border-radius:10px;font-size:13px;font-weight:600;color:#555;cursor:pointer;font-family:Pretendard,sans-serif;">📋 신청 내용 보기</button>';
+    var detailBtn = '<button onclick="openReqUserDetail(\''+req.id+'\')" style="flex:1;padding:10px;background:#f7f7f7;border:1.5px solid rgba(0,0,0,0.1);border-radius:10px;font-size:13px;font-weight:600;color:#555;cursor:pointer;font-family:Pretendard,sans-serif;">📋 신청 내용 보기</button>';
     if(req.status === '검토 중') {
-      editBtn = '<button onclick="openReqEdit(\''+req.id+'\')" style="width:100%;margin-top:8px;padding:10px;background:#111;border:none;border-radius:10px;font-size:13px;font-weight:700;color:#fff;cursor:pointer;font-family:Pretendard,sans-serif;">✎ 신청 내용 수정</button>';
+      editBtn = '<button onclick="openReqEdit(\''+req.id+'\')" style="flex:1;padding:10px;background:#111;border:none;border-radius:10px;font-size:13px;font-weight:700;color:#fff;cursor:pointer;font-family:Pretendard,sans-serif;">✎ 수정</button>';
     } else if(req.status === '진행 중') {
       statusNote = '<div style="margin-top:10px;background:#eff6ff;border-radius:8px;padding:10px 12px;font-size:12px;color:#1d4ed8;line-height:1.6;">진행 중인 신청은 수정할 수 없습니다.<br>변경이 필요하면 담당자 <strong>'+(req.manager||'')+'</strong>에게 문의해주세요.</div>';
     } else if(req.status === '반려') {
@@ -4382,8 +4407,7 @@ function searchReqStatus() {
         + '</div>'
         + '<div style="font-size:12px;color:#bbb;">마감: '+(req.deadline||'미정')+' · 신청: '+req.submittedAt+'</div>'
         + statusNote
-        + detailBtn
-        + editBtn
+        + '<div style="display:flex;gap:8px;margin-top:10px;">' + detailBtn + editBtn + '</div>'
       + '</div>'
     + '</div>';
   }).join('');
