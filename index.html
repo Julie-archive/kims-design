@@ -50,6 +50,7 @@ html, body { height: 100%; overflow: hidden; overflow-x: hidden; max-width: 100%
 *::-webkit-scrollbar { width: 3px; height: 3px; }
 *::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.15); border-radius: 2px; }
 *::-webkit-scrollbar-track { background: transparent; }
+@keyframes spin { to { transform: rotate(360deg); } }
 
 /* ── App Shell ── */
 #app { display: flex; flex-direction: column; height: 100dvh; overflow: hidden; overflow-x: hidden; max-width: 100vw; }
@@ -1296,7 +1297,9 @@ async function sbLoadAll() {
     DB.ads = adsRes.data.map(function(r){ return {id:r.id, mainCat:r.main_cat, subCat:r.sub_cat, product:r.product, title:r.title, adDate:r.ad_date, types:r.types||[], memo:r.memo||'', settingPhotos:r.setting_photos||[], orderAmount:r.order_amount||''}; });
     // base64가 Supabase에 저장된 경우 자동 복구
     setTimeout(async function() {
-      var toFix = DB.ads.filter(function(ad){ return (ad.types||[]).some(function(t){ return t.src && t.src.startsWith('data:'); }); });
+      var toFix = DB.ads.filter(function(ad){
+        return (ad.types||[]).some(function(t){ return t.src && t.src.startsWith('data:'); });
+      });
       for(var i=0; i<toFix.length; i++) {
         var ad = toFix[i];
         var fixed = await processAdTypes(ad.types);
@@ -1310,6 +1313,13 @@ async function sbLoadAll() {
         saveData();
         if(homeScreen==='B') renderHomeContent();
         if(curView==='admin') renderAdminContent();
+      }
+      // 이미지가 없는 광고 목록 콘솔에 출력 (관리자가 확인용)
+      var broken = DB.ads.filter(function(ad){
+        return (ad.types||[]).length > 0 && (ad.types||[]).every(function(t){ return !t.src || t.src === ''; });
+      });
+      if(broken.length > 0) {
+        console.warn('이미지 없는 광고 (재등록 필요):', broken.map(function(a){ return a.title; }));
       }
     }, 500);
     DB.requests = reqsRes.data.map(function(r){ return {
@@ -1543,17 +1553,14 @@ function homeCatSelect(cat) {
   homeScreen = 'B';
   hState = {cat, sub:'', prod:'__all__', search:''};
 
-  // 로딩 표시 후 Supabase에서 최신 데이터 로드
   var el = document.getElementById('viewHome');
-  // 캐시 데이터가 있으면 일단 빠르게 렌더 (이미지 있는 항목만)
-  var hasCachedImages = (DB.ads||[]).some(function(a){ return (a.types||[]).some(function(t){ return t.src && !t.src.startsWith('data:') && t.src !== ''; }); });
-  if(hasCachedImages) {
-    renderHomeB();
-  } else {
-    el.innerHTML = '<div style="flex:1;display:flex;align-items:center;justify-content:center;"><div style="font-size:14px;color:#aaa;">불러오는 중...</div></div>';
-  }
 
-  // 항상 Supabase에서 최신 데이터 갱신
+  // 로딩 스피너 표시
+  el.innerHTML = `<div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;">
+    <div style="width:28px;height:28px;border:3px solid #eee;border-top-color:#111;border-radius:50%;animation:spin .7s linear infinite;"></div>
+    <div style="font-size:13px;color:#bbb;">불러오는 중...</div>
+  </div>`;
+
   sbLoadAll().then(function(ok) {
     if(homeScreen === 'B' && hState.cat === cat) {
       renderHomeB();
