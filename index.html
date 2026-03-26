@@ -1294,6 +1294,24 @@ async function sbLoadAll() {
     DB.subs = subsRes.data.map(function(r){ return {id:r.id, mainCat:r.main_cat, name:r.name}; });
     DB.products = prodsRes.data.map(function(r){ return {id:r.id, mainCat:r.main_cat, subCat:r.sub_cat, name:r.name}; });
     DB.ads = adsRes.data.map(function(r){ return {id:r.id, mainCat:r.main_cat, subCat:r.sub_cat, product:r.product, title:r.title, adDate:r.ad_date, types:r.types||[], memo:r.memo||'', settingPhotos:r.setting_photos||[], orderAmount:r.order_amount||''}; });
+    // base64가 Supabase에 저장된 경우 자동 복구
+    setTimeout(async function() {
+      var toFix = DB.ads.filter(function(ad){ return (ad.types||[]).some(function(t){ return t.src && t.src.startsWith('data:'); }); });
+      for(var i=0; i<toFix.length; i++) {
+        var ad = toFix[i];
+        var fixed = await processAdTypes(ad.types);
+        var idx = DB.ads.findIndex(function(a){ return a.id===ad.id; });
+        if(idx!==-1) {
+          DB.ads[idx].types = fixed;
+          sbUpdateAd(DB.ads[idx]);
+        }
+      }
+      if(toFix.length > 0) {
+        saveData();
+        if(homeScreen==='B') renderHomeContent();
+        if(curView==='admin') renderAdminContent();
+      }
+    }, 500);
     DB.requests = reqsRes.data.map(function(r){ return {
       id:r.id, reqCode:r.req_code, submittedAt:r.submitted_at, status:r.status,
       dept:r.dept, name:r.name, tel:r.tel, title:r.title, deadline:r.deadline,
@@ -2446,10 +2464,9 @@ function editRemoveSettingPhoto(idx) {
 function editSave() {
   const title=document.getElementById('editTitle')?.value.trim();
   if(!title){alert('광고 이름을 입력하세요');return;}
-  const types=collectTypes('edit');
-  // for existing types, if editTypeSrcs[idx] is null, keep original src
+
   const blocks=document.querySelectorAll('[id^="editTypeBlock_"]');
-  const finalTypes=Array.from(blocks).map(b=>{
+  const rawTypes=Array.from(blocks).map(b=>{
     const idx=parseInt(b.id.replace('editTypeBlock_',''));
     const sel=b.querySelector('select');
     const name=sel.value==='__custom__'?(document.getElementById(`editTypeCustomName_${idx}`)?.value.trim()||'기타'):sel.value;
@@ -2463,19 +2480,26 @@ function editSave() {
     const src=newSrc!==null&&newSrc!==undefined?newSrc:origSrc;
     return {name,width,height,src,memo,unitPrice};
   });
+
   const memo=document.getElementById('editMemo')?.value.trim()||'';
   const idx=DB.ads.findIndex(a=>a.id===detailAd.id);
   if(idx===-1)return;
   const settingPhotos = editSettingPhotos !== null ? editSettingPhotos : (detailAd.settingPhotos||[]);
-  DB.ads[idx]={...DB.ads[idx],title,types:finalTypes,adDate:new Date().toLocaleDateString('ko-KR'),settingPhotos};
   editSettingPhotos = null;
-  detailAd=DB.ads[idx];
-  saveData();
-  sbUpdateAd(DB.ads[idx]);
-  detailTab='view';
-  renderDetail();
-  renderAdmin();
-  if(homeScreen==='B') renderHomeContent();
+
+  // base64 이미지는 Storage에 업로드 후 저장
+  processAdTypes(rawTypes).then(async function(finalTypes) {
+    // 셋팅 사진도 Storage 업로드
+    const finalSettingPhotos = await processRequestFiles(settingPhotos, 'setting');
+    DB.ads[idx]={...DB.ads[idx],title,types:finalTypes,adDate:new Date().toLocaleDateString('ko-KR'),settingPhotos:finalSettingPhotos};
+    detailAd=DB.ads[idx];
+    saveData();
+    sbUpdateAd(DB.ads[idx]);
+    detailTab='view';
+    renderDetail();
+    renderAdmin();
+    if(homeScreen==='B') renderHomeContent();
+  });
 }
 
 function openEditImg(id) {
@@ -3129,8 +3153,9 @@ async function processAdTypes(types) {
   for(var i=0; i<types.length; i++) {
     var t = types[i];
     if(t.src && t.src.startsWith('data:')) {
-      var url = await uploadImageToStorage(t.src, 'ad_' + t.name.replace(/\s/g,'_'));
-      result.push({name:t.name, width:t.width, height:t.height, memo:t.memo||'', unitPrice:t.unitPrice||'', src: url || t.src});
+      var url = await uploadImageToStorage(t.src, 'ad_' + (t.name||'type').replace(/[^a-zA-Z0-9]/g,'_'));
+      // Storage 업로드 성공 시 URL 사용, 실패 시 기존 src 유지 (base64는 저장 안 함)
+      result.push({name:t.name, width:t.width, height:t.height, memo:t.memo||'', unitPrice:t.unitPrice||'', src: url || ''});
     } else {
       result.push({name:t.name, width:t.width, height:t.height, memo:t.memo||'', unitPrice:t.unitPrice||'', src:t.src||''});
     }
