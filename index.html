@@ -1073,15 +1073,18 @@ html, body { height: 100%; overflow: hidden; overflow-x: hidden; max-width: 100%
     </div>
 
     <!-- 레퍼런스 이미지 -->
-    <div class="kform-group">
-      <div class="kform-label">레퍼런스 이미지 <span style="color:#999;font-weight:400;font-size:10px;text-transform:none;">(참고 이미지나 자료)</span></div>
-      <label class="kupload-label" style="min-height:90px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;position:relative;">
-        <input type="file" accept="image/*,application/pdf" multiple onchange="rqHandleFiles(this,'ref')" style="position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%;" />
-        <svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.5" width="26" height="26" style="opacity:.3;"><rect x="6" y="14" width="36" height="26" rx="4"/><path d="M24 8v16m-6-6 6-6 6 6"/></svg>
-        <span style="font-size:12px;color:#aaa;">클릭하여 레퍼런스 업로드 (이미지, PDF 가능)</span>
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px;">
+      <div style="flex:1;min-width:0;">
+        <div class="kform-label" style="margin-bottom:2px;">레퍼런스 이미지</div>
+        <div style="font-size:11px;color:#aaa;">참고 이미지나 자료 (선택)</div>
+      </div>
+      <label style="flex-shrink:0;display:flex;align-items:center;gap:6px;padding:8px 14px;background:#f7f7f7;border:1.5px dashed rgba(0,0,0,0.15);border-radius:10px;cursor:pointer;">
+        <input type="file" accept="image/*,application/pdf" multiple onchange="rqHandleFiles(this,'ref')" style="display:none;" />
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+        <span style="font-size:12px;color:#777;font-weight:600;white-space:nowrap;">파일 추가</span>
       </label>
-      <div id="rq-ref-preview" style="display:flex;flex-wrap:wrap;gap:8px;margin-top:8px;"></div>
     </div>
+    <div id="rq-ref-preview" style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px;"></div>
 
     <div class="kmodal-actions" style="margin-top:8px;">
       <button class="kbtn-cancel" style="flex:1;" onclick="modalClose('modalRequest')">취소</button>
@@ -2592,6 +2595,10 @@ function openRequestModal() {
   var telEl = document.getElementById('rq-tel');
   if(telEl) telEl.oninput = function(){ formatTelInput(this); };
   rqSiteFiles = []; rqRefFiles = []; rqProductFiles = []; rqSelectedTypes = new Set();
+  rqEditTargetId = null; // 수정 모드 초기화
+  // 제출 버튼 텍스트 초기화
+  var submitBtn = document.querySelector('#modalRequest .kbtn-confirm');
+  if(submitBtn) submitBtn.textContent = '신청하기';
   var spEl = document.getElementById('rq-site-preview'); if(spEl) spEl.innerHTML='';
   var rpEl = document.getElementById('rq-ref-preview'); if(rpEl) rpEl.innerHTML='';
   var ppEl = document.getElementById('rq-product-preview'); if(ppEl) ppEl.innerHTML='';
