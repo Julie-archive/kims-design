@@ -3029,9 +3029,35 @@ function rqEditSave() {
     return;
   }
 
+  // 광고 종류 + 사이즈 수집
+  var adTypesArr = Array.from(rqSelectedTypes).map(function(k){ return k.split('::')[1]||k; });
+  var adTypeDetails = {};
+  Array.from(rqSelectedTypes).forEach(function(key) {
+    var label = key.split('::')[1]||key;
+    var safeLabel = label.replace(/\s/g,'_');
+    var detail = {};
+    var wEl = document.getElementById('rq-w-'+safeLabel);
+    var hEl = document.getElementById('rq-h-'+safeLabel);
+    var qEl = document.getElementById('rq-qty-'+safeLabel);
+    if(wEl && wEl.value) detail.w = wEl.value;
+    if(hEl && hEl.value) detail.h = hEl.value;
+    if(qEl && qEl.value) detail.qty = qEl.value;
+    if(Object.keys(detail).length > 0) adTypeDetails[label] = detail;
+  });
+
+  // 입고 관련
+  var branch = (document.getElementById('rq-branch')?.value||'').trim();
+  var deliveryDay = (document.getElementById('rq-delivery-day')?.value||'').trim();
+  var deliveryDate = (document.getElementById('rq-delivery-date')?.value||'').trim();
+  var deliveryDayLabel = deliveryDay;
+  if(deliveryDate) deliveryDayLabel += ' (' + deliveryDate + ')';
+
   var idx = (DB.requests||[]).findIndex(function(r){ return String(r.id)===String(rqEditTargetId); });
   if(idx===-1) return;
-  DB.requests[idx] = Object.assign({}, DB.requests[idx], {dept, name, tel, title, deadline, adTitle, selling, eventDesc});
+  DB.requests[idx] = Object.assign({}, DB.requests[idx], {
+    dept, name, tel, title, deadline, adTitle, selling, eventDesc,
+    adTypes: adTypesArr, adTypeDetails, branch, deliveryDay: deliveryDayLabel
+  });
   var updated = DB.requests[idx];
   saveData();
 
@@ -3039,8 +3065,9 @@ function rqEditSave() {
   sb.from('requests').update({
     dept:updated.dept, name:updated.name, tel:updated.tel,
     title:updated.title, deadline:updated.deadline,
-    ad_title:updated.adTitle, selling:updated.selling,
-    event_desc:updated.eventDesc
+    ad_title:updated.adTitle, selling:updated.selling, event_desc:updated.eventDesc,
+    ad_types:updated.adTypes, ad_type_details:updated.adTypeDetails,
+    branch:updated.branch, delivery_day:updated.deliveryDay
   }).eq('id', updated.id).then(function(res){
     if(res.error) console.warn('수정 저장 실패:', res.error);
   });
@@ -3048,7 +3075,6 @@ function rqEditSave() {
   rqEditTargetId = null;
   modalClose('modalRequest');
 
-  // 완료 토스트
   var toast2 = document.createElement('div');
   toast2.style.cssText = 'position:fixed;top:24px;left:50%;transform:translateX(-50%);background:#111;color:#fff;padding:12px 28px;border-radius:50px;font-size:13px;font-weight:700;z-index:9999;';
   toast2.textContent = '✓ 신청 내용이 수정되었습니다';
@@ -3062,13 +3088,11 @@ function openReqEdit(reqId) {
   if(req.status !== '검토 중') return;
   rqEditTargetId = req.id;
 
-  // 조회 모달 닫기
   modalClose('modalReqStatus');
-
-  // 신청서 모달 열기
   openRequestModal();
 
   setTimeout(function() {
+    // 기본 텍스트 필드 복원
     var set = function(id, val) { var el = document.getElementById(id); if(el) el.value = val||''; };
     set('rq-dept', req.dept);
     set('rq-name', req.name);
@@ -3078,6 +3102,48 @@ function openReqEdit(reqId) {
     set('rq-ad-title', req.adTitle);
     set('rq-selling', req.selling);
     set('rq-event-desc', req.eventDesc);
+
+    // 광고 종류 복원
+    (req.adTypes||[]).forEach(function(val) {
+      // 어느 카테고리인지 판단
+      var cat = ['A3 가로형','A4 세로형','와블러'].indexOf(val) !== -1 ? 'POP' : '연출물';
+      var key = cat+'::'+val;
+      rqSelectedTypes.add(key);
+      // UI 체크 표시
+      var items = document.querySelectorAll('.rq-adcat-item');
+      items.forEach(function(item) {
+        if(item.dataset.val === val) item.classList.add('selected');
+      });
+    });
+
+    // 사이즈 입력란 렌더 후 값 채우기
+    renderAdTypeDetails();
+    rqUpdateConditionalSections();
+
+    setTimeout(function() {
+      var details = req.adTypeDetails || {};
+      Object.keys(details).forEach(function(label) {
+        var safeLabel = label.replace(/\s/g,'_');
+        var d = details[label];
+        if(d.w) { var el = document.getElementById('rq-w-'+safeLabel); if(el) el.value = d.w; }
+        if(d.h) { var el2 = document.getElementById('rq-h-'+safeLabel); if(el2) el2.value = d.h; }
+        if(d.qty) { var el3 = document.getElementById('rq-qty-'+safeLabel); if(el3) el3.value = d.qty; }
+      });
+
+      // 입고 관련 복원
+      if(req.branch) { var brEl = document.getElementById('rq-branch'); if(brEl) brEl.value = req.branch; }
+      // 입고 날짜 복원 (deliveryDay 형식: "화요일 (2026-03-31)" 등)
+      if(req.deliveryDay) {
+        var dateMatch = req.deliveryDay.match(/(\d{4}-\d{2}-\d{2})/);
+        var isCustom = req.deliveryDay.indexOf('별도') !== -1;
+        rqDeliveryTypeChange(isCustom ? 'custom' : 'fixed');
+        if(dateMatch) {
+          setTimeout(function() {
+            if(rqDeliveryPicker) rqDeliveryPicker.setDate(dateMatch[1]);
+          }, 100);
+        }
+      }
+    }, 100);
 
     // 제출 버튼 텍스트 변경
     var submitBtn = document.querySelector('#modalRequest .kbtn-confirm');
