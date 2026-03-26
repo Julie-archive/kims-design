@@ -1285,17 +1285,17 @@ function saveData() {
 // Supabase 동기화 함수들
 async function sbLoadAll() {
   try {
-    const [subsRes, prodsRes, adsRes, reqsRes] = await Promise.all([
+    const [subsRes, prodsRes, adsRes] = await Promise.all([
       sb.from('subs').select('*').order('id'),
       sb.from('products').select('*').order('id'),
       sb.from('ads').select('*').order('id'),
-      sb.from('requests').select('*').order('id', {ascending: false}),
     ]);
-    if(subsRes.error || prodsRes.error || adsRes.error || reqsRes.error) throw new Error('Load failed');
+    if(subsRes.error || prodsRes.error || adsRes.error) throw new Error('Load failed');
     DB.subs = subsRes.data.map(function(r){ return {id:r.id, mainCat:r.main_cat, name:r.name}; });
     DB.products = prodsRes.data.map(function(r){ return {id:r.id, mainCat:r.main_cat, subCat:r.sub_cat, name:r.name}; });
     DB.ads = adsRes.data.map(function(r){ return {id:r.id, mainCat:r.main_cat, subCat:r.sub_cat, product:r.product, title:r.title, adDate:r.ad_date, types:r.types||[], memo:r.memo||'', settingPhotos:r.setting_photos||[], orderAmount:r.order_amount||''}; });
-    // base64가 Supabase에 저장된 경우 자동 복구
+
+    // base64 자동 복구
     setTimeout(async function() {
       var toFix = DB.ads.filter(function(ad){
         return (ad.types||[]).some(function(t){ return t.src && t.src.startsWith('data:'); });
@@ -1304,37 +1304,39 @@ async function sbLoadAll() {
         var ad = toFix[i];
         var fixed = await processAdTypes(ad.types);
         var idx = DB.ads.findIndex(function(a){ return a.id===ad.id; });
-        if(idx!==-1) {
-          DB.ads[idx].types = fixed;
-          sbUpdateAd(DB.ads[idx]);
-        }
+        if(idx!==-1) { DB.ads[idx].types = fixed; sbUpdateAd(DB.ads[idx]); }
       }
       if(toFix.length > 0) {
         saveData();
         if(homeScreen==='B') renderHomeContent();
         if(curView==='admin') renderAdminContent();
       }
-      // 이미지가 없는 광고 목록 콘솔에 출력 (관리자가 확인용)
-      var broken = DB.ads.filter(function(ad){
-        return (ad.types||[]).length > 0 && (ad.types||[]).every(function(t){ return !t.src || t.src === ''; });
-      });
-      if(broken.length > 0) {
-        console.warn('이미지 없는 광고 (재등록 필요):', broken.map(function(a){ return a.title; }));
-      }
     }, 500);
-    DB.requests = reqsRes.data.map(function(r){ return {
-      id:r.id, reqCode:r.req_code, submittedAt:r.submitted_at, status:r.status,
-      dept:r.dept, name:r.name, tel:r.tel, title:r.title, deadline:r.deadline,
-      adTypes:r.ad_types||[], bannerType:r.banner_type||'', customSize:r.custom_size||'',
-      adTitle:r.ad_title, selling:r.selling, eventStart:r.event_start||'', eventEnd:r.event_end||'',
-      eventDesc:r.event_desc, sitePhotoSrcs:r.site_photo_srcs||[], refImageSrcs:r.ref_image_srcs||[],
-      manager:r.manager, dueDate:r.due_date,
-      branch:r.branch||'', deliveryDay:r.delivery_day||'',
-      adTypeDetails:r.ad_type_details||{}, productPhotoSrcs:r.product_photo_srcs||[]
-    }; });
-    // localStorage에 저장하지 않음 - 항상 Supabase가 원본
-    return true;
-  } catch(e) { console.warn('Supabase load failed, using localStorage:', e); return false; }
+  } catch(e) {
+    console.warn('Supabase load failed:', e);
+    return false;
+  }
+
+  // requests는 별도 로드 — 실패해도 나머지 데이터는 유지
+  try {
+    const reqsRes = await sb.from('requests').select('*').order('id', {ascending: false});
+    if(!reqsRes.error && reqsRes.data) {
+      DB.requests = reqsRes.data.map(function(r){ return {
+        id:r.id, reqCode:r.req_code, submittedAt:r.submitted_at, status:r.status,
+        dept:r.dept, name:r.name, tel:r.tel, title:r.title, deadline:r.deadline,
+        adTypes:r.ad_types||[], bannerType:r.banner_type||'', customSize:r.custom_size||'',
+        adTitle:r.ad_title, selling:r.selling, eventStart:r.event_start||'', eventEnd:r.event_end||'',
+        eventDesc:r.event_desc, sitePhotoSrcs:r.site_photo_srcs||[], refImageSrcs:r.ref_image_srcs||[],
+        manager:r.manager||'', dueDate:r.due_date||'',
+        branch:r.branch||'', deliveryDay:r.delivery_day||'',
+        adTypeDetails:r.ad_type_details||{}, productPhotoSrcs:r.product_photo_srcs||[]
+      }; });
+    }
+  } catch(e) {
+    console.warn('requests 로드 실패 (컬럼 미추가 가능성):', e);
+  }
+
+  return true;
 }
 
 async function sbSaveSub(sub) {
@@ -2321,7 +2323,7 @@ function renderDetail() {
           html+=`<div style="margin-top:16px;">
             <div style="font-size:12px;font-weight:700;color:#555;margin-bottom:8px;">셋팅 사진</div>
             <div style="display:flex;flex-direction:column;gap:10px;">
-              ${(ad.settingPhotos||[]).map(p=>{const src=typeof p==='object'?(p.src||''):p;const store=typeof p==='object'?(p.storeName||''):'';return `<div style="border-radius:12px;overflow:hidden;border:1.5px solid rgba(0,0,0,0.08);"><img src="${src}" onclick="openLightbox('${src}')" style="width:100%;display:block;cursor:zoom-in;" />${store?`<div style="padding:8px 12px;background:#f7f7f7;font-size:12px;font-weight:600;color:#555;">📍 ${store}</div>`:''}</div>`;}).join('')}
+              ${(ad.settingPhotos||[]).map(p=>{const src=typeof p==='object'?(p.src||''):p;const store=typeof p==='object'?(p.storeName||''):'';return `<div style="border-radius:12px;overflow:hidden;border:1.5px solid rgba(0,0,0,0.08);">${store?`<div style="padding:8px 12px;background:#f7f7f7;font-size:12px;font-weight:600;color:#555;border-bottom:1px solid rgba(0,0,0,0.07);">📍 ${store}</div>`:''}<img src="${src}" onclick="openLightbox('${src}')" style="width:100%;display:block;cursor:zoom-in;" /></div>`;}).join('')}
             </div>
           </div>`;
         }
@@ -2340,7 +2342,7 @@ function renderDetail() {
           html+=`<div style="margin-top:16px;">
             <div style="font-size:12px;font-weight:700;color:#555;margin-bottom:8px;">셋팅 사진</div>
             <div style="display:flex;flex-direction:column;gap:10px;">
-              ${(ad.settingPhotos||[]).map(p=>{const src=typeof p==='object'?(p.src||''):p;const store=typeof p==='object'?(p.storeName||''):'';return `<div style="border-radius:12px;overflow:hidden;border:1.5px solid rgba(0,0,0,0.08);"><img src="${src}" onclick="openLightbox('${src}')" style="width:100%;display:block;cursor:zoom-in;" />${store?`<div style="padding:8px 12px;background:#f7f7f7;font-size:12px;font-weight:600;color:#555;">📍 ${store}</div>`:''}</div>`;}).join('')}
+              ${(ad.settingPhotos||[]).map(p=>{const src=typeof p==='object'?(p.src||''):p;const store=typeof p==='object'?(p.storeName||''):'';return `<div style="border-radius:12px;overflow:hidden;border:1.5px solid rgba(0,0,0,0.08);">${store?`<div style="padding:8px 12px;background:#f7f7f7;font-size:12px;font-weight:600;color:#555;border-bottom:1px solid rgba(0,0,0,0.07);">📍 ${store}</div>`:''}<img src="${src}" onclick="openLightbox('${src}')" style="width:100%;display:block;cursor:zoom-in;" /></div>`;}).join('')}
             </div>
           </div>`;
         }
