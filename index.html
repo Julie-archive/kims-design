@@ -2863,6 +2863,11 @@ function rqHandleFiles(input, type) {
 }
 
 function rqSubmit() {
+  // 수정 모드인 경우
+  if(rqEditTargetId) {
+    rqEditSave();
+    return;
+  }
   const dept = document.getElementById('rq-dept').value.trim();
   const name = document.getElementById('rq-name').value.trim();
   const tel = document.getElementById('rq-tel').value.trim();
@@ -2994,7 +2999,90 @@ function rqSubmit() {
   openRequestSuccess(request.reqCode);
 }
 
-function dtRqSubmit() {
+// 신청서 수정 (검토 중 상태일 때만)
+var rqEditTargetId = null;
+
+function rqEditSave() {
+  var dept = document.getElementById('rq-dept').value.trim();
+  var name = document.getElementById('rq-name').value.trim();
+  var tel  = document.getElementById('rq-tel').value.trim();
+  var title = document.getElementById('rq-title').value.trim();
+  var deadline = document.getElementById('rq-deadline').value;
+  var adTitle = document.getElementById('rq-ad-title').value.trim();
+  var selling = document.getElementById('rq-selling').value.trim();
+  var eventDesc = document.getElementById('rq-event-desc').value.trim();
+
+  var missing = [];
+  if(!dept||!name||!tel) missing.push('요청자 정보');
+  if(!title) missing.push('요청 제목');
+  if(!deadline) missing.push('마감 요청일');
+  if(missing.length > 0) {
+    var toast = document.createElement('div');
+    toast.style.cssText = 'position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:#fff;border:1.5px solid #e03333;color:#e03333;padding:20px 28px;border-radius:16px;font-size:14px;font-weight:700;z-index:9999;box-shadow:0 8px 32px rgba(0,0,0,0.15);text-align:center;line-height:1.6;';
+    toast.innerHTML = '<div style="font-size:16px;margin-bottom:6px;">필수 항목을 작성해주세요</div><div style="font-size:12px;font-weight:500;color:#999;">'+missing.join(', ')+'</div>';
+    document.body.appendChild(toast);
+    setTimeout(function(){ toast.remove(); }, 2500);
+    return;
+  }
+
+  var idx = (DB.requests||[]).findIndex(function(r){ return String(r.id)===String(rqEditTargetId); });
+  if(idx===-1) return;
+  DB.requests[idx] = Object.assign({}, DB.requests[idx], {dept, name, tel, title, deadline, adTitle, selling, eventDesc});
+  var updated = DB.requests[idx];
+  saveData();
+
+  // Supabase 업데이트
+  sb.from('requests').update({
+    dept:updated.dept, name:updated.name, tel:updated.tel,
+    title:updated.title, deadline:updated.deadline,
+    ad_title:updated.adTitle, selling:updated.selling,
+    event_desc:updated.eventDesc
+  }).eq('id', updated.id).then(function(res){
+    if(res.error) console.warn('수정 저장 실패:', res.error);
+  });
+
+  rqEditTargetId = null;
+  modalClose('modalRequest');
+
+  // 완료 토스트
+  var toast2 = document.createElement('div');
+  toast2.style.cssText = 'position:fixed;top:24px;left:50%;transform:translateX(-50%);background:#111;color:#fff;padding:12px 28px;border-radius:50px;font-size:13px;font-weight:700;z-index:9999;';
+  toast2.textContent = '✓ 신청 내용이 수정되었습니다';
+  document.body.appendChild(toast2);
+  setTimeout(function(){ toast2.remove(); }, 2500);
+}
+
+function openReqEdit(reqId) {
+  var req = (DB.requests||[]).find(function(r){ return String(r.id)===String(reqId); });
+  if(!req) return;
+  if(req.status !== '검토 중') return;
+  rqEditTargetId = req.id;
+
+  // 신청서 모달 초기화 후 기존 값 채우기
+  openRequestModal();
+
+  // 잠깐 후 값 채우기 (openRequestModal 렌더 완료 후)
+  setTimeout(function() {
+    var set = function(id, val) { var el = document.getElementById(id); if(el) el.value = val||''; };
+    set('rq-dept', req.dept);
+    set('rq-name', req.name);
+    set('rq-tel', req.tel);
+    set('rq-title', req.title);
+    set('rq-deadline', req.deadline);
+    set('rq-ad-title', req.adTitle);
+    set('rq-selling', req.selling);
+    set('rq-event-desc', req.eventDesc);
+
+    // 제출 버튼 텍스트 변경
+    var submitBtn = document.querySelector('#modalRequest .kbtn-confirm');
+    if(submitBtn) submitBtn.textContent = '수정 저장';
+
+    // 상단 타이틀 변경
+    var titleEl = document.querySelector('#rq-scroll-area > div > div:first-child');
+  }, 100);
+}
+
+function rqSubmit() {
   const dept = (document.getElementById('dtRqDept')?.value||'').trim();
   const name = (document.getElementById('dtRqName')?.value||'').trim();
   const tel  = (document.getElementById('dtRqTel')?.value||'').trim();
@@ -4144,20 +4232,32 @@ function searchReqStatus() {
   var statusColors = {'검토 중':'#F97316','진행 중':'#3B82F6','완료':'#1C6B3A','반려':'#EF4444'};
   var cards = matched.map(function(req) {
     var sc = statusColors[req.status]||'#111';
+    var editBtn = '';
+    var statusNote = '';
+    if(req.status === '검토 중') {
+      editBtn = '<button onclick="openReqEdit(\''+req.id+'\')" style="width:100%;margin-top:12px;padding:10px;background:#fff;border:1.5px solid #111;border-radius:10px;font-size:13px;font-weight:700;color:#111;cursor:pointer;font-family:Pretendard,sans-serif;">✎ 신청 내용 수정</button>';
+    } else if(req.status === '진행 중') {
+      statusNote = '<div style="margin-top:10px;background:#eff6ff;border-radius:8px;padding:10px 12px;font-size:12px;color:#1d4ed8;line-height:1.6;">진행 중인 신청은 수정할 수 없습니다.<br>변경이 필요하면 담당자 <strong>'+(req.manager||'')+'</strong>에게 문의해주세요.</div>';
+    } else if(req.status === '반려') {
+      statusNote = '<div style="margin-top:10px;background:#fff0f0;border-radius:8px;padding:10px 12px;font-size:12px;color:#e03333;">반려 처리되었습니다. 담당자에게 문의해주세요.</div>';
+    } else if(req.status === '완료') {
+      statusNote = '<div style="margin-top:10px;background:#edfaed;border-radius:8px;padding:10px 12px;font-size:12px;color:#2d7a2d;">작업이 완료되었습니다.</div>';
+    }
     return '<div style="border:1.5px solid rgba(0,0,0,0.08);border-radius:14px;overflow:hidden;margin-bottom:10px;">'
-      + '<div style="background:#f7f7f7;padding:14px 18px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid rgba(0,0,0,0.06);">'
-        + '<div style="font-size:12px;font-weight:700;color:#999;letter-spacing:1px;">'+(req.reqCode||'번호 없음')+'</div>'
-        + '<span style="background:'+sc+';color:#fff;font-size:12px;font-weight:700;padding:4px 12px;border-radius:50px;">'+req.status+'</span>'
+      + '<div style="background:#f7f7f7;padding:12px 16px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid rgba(0,0,0,0.06);">'
+        + '<div style="font-size:11px;font-weight:700;color:#999;letter-spacing:1px;">'+(req.reqCode||'번호 없음')+'</div>'
+        + '<span style="background:'+sc+';color:#fff;font-size:11px;font-weight:700;padding:3px 10px;border-radius:50px;">'+req.status+'</span>'
       + '</div>'
-      + '<div style="padding:14px 18px;">'
-        + '<div style="font-size:15px;font-weight:700;margin-bottom:10px;letter-spacing:-0.02em;">'+req.title+'</div>'
+      + '<div style="padding:14px 16px;">'
+        + '<div style="font-size:15px;font-weight:800;color:#111;margin-bottom:4px;letter-spacing:-0.02em;">'+(req.title||'제목 없음')+'</div>'
+        + '<div style="font-size:12px;color:#999;margin-bottom:12px;">'+(req.name||'')+(req.dept?' · '+req.dept:'')+'</div>'
         + '<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px;">'
-          + '<div style="background:#f7f7f7;border-radius:8px;padding:10px 12px;"><div style="font-size:10px;color:#999;font-weight:600;text-transform:uppercase;letter-spacing:.5px;margin-bottom:3px;">담당자</div><div style="font-size:13px;font-weight:600;color:#111;">'+(req.manager||'미지정')+'</div></div>'
-          + '<div style="background:#f7f7f7;border-radius:8px;padding:10px 12px;"><div style="font-size:10px;color:#999;font-weight:600;text-transform:uppercase;letter-spacing:.5px;margin-bottom:3px;">완료 예정일</div><div style="font-size:13px;font-weight:600;color:#111;">'+(req.dueDate||'미정')+'</div></div>'
+          + '<div style="background:#f7f7f7;border-radius:8px;padding:10px 12px;"><div style="font-size:10px;color:#999;font-weight:600;margin-bottom:3px;">담당자</div><div style="font-size:13px;font-weight:600;color:#111;">'+(req.manager||'미지정')+'</div></div>'
+          + '<div style="background:#f7f7f7;border-radius:8px;padding:10px 12px;"><div style="font-size:10px;color:#999;font-weight:600;margin-bottom:3px;">완료 예정일</div><div style="font-size:13px;font-weight:600;color:#111;">'+(req.dueDate||'미정')+'</div></div>'
         + '</div>'
         + '<div style="font-size:12px;color:#bbb;">마감: '+(req.deadline||'미정')+' · 신청: '+req.submittedAt+'</div>'
-        + (req.status==='반려'?'<div style="margin-top:10px;background:#fff0f0;border-radius:8px;padding:10px;font-size:12px;color:#e03333;">반려 처리되었습니다. 담당자에게 문의해주세요.</div>':'')
-        + (req.status==='완료'?'<div style="margin-top:10px;background:#edfaed;border-radius:8px;padding:10px;font-size:12px;color:#2d7a2d;">작업이 완료되었습니다.</div>':'')
+        + statusNote
+        + editBtn
       + '</div>'
     + '</div>';
   }).join('');
