@@ -1386,17 +1386,19 @@ async function sbSaveAd(ad) {
 
 async function sbUpdateAd(ad) {
   try {
-    const res = await sb.from('ads').update({
+    await sb.from('ads').update({
       title:ad.title, ad_date:ad.adDate, types:ad.types, memo:ad.memo||'',
       setting_photos:ad.settingPhotos||[], order_amount:ad.orderAmount||''
     }).eq('id', ad.id);
-    if(res.error) {
-      // fallback
+  } catch(e) {
+    console.warn('sbUpdateAd error (setting_photos/order_amount 컬럼 없을 수 있음):', e);
+    // 컬럼 없을 때 기본 필드만 저장
+    try {
       await sb.from('ads').update({
         title:ad.title, ad_date:ad.adDate, types:ad.types, memo:ad.memo||''
       }).eq('id', ad.id);
-    }
-  } catch(e) { console.warn('sbUpdateAd error:', e); }
+    } catch(e2) { console.warn('sbUpdateAd fallback error:', e2); }
+  }
 }
 
 async function sbDeleteAd(id) {
@@ -2934,8 +2936,8 @@ function rqSubmit() {
     var wEl = document.getElementById('rq-w-'+safeLabel);
     var hEl = document.getElementById('rq-h-'+safeLabel);
     var qEl = document.getElementById('rq-qty-'+safeLabel);
-    if(wEl && wEl.value) detail.width = wEl.value;
-    if(hEl && hEl.value) detail.height = hEl.value;
+    if(wEl && wEl.value) detail.w = wEl.value;
+    if(hEl && hEl.value) detail.h = hEl.value;
     if(qEl && qEl.value) detail.qty = qEl.value;
     if(Object.keys(detail).length > 0) adTypeDetails[label] = detail;
   });
@@ -3058,10 +3060,12 @@ function openReqEdit(reqId) {
   if(req.status !== '검토 중') return;
   rqEditTargetId = req.id;
 
-  // 신청서 모달 초기화 후 기존 값 채우기
+  // 조회 모달 닫기
+  modalClose('modalReqStatus');
+
+  // 신청서 모달 열기
   openRequestModal();
 
-  // 잠깐 후 값 채우기 (openRequestModal 렌더 완료 후)
   setTimeout(function() {
     var set = function(id, val) { var el = document.getElementById(id); if(el) el.value = val||''; };
     set('rq-dept', req.dept);
@@ -3076,10 +3080,7 @@ function openReqEdit(reqId) {
     // 제출 버튼 텍스트 변경
     var submitBtn = document.querySelector('#modalRequest .kbtn-confirm');
     if(submitBtn) submitBtn.textContent = '수정 저장';
-
-    // 상단 타이틀 변경
-    var titleEl = document.querySelector('#rq-scroll-area > div > div:first-child');
-  }, 100);
+  }, 150);
 }
 
 function rqSubmit() {
@@ -4051,15 +4052,29 @@ function openRequestDetail(id) {
     return '<option value="'+s+'"'+(r.status===s?' selected':'')+'>'+s+'</option>';
   }).join('');
 
-  var infoGrid = [['소속',r.dept],['이름',r.name],['연락처',r.tel],['마감',r.deadline||'미정']].map(function(kv){
+  var infoGrid = [
+    ['소속', r.dept],
+    ['이름', r.name],
+    ['연락처', r.tel],
+    ['마감 요청일', r.deadline||'미정'],
+    ['입고 지점', r.branch||''],
+    ['입고 요청일', r.deliveryDay||'']
+  ].filter(function(kv){ return kv[1]; }).map(function(kv){
     return '<div style="background:#f7f7f7;border-radius:10px;padding:12px;">'
       +'<div style="font-size:10px;font-weight:600;color:#999;text-transform:uppercase;margin-bottom:4px;">'+kv[0]+'</div>'
       +'<div style="font-size:13px;font-weight:600;color:#111;">'+(kv[1]||'-')+'</div>'
       +'</div>';
   }).join('');
 
+  // 광고 종류 + 사이즈 상세
   var adTypePills = (r.adTypes||[]).map(function(t){
-    return '<span style="background:#111;color:#fff;font-size:12px;font-weight:600;padding:5px 12px;border-radius:50px;margin:2px;">'+t+'</span>';
+    var detail = (r.adTypeDetails||{})[t];
+    var detailStr = '';
+    if(detail) {
+      if(detail.w && detail.h) detailStr += ' <span style="font-size:10px;opacity:.7;">'+detail.w+'×'+detail.h+'mm</span>';
+      if(detail.qty) detailStr += ' <span style="font-size:10px;opacity:.7;">×'+detail.qty+'개</span>';
+    }
+    return '<span style="background:#111;color:#fff;font-size:12px;font-weight:600;padding:5px 12px;border-radius:50px;margin:2px;display:inline-flex;align-items:center;gap:4px;">'+t+detailStr+'</span>';
   }).join('');
   if(r.bannerType) adTypePills += '<span style="background:#555;color:#fff;font-size:12px;font-weight:600;padding:5px 12px;border-radius:50px;margin:2px;">'+r.bannerType+'</span>';
   if(r.customSize) adTypePills += '<span style="background:#f0f0f0;color:#555;font-size:12px;padding:5px 12px;border-radius:50px;margin:2px;">'+r.customSize+'</span>';
@@ -4217,7 +4232,9 @@ function searchReqStatus() {
       adTypes:r.ad_types||[], bannerType:r.banner_type, customSize:r.custom_size,
       adTitle:r.ad_title, selling:r.selling, eventStart:r.event_start, eventEnd:r.event_end,
       eventDesc:r.event_desc, sitePhotoSrcs:r.site_photo_srcs||[], refImageSrcs:r.ref_image_srcs||[],
-      manager:r.manager, dueDate:r.due_date
+      manager:r.manager, dueDate:r.due_date,
+      branch:r.branch||'', deliveryDay:r.delivery_day||'',
+      adTypeDetails:r.ad_type_details||{}, productPhotoSrcs:r.product_photo_srcs||[]
     }; });
     var matched = (DB.requests||[]).filter(function(r){
       return r.tel && r.tel.replace(/[^0-9]/g,'') === tel;
