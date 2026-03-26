@@ -2068,6 +2068,10 @@ function typeBlockInnerHTML(idx,prefix) {
       <p style="font-size:11px;color:var(--ktext3);margin-top:4px;">클릭하여 이미지 업로드</p>
     </div>
   </label>
+  <div style="margin-top:8px;display:flex;gap:6px;align-items:center;">
+    <input class="kinput" type="number" id="${prefix}TypePrice_${idx}" placeholder="연출물 단가" style="flex:1;font-size:13px;" />
+    <span style="font-size:12px;color:#999;flex-shrink:0;">원 / 개</span>
+  </div>
   <div style="margin-top:8px;">
     <input class="kinput" type="text" id="${prefix}TypeMemo_${idx}" placeholder="메모 (선택 · 특이사항, 적용 매장 등)" style="font-size:13px;" />
   </div>`;
@@ -2108,8 +2112,9 @@ function collectTypes(prefix) {
     const width=document.getElementById(`${prefix}TypeW_${idx}`)?.value.trim()||'';
     const height=document.getElementById(`${prefix}TypeH_${idx}`)?.value.trim()||'';
     const memo=document.getElementById(`${prefix}TypeMemo_${idx}`)?.value.trim()||'';
+    const unitPrice=document.getElementById(`${prefix}TypePrice_${idx}`)?.value.trim()||'';
     const src=prefix==='ai'?(aiTypeSrcs[idx]||''):(editTypeSrcs[idx]!==undefined&&editTypeSrcs[idx]!==null?editTypeSrcs[idx]:(detailAd?.types?.find(t=>t.name===name)?.src||''));
-    return {name,width,height,src,memo};
+    return {name,width,height,src,memo,unitPrice};
   });
 }
 
@@ -2273,7 +2278,10 @@ function renderDetail() {
         <div style="margin-bottom:${i<types.length-1?28:0}px;padding-bottom:${i<types.length-1?28:0}px;border-bottom:${i<types.length-1?'1px solid var(--kborder)':'none'};">
           <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
             <span style="font-size:14px;font-weight:600;">${t.name}</span>
-            ${t.width&&t.height?`<span style="font-size:12px;color:var(--ktext3);">사이즈: ${t.width}×${t.height}</span>`:''}
+            <div style="display:flex;gap:10px;align-items:center;">
+              ${t.unitPrice?`<span style="font-size:12px;font-weight:700;color:#b45309;background:#fff8e1;padding:3px 10px;border-radius:20px;">${Number(t.unitPrice).toLocaleString()}원/개</span>`:''}
+              ${t.width&&t.height?`<span style="font-size:12px;color:var(--ktext3);">사이즈: ${t.width}×${t.height}</span>`:''}
+            </div>
           </div>
           <div onclick="${t.src?`openLightbox('${t.src}')`:''}" style="width:100%;background:${t.src?'transparent':'#f0f0f0'};border-radius:10px;overflow:hidden;min-height:140px;display:flex;align-items:center;justify-content:center;cursor:${t.src?'zoom-in':'default'};">
             ${t.src?`<img src="${t.src}" style="width:100%;display:block;border-radius:10px;" />`:`<span style="color:#999;font-size:13px;">이미지 없음</span>`}
@@ -2286,12 +2294,6 @@ function renderDetail() {
           html+=`<div style="margin-top:20px;padding:14px 16px;background:#f7f8f5;border-radius:12px;">
             <div style="font-size:11px;font-weight:700;color:#aaa;margin-bottom:6px;letter-spacing:0.02em;">메모</div>
             <div style="font-size:13px;color:#555;line-height:1.6;white-space:pre-wrap;">${ad.memo}</div>
-          </div>`;
-        }
-        if(ad.orderAmount) {
-          html+=`<div style="margin-top:12px;padding:12px 16px;background:#fff8e1;border-radius:12px;display:flex;align-items:center;justify-content:space-between;">
-            <span style="font-size:12px;font-weight:700;color:#b45309;">발주 금액</span>
-            <span style="font-size:15px;font-weight:800;color:#b45309;">${ad.orderAmount} 원</span>
           </div>`;
         }
         if((ad.settingPhotos||[]).length > 0) {
@@ -2311,12 +2313,6 @@ function renderDetail() {
           html+=`<div style="margin-top:20px;padding:14px 16px;background:#f7f8f5;border-radius:12px;">
             <div style="font-size:11px;font-weight:700;color:#aaa;margin-bottom:6px;letter-spacing:0.02em;">메모</div>
             <div style="font-size:13px;color:#555;line-height:1.6;white-space:pre-wrap;">${ad.memo}</div>
-          </div>`;
-        }
-        if(ad.orderAmount) {
-          html+=`<div style="margin-top:12px;padding:12px 16px;background:#fff8e1;border-radius:12px;display:flex;align-items:center;justify-content:space-between;">
-            <span style="font-size:12px;font-weight:700;color:#b45309;">발주 금액</span>
-            <span style="font-size:15px;font-weight:800;color:#b45309;">${ad.orderAmount} 원</span>
           </div>`;
         }
         if((ad.settingPhotos||[]).length > 0) {
@@ -2366,6 +2362,10 @@ function renderDetail() {
           <img id="editTypePrev_${i}" style="width:100%;max-height:120px;object-fit:contain;border-radius:8px;display:none;" />
           <div id="editTypeIcon_${i}"><svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.5" width="28" height="28" style="opacity:.3;margin:0 auto;display:block;"><rect x="6" y="14" width="36" height="26" rx="4"/><path d="M24 8v16m-6-6 6-6 6 6"/></svg><p style="font-size:11px;color:var(--ktext3);margin-top:4px;">클릭해서 변경</p></div>`}
         </label>
+        <div style="margin-top:8px;display:flex;gap:6px;align-items:center;">
+          <input class="kinput" type="number" id="editTypePrice_${i}" value="${(t.unitPrice||'').replace(/"/g,'&quot;')}" placeholder="연출물 단가" style="flex:1;font-size:13px;" />
+          <span style="font-size:12px;color:#999;flex-shrink:0;">원 / 개</span>
+        </div>
         <div style="margin-top:8px;">
           <input class="kinput" type="text" id="editTypeMemo_${i}" value="${(t.memo||'').replace(/"/g,'&quot;')}" placeholder="메모 (선택 · 특이사항, 적용 매장 등)" style="font-size:13px;" />
         </div>
@@ -2374,13 +2374,6 @@ function renderDetail() {
     html+=`</div>
     <button class="kadd-type-btn" onclick="editAddType()">+ 타입 추가</button>
     <div class="kform-group" style="margin-top:16px;">
-      <label class="kform-label">발주 금액 <span style="font-size:11px;color:#aaa;font-weight:400;">(선택)</span></label>
-      <div style="display:flex;align-items:center;gap:8px;">
-        <input class="kinput" type="number" id="editOrderAmount" value="${ad.orderAmount||''}" placeholder="0" style="flex:1;" />
-        <span style="font-size:13px;color:#777;flex-shrink:0;">원</span>
-      </div>
-    </div>
-    <div class="kform-group">
       <label class="kform-label">셋팅 사진 <span style="font-size:11px;color:#aaa;font-weight:400;">(선택 · 복수 가능)</span></label>
       <div id="editSettingPreview" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(90px,1fr));gap:8px;margin-bottom:8px;">
         ${(ad.settingPhotos||[]).map((src,i)=>`
@@ -2469,19 +2462,18 @@ function editSave() {
     const width=document.getElementById(`editTypeW_${idx}`)?.value.trim()||'';
     const height=document.getElementById(`editTypeH_${idx}`)?.value.trim()||'';
     const memo=document.getElementById(`editTypeMemo_${idx}`)?.value.trim()||'';
+    const unitPrice=document.getElementById(`editTypePrice_${idx}`)?.value.trim()||'';
     const newSrc=editTypeSrcs[idx];
     const origType=(detailAd.types||[]).find(t=>t.name===name);
     const origSrc=origType?.src||'';
     const src=newSrc!==null&&newSrc!==undefined?newSrc:origSrc;
-    return {name,width,height,src,memo};
+    return {name,width,height,src,memo,unitPrice};
   });
   const memo=document.getElementById('editMemo')?.value.trim()||'';
-  const orderAmount=document.getElementById('editOrderAmount')?.value.trim()||'';
   const idx=DB.ads.findIndex(a=>a.id===detailAd.id);
   if(idx===-1)return;
-  // 셋팅 사진: 기존 유지 + 새로 추가된 것
   const settingPhotos = editSettingPhotos !== null ? editSettingPhotos : (detailAd.settingPhotos||[]);
-  DB.ads[idx]={...DB.ads[idx],title,types:finalTypes,adDate:new Date().toLocaleDateString('ko-KR'),orderAmount,settingPhotos};
+  DB.ads[idx]={...DB.ads[idx],title,types:finalTypes,adDate:new Date().toLocaleDateString('ko-KR'),settingPhotos};
   editSettingPhotos = null;
   detailAd=DB.ads[idx];
   saveData();
@@ -3144,9 +3136,9 @@ async function processAdTypes(types) {
     var t = types[i];
     if(t.src && t.src.startsWith('data:')) {
       var url = await uploadImageToStorage(t.src, 'ad_' + t.name.replace(/\s/g,'_'));
-      result.push({name:t.name, width:t.width, height:t.height, src: url || t.src});
+      result.push({name:t.name, width:t.width, height:t.height, memo:t.memo||'', unitPrice:t.unitPrice||'', src: url || t.src});
     } else {
-      result.push(t);
+      result.push({name:t.name, width:t.width, height:t.height, memo:t.memo||'', unitPrice:t.unitPrice||'', src:t.src||''});
     }
   }
   return result;
