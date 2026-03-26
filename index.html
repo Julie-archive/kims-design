@@ -2318,8 +2318,8 @@ function renderDetail() {
         if((ad.settingPhotos||[]).length > 0) {
           html+=`<div style="margin-top:16px;">
             <div style="font-size:12px;font-weight:700;color:#555;margin-bottom:8px;">셋팅 사진</div>
-            <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(100px,1fr));gap:8px;">
-              ${(ad.settingPhotos||[]).map(src=>`<img src="${src}" onclick="openLightbox('${src}')" style="width:100%;aspect-ratio:1;object-fit:cover;border-radius:8px;cursor:zoom-in;" />`).join('')}
+            <div style="display:flex;flex-direction:column;gap:10px;">
+              ${(ad.settingPhotos||[]).map(p=>{const src=typeof p==='object'?(p.src||''):p;const store=typeof p==='object'?(p.storeName||''):'';return `<div style="border-radius:12px;overflow:hidden;border:1.5px solid rgba(0,0,0,0.08);"><img src="${src}" onclick="openLightbox('${src}')" style="width:100%;display:block;cursor:zoom-in;" />${store?`<div style="padding:8px 12px;background:#f7f7f7;font-size:12px;font-weight:600;color:#555;">📍 ${store}</div>`:''}</div>`;}).join('')}
             </div>
           </div>`;
         }
@@ -2337,8 +2337,8 @@ function renderDetail() {
         if((ad.settingPhotos||[]).length > 0) {
           html+=`<div style="margin-top:16px;">
             <div style="font-size:12px;font-weight:700;color:#555;margin-bottom:8px;">셋팅 사진</div>
-            <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(100px,1fr));gap:8px;">
-              ${(ad.settingPhotos||[]).map(src=>`<img src="${src}" onclick="openLightbox('${src}')" style="width:100%;aspect-ratio:1;object-fit:cover;border-radius:8px;cursor:zoom-in;" />`).join('')}
+            <div style="display:flex;flex-direction:column;gap:10px;">
+              ${(ad.settingPhotos||[]).map(p=>{const src=typeof p==='object'?(p.src||''):p;const store=typeof p==='object'?(p.storeName||''):'';return `<div style="border-radius:12px;overflow:hidden;border:1.5px solid rgba(0,0,0,0.08);"><img src="${src}" onclick="openLightbox('${src}')" style="width:100%;display:block;cursor:zoom-in;" />${store?`<div style="padding:8px 12px;background:#f7f7f7;font-size:12px;font-weight:600;color:#555;">📍 ${store}</div>`:''}</div>`;}).join('')}
             </div>
           </div>`;
         }
@@ -2394,12 +2394,18 @@ function renderDetail() {
     <button class="kadd-type-btn" onclick="editAddType()">+ 타입 추가</button>
     <div class="kform-group" style="margin-top:16px;">
       <label class="kform-label">셋팅 사진 <span style="font-size:11px;color:#aaa;font-weight:400;">(선택 · 복수 가능)</span></label>
-      <div id="editSettingPreview" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(90px,1fr));gap:8px;margin-bottom:8px;">
-        ${(ad.settingPhotos||[]).map((src,i)=>`
-          <div style="position:relative;">
-            <img src="${src}" style="width:100%;aspect-ratio:1;object-fit:cover;border-radius:8px;" />
-            <button onclick="editRemoveSettingPhoto(${i})" style="position:absolute;top:3px;right:3px;width:20px;height:20px;border-radius:50%;background:rgba(0,0,0,0.6);color:#fff;border:none;cursor:pointer;font-size:12px;line-height:1;display:flex;align-items:center;justify-content:center;">×</button>
-          </div>`).join('')}
+      <div id="editSettingPreview" style="display:flex;flex-direction:column;gap:10px;margin-bottom:8px;">
+        ${(ad.settingPhotos||[]).map((p,i)=>{
+          const src = typeof p === 'object' ? (p.src||'') : p;
+          const storeName = typeof p === 'object' ? (p.storeName||'') : '';
+          return `<div style="border:1.5px solid rgba(0,0,0,0.1);border-radius:10px;overflow:hidden;">
+            <img src="${src}" style="width:100%;max-height:200px;object-fit:cover;display:block;" />
+            <div style="display:flex;align-items:center;gap:8px;padding:8px 10px;background:#f7f7f7;">
+              <input class="kinput" type="text" id="editSettingStore_${i}" value="${storeName.replace(/"/g,'&quot;')}" placeholder="매장명 (예: 강서점)" style="flex:1;font-size:13px;" />
+              <button onclick="editRemoveSettingPhoto(${i})" style="padding:5px 12px;background:#ffe0e0;border:none;border-radius:6px;color:#e03333;font-size:12px;font-weight:700;cursor:pointer;white-space:nowrap;">삭제</button>
+            </div>
+          </div>`;
+        }).join('')}
       </div>
       <label style="display:flex;align-items:center;justify-content:center;gap:8px;padding:12px;background:#f7f7f7;border-radius:10px;border:1.5px dashed var(--kborder2);cursor:pointer;">
         <input type="file" accept="image/*" multiple onchange="editAddSettingPhotos(this)" style="display:none;" />
@@ -2432,19 +2438,23 @@ var editSettingPhotos = null; // null = 변경 없음, array = 변경됨
 function editAddSettingPhotos(input) {
   var files = Array.from(input.files);
   if(!files.length) return;
-  var current = editSettingPhotos !== null ? editSettingPhotos : [...(detailAd.settingPhotos||[])];
+  var current = editSettingPhotos !== null ? editSettingPhotos : (detailAd.settingPhotos||[]).map(function(p){ return typeof p==='object' ? p : {src:p, storeName:''}; });
   var preview = document.getElementById('editSettingPreview');
   files.forEach(function(file) {
     var reader = new FileReader();
     reader.onload = function(e) {
-      current.push(e.target.result);
+      var newItem = {src: e.target.result, storeName: ''};
+      current.push(newItem);
       editSettingPhotos = current;
-      // 미리보기 추가
+      var i = current.length - 1;
       var div = document.createElement('div');
-      div.style.position = 'relative';
-      var idx = current.length - 1;
-      div.innerHTML = `<img src="${e.target.result}" style="width:100%;aspect-ratio:1;object-fit:cover;border-radius:8px;" />
-        <button onclick="editRemoveSettingPhoto(${idx})" style="position:absolute;top:3px;right:3px;width:20px;height:20px;border-radius:50%;background:rgba(0,0,0,0.6);color:#fff;border:none;cursor:pointer;font-size:12px;line-height:1;display:flex;align-items:center;justify-content:center;">×</button>`;
+      div.id = 'editSettingItem_' + i;
+      div.style.cssText = 'border:1.5px solid rgba(0,0,0,0.1);border-radius:10px;overflow:hidden;';
+      div.innerHTML = `<img src="${e.target.result}" style="width:100%;max-height:200px;object-fit:cover;display:block;" />
+        <div style="display:flex;align-items:center;gap:8px;padding:8px 10px;background:#f7f7f7;">
+          <input class="kinput" type="text" id="editSettingStore_${i}" placeholder="매장명 (예: 강서점)" style="flex:1;font-size:13px;" />
+          <button onclick="editRemoveSettingPhoto(${i})" style="padding:5px 12px;background:#ffe0e0;border:none;border-radius:6px;color:#e03333;font-size:12px;font-weight:700;cursor:pointer;white-space:nowrap;">삭제</button>
+        </div>`;
       if(preview) preview.appendChild(div);
     };
     reader.readAsDataURL(file);
@@ -2453,16 +2463,20 @@ function editAddSettingPhotos(input) {
 }
 
 function editRemoveSettingPhoto(idx) {
-  var current = editSettingPhotos !== null ? editSettingPhotos : [...(detailAd.settingPhotos||[])];
+  var current = editSettingPhotos !== null ? editSettingPhotos : (detailAd.settingPhotos||[]).map(function(p){ return typeof p==='object' ? p : {src:p, storeName:''}; });
   current.splice(idx, 1);
   editSettingPhotos = current;
-  // 미리보기 재렌더
   var preview = document.getElementById('editSettingPreview');
   if(preview) {
-    preview.innerHTML = current.map(function(src, i) {
-      return `<div style="position:relative;">
-        <img src="${src}" style="width:100%;aspect-ratio:1;object-fit:cover;border-radius:8px;" />
-        <button onclick="editRemoveSettingPhoto(${i})" style="position:absolute;top:3px;right:3px;width:20px;height:20px;border-radius:50%;background:rgba(0,0,0,0.6);color:#fff;border:none;cursor:pointer;font-size:12px;line-height:1;display:flex;align-items:center;justify-content:center;">×</button>
+    preview.innerHTML = current.map(function(p, i) {
+      var src = typeof p === 'object' ? (p.src||'') : p;
+      var storeName = typeof p === 'object' ? (p.storeName||'') : '';
+      return `<div style="border:1.5px solid rgba(0,0,0,0.1);border-radius:10px;overflow:hidden;">
+        <img src="${src}" style="width:100%;max-height:200px;object-fit:cover;display:block;" />
+        <div style="display:flex;align-items:center;gap:8px;padding:8px 10px;background:#f7f7f7;">
+          <input class="kinput" type="text" id="editSettingStore_${i}" value="${storeName.replace(/"/g,'&quot;')}" placeholder="매장명 (예: 강서점)" style="flex:1;font-size:13px;" />
+          <button onclick="editRemoveSettingPhoto(${i})" style="padding:5px 12px;background:#ffe0e0;border:none;border-radius:6px;color:#e03333;font-size:12px;font-weight:700;cursor:pointer;white-space:nowrap;">삭제</button>
+        </div>
       </div>`;
     }).join('');
   }
@@ -2491,13 +2505,29 @@ function editSave() {
   const memo=document.getElementById('editMemo')?.value.trim()||'';
   const idx=DB.ads.findIndex(a=>a.id===detailAd.id);
   if(idx===-1)return;
-  const settingPhotos = editSettingPhotos !== null ? editSettingPhotos : (detailAd.settingPhotos||[]);
+  const settingPhotos = (editSettingPhotos !== null ? editSettingPhotos : (detailAd.settingPhotos||[])).map(function(p, i) {
+    var src = typeof p === 'object' ? (p.src||'') : p;
+    var storeEl = document.getElementById('editSettingStore_' + i);
+    var storeName = storeEl ? storeEl.value.trim() : (typeof p === 'object' ? (p.storeName||'') : '');
+    return {src, storeName};
+  });
   editSettingPhotos = null;
 
   // base64 이미지는 Storage에 업로드 후 저장
   processAdTypes(rawTypes).then(async function(finalTypes) {
-    // 셋팅 사진도 Storage 업로드
-    const finalSettingPhotos = await processRequestFiles(settingPhotos, 'setting');
+    // 셋팅 사진 Storage 업로드 (src만 업로드, storeName 유지)
+    const finalSettingPhotos = [];
+    for(var si=0; si<settingPhotos.length; si++) {
+      var sp = settingPhotos[si];
+      var spSrc = typeof sp === 'object' ? (sp.src||'') : sp;
+      var spStore = typeof sp === 'object' ? (sp.storeName||'') : '';
+      if(spSrc && spSrc.startsWith('data:')) {
+        var uploadedUrl = await uploadImageToStorage(spSrc, 'setting_' + si);
+        finalSettingPhotos.push({src: uploadedUrl || spSrc, storeName: spStore});
+      } else {
+        finalSettingPhotos.push({src: spSrc, storeName: spStore});
+      }
+    }
     DB.ads[idx]={...DB.ads[idx],title,types:finalTypes,adDate:new Date().toLocaleDateString('ko-KR'),settingPhotos:finalSettingPhotos};
     detailAd=DB.ads[idx];
     saveData();
@@ -4186,15 +4216,6 @@ function formatTelInput(el) {
   if(ok) {
     console.log('Supabase 데이터 로드 성공');
     if(homeScreen === 'B') {
-      // sub 재설정 후 renderHomeContent만 갱신
-      if(!hState.sub || !getSubs(hState.cat).find(function(s){ return s.name===hState.sub; })) {
-        hState.sub = getSubs(hState.cat)[0]?.name || '';
-      }
-      if(hState.prod && hState.prod !== '__all__') {
-        if(!getProds(hState.cat, hState.sub).find(function(p){ return p.name===hState.prod; })) {
-          hState.prod = '__all__';
-        }
-      }
       renderHomeB();
     } else if(curView === 'admin' && adminLoggedIn) {
       renderAdmin();
