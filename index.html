@@ -1293,7 +1293,7 @@ async function sbLoadAll() {
     if(subsRes.error || prodsRes.error || adsRes.error || reqsRes.error) throw new Error('Load failed');
     DB.subs = subsRes.data.map(function(r){ return {id:r.id, mainCat:r.main_cat, name:r.name}; });
     DB.products = prodsRes.data.map(function(r){ return {id:r.id, mainCat:r.main_cat, subCat:r.sub_cat, name:r.name}; });
-    DB.ads = adsRes.data.map(function(r){ return {id:r.id, mainCat:r.main_cat, subCat:r.sub_cat, product:r.product, title:r.title, adDate:r.ad_date, types:r.types||[], memo:r.memo||''}; });
+    DB.ads = adsRes.data.map(function(r){ return {id:r.id, mainCat:r.main_cat, subCat:r.sub_cat, product:r.product, title:r.title, adDate:r.ad_date, types:r.types||[], memo:r.memo||'', settingPhotos:r.setting_photos||[], orderAmount:r.order_amount||''}; });
     DB.requests = reqsRes.data.map(function(r){ return {
       id:r.id, reqCode:r.req_code, submittedAt:r.submitted_at, status:r.status,
       dept:r.dept, name:r.name, tel:r.tel, title:r.title, deadline:r.deadline,
@@ -1339,16 +1339,35 @@ async function sbSaveAd(ad) {
   try {
     const res = await sb.from('ads').insert({
       main_cat:ad.mainCat, sub_cat:ad.subCat, product:ad.product,
-      title:ad.title, ad_date:ad.adDate, types:ad.types, memo:ad.memo||''
+      title:ad.title, ad_date:ad.adDate, types:ad.types, memo:ad.memo||'',
+      setting_photos:ad.settingPhotos||[], order_amount:ad.orderAmount||''
     }).select().single();
-    if(res.error) throw res.error;
+    if(res.error) {
+      // 새 컬럼 없을 때 fallback
+      const res2 = await sb.from('ads').insert({
+        main_cat:ad.mainCat, sub_cat:ad.subCat, product:ad.product,
+        title:ad.title, ad_date:ad.adDate, types:ad.types, memo:ad.memo||''
+      }).select().single();
+      if(res2.error) throw res2.error;
+      ad.id = res2.data.id;
+      return;
+    }
     ad.id = res.data.id;
   } catch(e) { console.warn('sbSaveAd error:', e); }
 }
 
 async function sbUpdateAd(ad) {
   try {
-    await sb.from('ads').update({title:ad.title, ad_date:ad.adDate, types:ad.types, memo:ad.memo||''}).eq('id', ad.id);
+    const res = await sb.from('ads').update({
+      title:ad.title, ad_date:ad.adDate, types:ad.types, memo:ad.memo||'',
+      setting_photos:ad.settingPhotos||[], order_amount:ad.orderAmount||''
+    }).eq('id', ad.id);
+    if(res.error) {
+      // fallback
+      await sb.from('ads').update({
+        title:ad.title, ad_date:ad.adDate, types:ad.types, memo:ad.memo||''
+      }).eq('id', ad.id);
+    }
   } catch(e) { console.warn('sbUpdateAd error:', e); }
 }
 
@@ -1505,24 +1524,33 @@ function renderHomeA() {
 function homeCatSelect(cat) {
   homeScreen = 'B';
   hState = {cat, sub:'', prod:'__all__', search:''};
-  // 로딩 화면 먼저 표시
+
+  // 데이터가 이미 로드된 경우 바로 렌더 (속도 개선)
+  if(DB.ads && DB.ads.length > 0) {
+    renderHomeB();
+    setTimeout(function() {
+      var tabBar = document.querySelector('.ktab-bar');
+      if(!tabBar) return;
+      var btns = tabBar.querySelectorAll('.ktab-btn');
+      var idx = MAIN_CATS.indexOf(cat);
+      if(idx >= 0 && btns[idx]) btns[idx].scrollIntoView({block:'nearest', inline:'center', behavior:'smooth'});
+    }, 50);
+    return;
+  }
+
+  // 최초 로드
   var el = document.getElementById('viewHome');
   el.innerHTML = '<div style="flex:1;display:flex;align-items:center;justify-content:center;"><div style="font-size:14px;color:#aaa;">불러오는 중...</div></div>';
-  // 항상 Supabase에서 최신 데이터 로드 후 렌더
   sbLoadAll().then(function(ok) {
     if(homeScreen === 'B' && hState.cat === cat) {
       hState.sub = '';
       renderHomeB();
-      // 탭 스크롤 위치 유지 - 선택된 탭이 보이도록
       setTimeout(function() {
         var tabBar = document.querySelector('.ktab-bar');
         if(!tabBar) return;
         var btns = tabBar.querySelectorAll('.ktab-btn');
-        var CATS = ['농산','축산','수산','공산','S.I','지점 운영 광고'];
-        var idx = CATS.indexOf(cat);
-        if(idx >= 0 && btns[idx]) {
-          btns[idx].scrollIntoView({block:'nearest', inline:'center', behavior:'smooth'});
-        }
+        var idx = MAIN_CATS.indexOf(cat);
+        if(idx >= 0 && btns[idx]) btns[idx].scrollIntoView({block:'nearest', inline:'center', behavior:'smooth'});
       }, 50);
     }
   });
@@ -2260,6 +2288,20 @@ function renderDetail() {
             <div style="font-size:13px;color:#555;line-height:1.6;white-space:pre-wrap;">${ad.memo}</div>
           </div>`;
         }
+        if(ad.orderAmount) {
+          html+=`<div style="margin-top:12px;padding:12px 16px;background:#fff8e1;border-radius:12px;display:flex;align-items:center;justify-content:space-between;">
+            <span style="font-size:12px;font-weight:700;color:#b45309;">발주 금액</span>
+            <span style="font-size:15px;font-weight:800;color:#b45309;">${ad.orderAmount} 원</span>
+          </div>`;
+        }
+        if((ad.settingPhotos||[]).length > 0) {
+          html+=`<div style="margin-top:16px;">
+            <div style="font-size:12px;font-weight:700;color:#555;margin-bottom:8px;">셋팅 사진</div>
+            <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(100px,1fr));gap:8px;">
+              ${(ad.settingPhotos||[]).map(src=>`<img src="${src}" onclick="openLightbox('${src}')" style="width:100%;aspect-ratio:1;object-fit:cover;border-radius:8px;cursor:zoom-in;" />`).join('')}
+            </div>
+          </div>`;
+        }
         html+=`<div style="display:flex;gap:10px;margin-top:20px;">
           <button onclick="modalClose('modalDetail')" style="flex:1;padding:13px;background:#f0f0f0;color:#111;border:none;border-radius:50px;font-size:14px;font-weight:700;cursor:pointer;font-family:'Pretendard',sans-serif;">닫기</button>
           <button onclick="detailTab='edit';renderDetail();" style="flex:2;padding:13px;background:#111;color:#fff;border:none;border-radius:50px;font-size:14px;font-weight:700;cursor:pointer;font-family:'Pretendard',sans-serif;">✎ 수정하기</button>
@@ -2271,11 +2313,26 @@ function renderDetail() {
             <div style="font-size:13px;color:#555;line-height:1.6;white-space:pre-wrap;">${ad.memo}</div>
           </div>`;
         }
+        if(ad.orderAmount) {
+          html+=`<div style="margin-top:12px;padding:12px 16px;background:#fff8e1;border-radius:12px;display:flex;align-items:center;justify-content:space-between;">
+            <span style="font-size:12px;font-weight:700;color:#b45309;">발주 금액</span>
+            <span style="font-size:15px;font-weight:800;color:#b45309;">${ad.orderAmount} 원</span>
+          </div>`;
+        }
+        if((ad.settingPhotos||[]).length > 0) {
+          html+=`<div style="margin-top:16px;">
+            <div style="font-size:12px;font-weight:700;color:#555;margin-bottom:8px;">셋팅 사진</div>
+            <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(100px,1fr));gap:8px;">
+              ${(ad.settingPhotos||[]).map(src=>`<img src="${src}" onclick="openLightbox('${src}')" style="width:100%;aspect-ratio:1;object-fit:cover;border-radius:8px;cursor:zoom-in;" />`).join('')}
+            </div>
+          </div>`;
+        }
         html+=`<button onclick="openAdRequest(${ad.id})" style="width:100%;margin-top:20px;padding:14px;background:#111;color:#fff;border:none;border-radius:50px;font-size:15px;font-weight:700;cursor:pointer;font-family:'Pretendard',sans-serif;letter-spacing:-0.02em;">이 광고로 신청하기</button>`;
       }
     }
   } else {
     // Edit tab
+    editSettingPhotos = null;
     html+=`<div class="kform-group">
       <label class="kform-label">광고 이름</label>
       <input class="kinput" type="text" id="editTitle" value="${ad.title}" placeholder="광고 이름" />
@@ -2316,6 +2373,28 @@ function renderDetail() {
     });
     html+=`</div>
     <button class="kadd-type-btn" onclick="editAddType()">+ 타입 추가</button>
+    <div class="kform-group" style="margin-top:16px;">
+      <label class="kform-label">발주 금액 <span style="font-size:11px;color:#aaa;font-weight:400;">(선택)</span></label>
+      <div style="display:flex;align-items:center;gap:8px;">
+        <input class="kinput" type="number" id="editOrderAmount" value="${ad.orderAmount||''}" placeholder="0" style="flex:1;" />
+        <span style="font-size:13px;color:#777;flex-shrink:0;">원</span>
+      </div>
+    </div>
+    <div class="kform-group">
+      <label class="kform-label">셋팅 사진 <span style="font-size:11px;color:#aaa;font-weight:400;">(선택 · 복수 가능)</span></label>
+      <div id="editSettingPreview" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(90px,1fr));gap:8px;margin-bottom:8px;">
+        ${(ad.settingPhotos||[]).map((src,i)=>`
+          <div style="position:relative;">
+            <img src="${src}" style="width:100%;aspect-ratio:1;object-fit:cover;border-radius:8px;" />
+            <button onclick="editRemoveSettingPhoto(${i})" style="position:absolute;top:3px;right:3px;width:20px;height:20px;border-radius:50%;background:rgba(0,0,0,0.6);color:#fff;border:none;cursor:pointer;font-size:12px;line-height:1;display:flex;align-items:center;justify-content:center;">×</button>
+          </div>`).join('')}
+      </div>
+      <label style="display:flex;align-items:center;justify-content:center;gap:8px;padding:12px;background:#f7f7f7;border-radius:10px;border:1.5px dashed var(--kborder2);cursor:pointer;">
+        <input type="file" accept="image/*" multiple onchange="editAddSettingPhotos(this)" style="display:none;" />
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+        <span style="font-size:13px;color:#999;">셋팅 사진 추가</span>
+      </label>
+    </div>
     <div class="kmodal-actions">
       <button class="kbtn-cancel" onclick="detailTab='view';renderDetail()">취소</button>
       <button class="kbtn-confirm" onclick="editSave()">저장</button>
@@ -2335,6 +2414,48 @@ function editAddType() {
   container.appendChild(block);
 }
 
+// 셋팅 사진 관련
+var editSettingPhotos = null; // null = 변경 없음, array = 변경됨
+
+function editAddSettingPhotos(input) {
+  var files = Array.from(input.files);
+  if(!files.length) return;
+  var current = editSettingPhotos !== null ? editSettingPhotos : [...(detailAd.settingPhotos||[])];
+  var preview = document.getElementById('editSettingPreview');
+  files.forEach(function(file) {
+    var reader = new FileReader();
+    reader.onload = function(e) {
+      current.push(e.target.result);
+      editSettingPhotos = current;
+      // 미리보기 추가
+      var div = document.createElement('div');
+      div.style.position = 'relative';
+      var idx = current.length - 1;
+      div.innerHTML = `<img src="${e.target.result}" style="width:100%;aspect-ratio:1;object-fit:cover;border-radius:8px;" />
+        <button onclick="editRemoveSettingPhoto(${idx})" style="position:absolute;top:3px;right:3px;width:20px;height:20px;border-radius:50%;background:rgba(0,0,0,0.6);color:#fff;border:none;cursor:pointer;font-size:12px;line-height:1;display:flex;align-items:center;justify-content:center;">×</button>`;
+      if(preview) preview.appendChild(div);
+    };
+    reader.readAsDataURL(file);
+  });
+  input.value = '';
+}
+
+function editRemoveSettingPhoto(idx) {
+  var current = editSettingPhotos !== null ? editSettingPhotos : [...(detailAd.settingPhotos||[])];
+  current.splice(idx, 1);
+  editSettingPhotos = current;
+  // 미리보기 재렌더
+  var preview = document.getElementById('editSettingPreview');
+  if(preview) {
+    preview.innerHTML = current.map(function(src, i) {
+      return `<div style="position:relative;">
+        <img src="${src}" style="width:100%;aspect-ratio:1;object-fit:cover;border-radius:8px;" />
+        <button onclick="editRemoveSettingPhoto(${i})" style="position:absolute;top:3px;right:3px;width:20px;height:20px;border-radius:50%;background:rgba(0,0,0,0.6);color:#fff;border:none;cursor:pointer;font-size:12px;line-height:1;display:flex;align-items:center;justify-content:center;">×</button>
+      </div>`;
+    }).join('');
+  }
+}
+
 function editSave() {
   const title=document.getElementById('editTitle')?.value.trim();
   if(!title){alert('광고 이름을 입력하세요');return;}
@@ -2347,15 +2468,21 @@ function editSave() {
     const name=sel.value==='__custom__'?(document.getElementById(`editTypeCustomName_${idx}`)?.value.trim()||'기타'):sel.value;
     const width=document.getElementById(`editTypeW_${idx}`)?.value.trim()||'';
     const height=document.getElementById(`editTypeH_${idx}`)?.value.trim()||'';
+    const memo=document.getElementById(`editTypeMemo_${idx}`)?.value.trim()||'';
     const newSrc=editTypeSrcs[idx];
-    const origSrc=(detailAd.types||[]).find(t=>t.name===name)?.src||'';
+    const origType=(detailAd.types||[]).find(t=>t.name===name);
+    const origSrc=origType?.src||'';
     const src=newSrc!==null&&newSrc!==undefined?newSrc:origSrc;
-    return {name,width,height,src};
+    return {name,width,height,src,memo};
   });
   const memo=document.getElementById('editMemo')?.value.trim()||'';
+  const orderAmount=document.getElementById('editOrderAmount')?.value.trim()||'';
   const idx=DB.ads.findIndex(a=>a.id===detailAd.id);
   if(idx===-1)return;
-  DB.ads[idx]={...DB.ads[idx],title,types:finalTypes,adDate:new Date().toLocaleDateString('ko-KR')};
+  // 셋팅 사진: 기존 유지 + 새로 추가된 것
+  const settingPhotos = editSettingPhotos !== null ? editSettingPhotos : (detailAd.settingPhotos||[]);
+  DB.ads[idx]={...DB.ads[idx],title,types:finalTypes,adDate:new Date().toLocaleDateString('ko-KR'),orderAmount,settingPhotos};
+  editSettingPhotos = null;
   detailAd=DB.ads[idx];
   saveData();
   sbUpdateAd(DB.ads[idx]);
