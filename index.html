@@ -1525,25 +1525,19 @@ function homeCatSelect(cat) {
   homeScreen = 'B';
   hState = {cat, sub:'', prod:'__all__', search:''};
 
-  // 데이터가 이미 로드된 경우 바로 렌더 (속도 개선)
-  if(DB.ads && DB.ads.length > 0) {
+  // 로딩 표시 후 Supabase에서 최신 데이터 로드
+  var el = document.getElementById('viewHome');
+  // 캐시 데이터가 있으면 일단 빠르게 렌더 (이미지 있는 항목만)
+  var hasCachedImages = (DB.ads||[]).some(function(a){ return (a.types||[]).some(function(t){ return t.src && !t.src.startsWith('data:') && t.src !== ''; }); });
+  if(hasCachedImages) {
     renderHomeB();
-    setTimeout(function() {
-      var tabBar = document.querySelector('.ktab-bar');
-      if(!tabBar) return;
-      var btns = tabBar.querySelectorAll('.ktab-btn');
-      var idx = MAIN_CATS.indexOf(cat);
-      if(idx >= 0 && btns[idx]) btns[idx].scrollIntoView({block:'nearest', inline:'center', behavior:'smooth'});
-    }, 50);
-    return;
+  } else {
+    el.innerHTML = '<div style="flex:1;display:flex;align-items:center;justify-content:center;"><div style="font-size:14px;color:#aaa;">불러오는 중...</div></div>';
   }
 
-  // 최초 로드
-  var el = document.getElementById('viewHome');
-  el.innerHTML = '<div style="flex:1;display:flex;align-items:center;justify-content:center;"><div style="font-size:14px;color:#aaa;">불러오는 중...</div></div>';
+  // 항상 Supabase에서 최신 데이터 갱신
   sbLoadAll().then(function(ok) {
     if(homeScreen === 'B' && hState.cat === cat) {
-      hState.sub = '';
       renderHomeB();
       setTimeout(function() {
         var tabBar = document.querySelector('.ktab-bar');
