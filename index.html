@@ -1143,10 +1143,10 @@ html, body { height: 100%; overflow: hidden; overflow-x: hidden; max-width: 100%
   <div class="kmodal-sheet" style="max-width:520px;border-radius:12px;max-height:92vh;overflow:hidden;padding:0;display:flex;flex-direction:column;">
     <!-- 공지 바 -->
     <div style="background:#4a7cf4;border-radius:0;padding:13px 22px;flex-shrink:0;text-align:center;">
-      <span style="font-size:14px;font-weight:700;color:#fff;letter-spacing:-0.02em;">이 광고를 기반으로 신청합니다</span>
+      <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;"><span style="font-size:14px;font-weight:700;color:#fff;letter-spacing:-0.02em;">기존 광고물 신청</span><span style="font-size:11px;color:rgba(255,255,255,0.75);font-weight:500;"><span style="color:#facc15;">*</span> 필수 입력 항목</span></div>
     </div>
     <!-- 스크롤 영역 -->
-    <div style="overflow-y:auto;padding:24px 24px 40px;flex:1;">
+    <div id="adreq-scroll-area" style="overflow-y:auto;padding:24px 24px 40px;flex:1;">
     <div class="kmodal-handle" style="margin-bottom:16px;"></div>
 
     <!-- 참고 광고 헤더 -->
@@ -1173,15 +1173,9 @@ html, body { height: 100%; overflow: hidden; overflow-x: hidden; max-width: 100%
           <input class="kinput" type="text" id="adreq-name" placeholder="이름" />
         </div>
       </div>
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
-        <div>
-          <div class="kform-label">연락처</div>
-          <input class="kinput" type="tel" id="adreq-tel" placeholder="010-0000-0000" oninput="formatTelInput(this)" />
-        </div>
-        <div>
-          <div class="kform-label">입고 지점</div>
-          <input class="kinput" type="text" id="adreq-branch" placeholder="예) 강서점" />
-        </div>
+      <div>
+        <div class="kform-label">연락처</div>
+        <input class="kinput" type="tel" id="adreq-tel" placeholder="010-0000-0000" oninput="formatTelInput(this)" />
       </div>
     </div>
 
@@ -1194,6 +1188,10 @@ html, body { height: 100%; overflow: hidden; overflow-x: hidden; max-width: 100%
     <!-- 입고 방법 -->
     <div class="kform-label" style="margin-bottom:8px;">입고 방법 <span style="color:#e03333;">*</span></div>
     <div style="background:#f4f6ff;border:1.5px solid #e2e8ff;border-radius:6px;padding:14px;margin-bottom:16px;">
+      <div style="margin-bottom:10px;">
+        <div class="kform-label" style="margin-bottom:4px;">입고 지점 <span style="color:#e03333;">*</span></div>
+        <input class="kinput" type="text" id="adreq-branch" placeholder="예) 강서점" />
+      </div>
       <div class="kform-label" style="margin-bottom:6px;">입고일 <span style="color:#e03333;">*</span></div>
       <div style="display:flex;border:1.5px solid #d8dce3;border-radius:8px;overflow:hidden;background:#fff;margin-bottom:10px;">
         <button type="button" id="adreq-tab-fixed" onclick="adreqSwitchDeliveryTab('fixed')"
@@ -1221,6 +1219,7 @@ html, body { height: 100%; overflow: hidden; overflow-x: hidden; max-width: 100%
         <button type="button" class="adreq-type-tab" data-type="규격POP (A3)" onclick="adreqSelectType(this)">규격POP (A3)</button>
         <button type="button" class="adreq-type-tab" data-type="규격POP (A4)" onclick="adreqSelectType(this)">규격POP (A4)</button>
         <button type="button" class="adreq-type-tab" data-type="우드락 셀링" onclick="adreqSelectType(this)">우드락 셀링</button>
+        <button type="button" class="adreq-type-tab" data-type="기타" onclick="adreqSelectType(this)">기타</button>
       </div>
       <!-- 우드락 셀링 선택 시 사이즈 입력 -->
       <div id="adreq-woodlak-size" style="display:none;margin-top:10px;">
@@ -1232,11 +1231,15 @@ html, body { height: 100%; overflow: hidden; overflow-x: hidden; max-width: 100%
           <span style="font-size:13px;color:#999;flex-shrink:0;">mm</span>
         </div>
       </div>
+      <!-- 기타 선택 시 직접 입력 -->
+      <div id="adreq-other-input" style="display:none;margin-top:10px;">
+        <div class="kform-label" style="font-size:12px;color:#555;margin-bottom:6px;">광고물 종류 직접 입력</div>
+        <input class="kinput" type="text" id="adreq-other-text" placeholder="예) 현수막, 행잉형 배너 등" />
+      </div>
     </div>
 
-      <label class="kform-label">수량 <span style="color:#e03333;">*</span></label>
     <div class="kform-group">
-      <label class="kform-label">수량</label>
+      <label class="kform-label">수량 <span style="color:#e03333;">*</span></label>
       <div style="display:flex;align-items:center;gap:10px;">
         <input class="kinput" type="number" id="adreq-qty" placeholder="예) 3" min="1" style="max-width:120px;" />
         <span style="font-size:13px;color:#999;">개</span>
@@ -3366,11 +3369,13 @@ function openAdRequest(adId) {
   // 폼 초기화
   ['adreq-dept','adreq-name','adreq-tel','adreq-branch','adreq-deadline',
    'adreq-qty','adreq-desc','adreq-size-w','adreq-size-h',
-   'adreq-delivery-date','adreq-custom-date','adreq-fixed-calendar','adreq-custom-calendar'].forEach(id => {
+   'adreq-delivery-date','adreq-custom-date','adreq-fixed-calendar','adreq-custom-calendar','adreq-other-text'].forEach(id => {
     const el = document.getElementById(id); if(el) el.value = '';
   });
   document.getElementById('adreq-site-preview').innerHTML = '';
   modalOpen('modalAdRequest');
+  var _adreqScroll = document.getElementById('adreq-scroll-area');
+  if(_adreqScroll) _adreqScroll.scrollTop = 0;
   adreqSwitchDeliveryTab('fixed');
   setTimeout(adreqInitFixedCalendar, 100);
   var dd = document.getElementById('adreq-delivery-date'); if(dd) dd.value='';
@@ -3382,12 +3387,19 @@ function openAdRequest(adId) {
 function adreqSelectType(el) {
   document.querySelectorAll('.adreq-type-tab').forEach(t => t.classList.remove('active'));
   el.classList.add('active');
-  const isWoodlak = el.dataset.type === '우드락 셀링';
+  const adType = el.dataset.type;
+  const isWoodlak = adType === '우드락 셀링';
+  const isOther = adType === '기타';
   document.getElementById('adreq-woodlak-size').style.display = isWoodlak ? '' : 'none';
+  document.getElementById('adreq-other-input').style.display = isOther ? '' : 'none';
   if(!isWoodlak) {
     const w = document.getElementById('adreq-size-w');
     const h = document.getElementById('adreq-size-h');
     if(w) w.value = ''; if(h) h.value = '';
+  }
+  if(!isOther) {
+    const ot = document.getElementById('adreq-other-text');
+    if(ot) ot.value = '';
   }
 }
 
@@ -3448,7 +3460,9 @@ function adreqSubmit() {
     document.body.appendChild(toast); setTimeout(()=>toast.remove(), 2500); return;
   }
 
-  const sizeText = adType === '우드락 셀링' ? `${adType} (${sizeW}×${sizeH}mm)` : adType;
+  const otherText = (document.getElementById('adreq-other-text')?.value||'').trim();
+  const effectiveType = adType === '기타' ? (otherText ? `기타 (${otherText})` : '기타') : adType;
+  const sizeText = adType === '우드락 셀링' ? `${effectiveType} (${sizeW}×${sizeH}mm)` : effectiveType;
   const sitePrevImgs = Array.from(document.getElementById('adreq-site-preview').querySelectorAll('img'));
   const sitePhotoSrcs = sitePrevImgs.map(img=>img.src);
 
