@@ -2303,17 +2303,19 @@ function renderDetail() {
     } else {
       html+=types.map((t,i)=>`
         <div style="margin-bottom:${i<types.length-1?28:0}px;padding-bottom:${i<types.length-1?28:0}px;border-bottom:${i<types.length-1?'1px solid var(--kborder)':'none'};">
-          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
-            <span style="font-size:14px;font-weight:600;">${t.name}</span>
-            <div style="display:flex;gap:10px;align-items:center;">
-              ${t.unitPrice?`<span style="font-size:12px;font-weight:700;color:#b45309;background:#fff8e1;padding:3px 10px;border-radius:20px;">${Number(t.unitPrice).toLocaleString()}원/개</span>`:''}
-              ${t.width&&t.height?`<span style="font-size:12px;color:var(--ktext3);">사이즈: ${t.width}×${t.height}</span>`:''}
-            </div>
+          <div style="margin-bottom:10px;">
+            <span style="font-size:14px;font-weight:700;letter-spacing:-0.02em;">${t.name}</span>
           </div>
           <div onclick="${t.src?`openLightbox('${t.src}')`:''}" style="width:100%;background:${t.src?'transparent':'#f0f0f0'};border-radius:10px;overflow:hidden;min-height:140px;display:flex;align-items:center;justify-content:center;cursor:${t.src?'zoom-in':'default'};">
             ${t.src?`<img src="${t.src}" style="width:100%;display:block;border-radius:10px;" />`:`<span style="color:#999;font-size:13px;">이미지 없음</span>`}
           </div>
-          ${t.memo?`<div style="margin-top:10px;padding:10px 14px;background:#f7f8f5;border-radius:10px;font-size:13px;color:#555;line-height:1.6;">${t.memo}</div>`:''}
+          ${(t.width&&t.height)||t.unitPrice?`
+          <div style="margin-top:10px;border:1px solid rgba(0,0,0,0.07);border-radius:10px;overflow:hidden;display:flex;align-items:stretch;">
+            ${t.width&&t.height?`<div style="flex:1;padding:11px 16px;display:flex;align-items:center;gap:8px;background:#fafafa;"><span style="font-size:12px;font-weight:700;color:#111;white-space:nowrap;">사이즈</span><span style="font-size:13px;color:#333;font-weight:500;">${t.width}×${t.height}mm</span></div>`:''}
+            ${(t.width&&t.height)&&t.unitPrice?`<div style="width:1px;background:rgba(0,0,0,0.07);flex-shrink:0;"></div>`:''}
+            ${t.unitPrice?`<div style="flex:2;padding:11px 16px;display:flex;align-items:center;gap:8px;flex-wrap:wrap;background:#fafafa;"><span style="font-size:12px;font-weight:700;color:#111;white-space:nowrap;">단가</span><span style="font-size:13px;color:#333;font-weight:600;">${Number(t.unitPrice).toLocaleString()}원/개</span><span style="font-size:11px;color:#bbb;">단가는 사이즈에 따라 변동될 수 있습니다.</span></div>`:''}
+          </div>`:''}
+          ${t.memo?`<div style="margin-top:10px;padding:12px 16px;background:#f7f8f5;border-radius:10px;"><div style="font-size:11px;font-weight:700;color:#aaa;margin-bottom:5px;letter-spacing:0.02em;">메모</div><div style="font-size:13px;color:#555;line-height:1.6;white-space:pre-wrap;">${t.memo}</div></div>`:''}
         </div>
       `).join('');
       if(detailMode==='admin' && adminLoggedIn) {
@@ -2821,23 +2823,19 @@ function renderAdTypeDetails() {
     + sizeItems.map(function(label) {
         var safeLabel = label.replace(/\s/g,'_');
         var isQtyOnly = label === 'A3 가로형' || label === 'A4 세로형';
-        return '<div style="background:#f7f8f5;border-radius:10px;padding:12px 14px;">'
-          + '<div style="font-size:12px;font-weight:700;color:#555;margin-bottom:8px;">'+label+'</div>'
-          + '<div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;justify-content:space-evenly;">'
-          + (!isQtyOnly
-              ? '<div style="display:flex;align-items:center;gap:6px;flex:1;min-width:180px;justify-content:center;">'
-                + '<span style="font-size:12px;color:#777;font-weight:600;">가로</span>'
-                + '<input class="kinput" type="number" placeholder="mm" id="rq-w-'+safeLabel+'" style="width:80px;" />'
-                + '<span style="font-size:13px;color:#bbb;">×</span>'
-                + '<span style="font-size:12px;color:#777;font-weight:600;">세로</span>'
-                + '<input class="kinput" type="number" placeholder="mm" id="rq-h-'+safeLabel+'" style="width:80px;" />'
-                + '</div>'
-                + '<div style="width:1px;height:20px;background:rgba(0,0,0,0.1);flex-shrink:0;"></div>'
-              : '')
-          + '<div style="display:flex;align-items:center;gap:6px;justify-content:center;">'
-          + '<span style="font-size:12px;color:#777;font-weight:600;">수량</span>'
-          + '<input class="kinput" type="number" placeholder="개" id="rq-qty-'+safeLabel+'" min="1" style="width:72px;" />'
-          + '</div>'
+        var sizeBlock = !isQtyOnly
+          ? '<input class="kinput" type="number" placeholder="가로" id="rq-w-'+safeLabel+'" style="flex:1;min-width:60px;" />'
+            + '<span style="font-size:15px;color:#bbb;font-weight:400;flex-shrink:0;">×</span>'
+            + '<input class="kinput" type="number" placeholder="세로" id="rq-h-'+safeLabel+'" style="flex:1;min-width:60px;" />'
+            + '<span style="font-size:13px;color:#888;font-weight:500;flex-shrink:0;white-space:nowrap;">mm</span>'
+            + '<span style="width:1px;height:22px;background:rgba(0,0,0,0.12);flex-shrink:0;margin:0 2px;"></span>'
+          : '';
+        return '<div style="background:#f7f8f5;border-radius:10px;padding:14px 16px;">'
+          + '<div style="font-size:12px;font-weight:700;color:#555;margin-bottom:10px;letter-spacing:-0.01em;">'+label+'</div>'
+          + '<div style="display:flex;align-items:center;gap:8px;">'
+          + sizeBlock
+          + '<input class="kinput" type="number" placeholder="수량" id="rq-qty-'+safeLabel+'" min="1" style="'+(isQtyOnly?'flex:1;':'width:72px;flex-shrink:0;')+'" />'
+          + '<span style="font-size:13px;color:#888;font-weight:500;flex-shrink:0;">개</span>'
           + '</div>'
           + '</div>';
       }).join('')
