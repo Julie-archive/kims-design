@@ -1705,7 +1705,7 @@ function adCardHTML(ad, mode) {
     </button>
   ` : '';
   return `
-    <div class="kad-card" onclick="openDetail(${ad.id}, 'home')">
+    <div class="kad-card" onclick="openDetail(${ad.id}, '${mode}')">
       <div class="kad-thumb-wrap">
         <div class="kad-thumb">
           ${thumb ? `<img src="${thumb}" alt="${ad.title}" />` : `<div class="kad-thumb-empty">
@@ -2261,7 +2261,8 @@ var detailMode = 'admin';
 function openDetail(id, mode) {
   detailAd=DB.ads.find(a=>String(a.id)===String(id));
   if(!detailAd)return;
-  detailMode = adminLoggedIn ? 'admin' : 'home';
+  // mode가 'home'이면 항상 home 뷰 (관리자 로그인 여부 무관)
+  detailMode = (mode === 'home') ? 'home' : (adminLoggedIn ? 'admin' : 'home');
   detailTab='view';
   renderDetail();
   document.getElementById('modalDetail').classList.add('open');
@@ -2822,17 +2823,21 @@ function renderAdTypeDetails() {
         var isQtyOnly = label === 'A3 가로형' || label === 'A4 세로형';
         return '<div style="background:#f7f8f5;border-radius:10px;padding:12px 14px;">'
           + '<div style="font-size:12px;font-weight:700;color:#555;margin-bottom:8px;">'+label+'</div>'
-          + '<div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">'
+          + '<div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;justify-content:space-evenly;">'
           + (!isQtyOnly
-              ? '<span style="font-size:12px;color:#777;font-weight:600;">가로</span>'
+              ? '<div style="display:flex;align-items:center;gap:6px;flex:1;min-width:180px;justify-content:center;">'
+                + '<span style="font-size:12px;color:#777;font-weight:600;">가로</span>'
                 + '<input class="kinput" type="number" placeholder="mm" id="rq-w-'+safeLabel+'" style="width:80px;" />'
                 + '<span style="font-size:13px;color:#bbb;">×</span>'
                 + '<span style="font-size:12px;color:#777;font-weight:600;">세로</span>'
                 + '<input class="kinput" type="number" placeholder="mm" id="rq-h-'+safeLabel+'" style="width:80px;" />'
-                + '<span style="width:1px;height:20px;background:rgba(0,0,0,0.1);flex-shrink:0;margin:0 4px;"></span>'
+                + '</div>'
+                + '<div style="width:1px;height:20px;background:rgba(0,0,0,0.1);flex-shrink:0;"></div>'
               : '')
+          + '<div style="display:flex;align-items:center;gap:6px;justify-content:center;">'
           + '<span style="font-size:12px;color:#777;font-weight:600;">수량</span>'
           + '<input class="kinput" type="number" placeholder="개" id="rq-qty-'+safeLabel+'" min="1" style="width:72px;" />'
+          + '</div>'
           + '</div>'
           + '</div>';
       }).join('')
@@ -3333,7 +3338,19 @@ function adreqSubmit() {
   };
   if(!DB.requests) DB.requests=[];
   DB.requests.unshift(request);
-  saveData(); sbSaveRequest(request);
+  saveData();
+
+  // 현장 사진 Storage 업로드 후 Supabase에 저장
+  processRequestFiles(sitePhotoSrcs, 'adreq_site').then(function(uploadedSite) {
+    request.sitePhotoSrcs = uploadedSite;
+    // localStorage도 업데이트
+    var idx = (DB.requests||[]).findIndex(function(r){ return r.id === request.id; });
+    if(idx !== -1) { DB.requests[idx].sitePhotoSrcs = uploadedSite; saveData(); }
+    sbSaveRequest(request).then(function(ok) {
+      if(!ok) console.warn('Supabase 저장 실패 (adreq)');
+    });
+  });
+
   modalClose('modalAdRequest');
   openRequestSuccess(reqCode);
 }
