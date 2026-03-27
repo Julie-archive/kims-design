@@ -357,7 +357,7 @@ html, body { height: 100%; overflow: hidden; overflow-x: hidden; max-width: 100%
 .kmodal-sheet {
   background: #fff; border-radius: 12px;
   padding: 28px 24px 40px; width: 100%; max-width: 520px;
-  max-height: 90vh; overflow-y: auto;
+  max-height: 90vh; overflow-y: auto; overflow-x: hidden;
   font-family: 'Pretendard', sans-serif;
   box-shadow: 0 -4px 40px rgba(0,0,0,0.10);
   animation: sheetUp .25s ease;
@@ -909,7 +909,7 @@ html, body { height: 100%; overflow: hidden; overflow-x: hidden; max-width: 100%
 <div class="kmodal-overlay center" id="modalRequest">
   <div class="kmodal-sheet" style="max-width:600px;border-radius:12px;max-height:92vh;overflow:hidden;padding:0;display:flex;flex-direction:column;">
     <!-- 공지 바 (상단 고정) -->
-    <div style="background:#4a7cf4;border-radius:14px 14px 0 0;padding:13px 22px;flex-shrink:0;text-align:center;">
+    <div style="background:#4a7cf4;border-radius:0;padding:13px 22px;flex-shrink:0;text-align:center;">
       <span style="font-size:14px;font-weight:700;color:#fff;letter-spacing:-0.02em;">광고물 고정 입고일은 <span style="color:#facc15;">화요일 · 금요일</span>입니다</span>
     </div>
     <!-- 스크롤 영역 -->
@@ -1142,7 +1142,7 @@ html, body { height: 100%; overflow: hidden; overflow-x: hidden; max-width: 100%
 <div class="kmodal-overlay center" id="modalAdRequest">
   <div class="kmodal-sheet" style="max-width:520px;border-radius:12px;max-height:92vh;overflow:hidden;padding:0;display:flex;flex-direction:column;">
     <!-- 공지 바 -->
-    <div style="background:#4a7cf4;border-radius:14px 14px 0 0;padding:13px 22px;flex-shrink:0;text-align:center;">
+    <div style="background:#4a7cf4;border-radius:0;padding:13px 22px;flex-shrink:0;text-align:center;">
       <span style="font-size:14px;font-weight:700;color:#fff;letter-spacing:-0.02em;">이 광고를 기반으로 신청합니다</span>
     </div>
     <!-- 스크롤 영역 -->
@@ -1191,6 +1191,29 @@ html, body { height: 100%; overflow: hidden; overflow-x: hidden; max-width: 100%
       <input class="kinput" type="date" id="adreq-deadline" />
     </div>
 
+    <!-- 입고 방법 -->
+    <div class="kform-label" style="margin-bottom:8px;">입고 방법 <span style="color:#e03333;">*</span></div>
+    <div style="background:#f4f6ff;border:1.5px solid #e2e8ff;border-radius:6px;padding:14px;margin-bottom:16px;">
+      <div class="kform-label" style="margin-bottom:6px;">입고일 <span style="color:#e03333;">*</span></div>
+      <div style="display:flex;border:1.5px solid #d8dce3;border-radius:8px;overflow:hidden;background:#fff;margin-bottom:10px;">
+        <button type="button" id="adreq-tab-fixed" onclick="adreqSwitchDeliveryTab('fixed')"
+          style="flex:1;padding:9px 4px;background:#4a7cf4;color:#fff;border:none;font-size:12px;font-weight:700;cursor:pointer;font-family:Pretendard,sans-serif;transition:all .15s;">고정입고일(화/금)</button>
+        <button type="button" id="adreq-tab-custom" onclick="adreqSwitchDeliveryTab('custom')"
+          style="flex:1;padding:9px 4px;background:none;color:#999;border:none;font-size:12px;font-weight:600;cursor:pointer;font-family:Pretendard,sans-serif;transition:all .15s;">별도 지정일</button>
+      </div>
+      <div id="adreq-fixed-area">
+        <input type="text" id="adreq-fixed-calendar" class="kinput" readonly placeholder="화요일 · 금요일만 선택 가능" style="cursor:pointer;background:#fff;" />
+        <input type="hidden" id="adreq-delivery-day" value="고정입고일" />
+        <input type="hidden" id="adreq-delivery-date" value="" />
+      </div>
+      <div id="adreq-custom-area" style="display:none;">
+        <input type="text" id="adreq-custom-calendar" class="kinput" readonly placeholder="날짜를 선택하세요" style="cursor:pointer;background:#fff;" />
+        <input type="hidden" id="adreq-custom-date" value="" />
+        <div style="font-size:11px;color:#e03333;font-weight:600;margin-top:5px;">⚠ 퀵배송 이용 시 퀵비가 발생합니다</div>
+      </div>
+    </div>
+
+
     <!-- 광고물 형태 -->
     <div class="kform-group">
       <label class="kform-label">광고물 형태 <span style="color:#e03333;">*</span></label>
@@ -1211,7 +1234,7 @@ html, body { height: 100%; overflow: hidden; overflow-x: hidden; max-width: 100%
       </div>
     </div>
 
-    <!-- 수량 -->
+      <label class="kform-label">수량 <span style="color:#e03333;">*</span></label>
     <div class="kform-group">
       <label class="kform-label">수량</label>
       <div style="display:flex;align-items:center;gap:10px;">
@@ -1222,7 +1245,7 @@ html, body { height: 100%; overflow: hidden; overflow-x: hidden; max-width: 100%
 
     <!-- 설치 위치 사진 -->
     <div class="kform-group">
-      <label class="kform-label">설치 위치 사진 <span style="color:#999;font-size:11px;font-weight:400;">(설치될 곳)</span></label>
+      <label class="kform-label">설치 위치 사진 <span style="color:#e03333;">*</span> <span style="color:#999;font-size:11px;font-weight:400;">(설치될 곳)</span></label>
       <label class="kupload-label" style="min-height:80px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;position:relative;">
         <input type="file" accept="image/*" multiple capture="environment" onchange="adreqHandlePhotos(this)" style="position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%;" />
         <svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.5" width="24" height="24" style="opacity:.3;"><rect x="6" y="14" width="36" height="26" rx="4"/><path d="M24 8v16m-6-6 6-6 6 6"/></svg>
@@ -1931,7 +1954,7 @@ function goAdmin() {
 function pinOpen() {
   document.getElementById('pinInput').value='';
   document.getElementById('pinError').textContent='';
-  document.getElementById('modalPin').classList.add('open');
+  modalOpen('modalPin');
   setTimeout(()=>document.getElementById('pinInput').focus(), 200);
 }
 function pinClose() {
@@ -1970,8 +1993,25 @@ document.addEventListener('keydown',e=>{
 //  MODAL HELPERS
 // ══════════════════════════════════════════════════════
 function modalClose(id) {
-  document.getElementById(id).classList.remove('open');
+  const el = document.getElementById(id);
+  if(!el) return;
+  el.classList.remove('open');
+  // 다음에 열릴 때 최상단 보이도록 스크롤 리셋
+  const sheet = el.querySelector('.kmodal-sheet');
+  if(sheet) sheet.scrollTop = 0;
+  const scrollAreas = el.querySelectorAll('[style*="overflow-y:auto"],[style*="overflow-y: auto"]');
+  scrollAreas.forEach(function(a){ a.scrollTop = 0; });
 }
+function modalOpen(id) {
+  const el = document.getElementById(id);
+  if(!el) return;
+  const sheet = el.querySelector('.kmodal-sheet');
+  if(sheet) sheet.scrollTop = 0;
+  const scrollAreas = el.querySelectorAll('[style*="overflow-y:auto"],[style*="overflow-y: auto"]');
+  scrollAreas.forEach(function(a){ a.scrollTop = 0; });
+  el.classList.add('open');
+}
+
 // close on overlay click
 document.querySelectorAll('.kmodal-overlay').forEach(el=>{
   if(el.id === 'modalRequest') return;
@@ -2001,7 +2041,7 @@ function openAddImg(prodName) {
   document.getElementById('aiTypeBlocks').innerHTML='';
   renderAiSubRow();
   renderAiProdRow();
-  document.getElementById('modalAddImg').classList.add('open');
+  modalOpen('modalAddImg');
 }
 
 function aiCatChange() {
@@ -2188,7 +2228,7 @@ function aiConfirm() {
 // ══════════════════════════════════════════════════════
 function openAddSub() {
   document.getElementById('addSubName').value='';
-  document.getElementById('modalAddSub').classList.add('open');
+  modalOpen('modalAddSub');
   setTimeout(()=>document.getElementById('addSubName').focus(),200);
 }
 function addSubConfirm() {
@@ -2209,7 +2249,7 @@ function openAddProd() {
   catEl.innerHTML=MAIN_CATS.map(c=>`<option value="${c}" ${c===aState.cat?'selected':''}>${c}</option>`).join('');
   apCatChange();
   document.getElementById('apName').value='';
-  document.getElementById('modalAddProd').classList.add('open');
+  modalOpen('modalAddProd');
   setTimeout(()=>document.getElementById('apName').focus(),200);
 }
 function apCatChange() {
@@ -2275,7 +2315,7 @@ function openDetail(id, mode) {
   detailMode = (mode === 'home') ? 'home' : (adminLoggedIn ? 'admin' : 'home');
   detailTab='view';
   renderDetail();
-  document.getElementById('modalDetail').classList.add('open');
+  modalOpen('modalDetail');
 }
 
 function renderDetail() {
@@ -2568,7 +2608,7 @@ function openEditImg(id) {
   if(!detailAd)return;
   detailTab='edit';
   renderDetail();
-  document.getElementById('modalDetail').classList.add('open');
+  modalOpen('modalDetail');
 }
 
 // ══════════════════════════════════════════════════════
@@ -2642,7 +2682,7 @@ function openRequestModal() {
   if(deliveryDay) deliveryDay.value='';
   var deliveryCustom = document.getElementById('rq-delivery-custom');
   if(deliveryCustom) deliveryCustom.style.display='none';
-  document.getElementById('modalRequest').classList.add('open');
+  modalOpen('modalRequest');
   // 모달이 표시된 후 스크롤 상단으로
   setTimeout(function() {
     var scrollArea = document.getElementById('rq-scroll-area');
@@ -3262,6 +3302,48 @@ function openReqEdit(reqId) {
 let adreqSiteFiles = [];
 let adreqAdId = null;
 
+function adreqSwitchDeliveryTab(mode) {
+  var fixedBtn = document.getElementById('adreq-tab-fixed');
+  var customBtn = document.getElementById('adreq-tab-custom');
+  var fixedArea = document.getElementById('adreq-fixed-area');
+  var customArea = document.getElementById('adreq-custom-area');
+  if(!fixedBtn) return;
+  if(mode === 'fixed') {
+    fixedBtn.style.background = '#4a7cf4'; fixedBtn.style.color = '#fff'; fixedBtn.style.fontWeight = '700';
+    customBtn.style.background = 'none'; customBtn.style.color = '#999'; customBtn.style.fontWeight = '600';
+    fixedArea.style.display = ''; customArea.style.display = 'none';
+    document.getElementById('adreq-delivery-day').value = '고정입고일';
+  } else {
+    customBtn.style.background = '#4a7cf4'; customBtn.style.color = '#fff'; customBtn.style.fontWeight = '700';
+    fixedBtn.style.background = 'none'; fixedBtn.style.color = '#999'; fixedBtn.style.fontWeight = '600';
+    customArea.style.display = ''; fixedArea.style.display = 'none';
+    document.getElementById('adreq-delivery-day').value = '별도 지정일';
+    setTimeout(adreqInitCustomCalendar, 50);
+  }
+}
+
+function adreqInitFixedCalendar() {
+  if(typeof flatpickr === 'undefined') return;
+  var el = document.getElementById('adreq-fixed-calendar');
+  if(!el || el._fp) return;
+  el._fp = flatpickr(el, {
+    locale: 'ko', dateFormat: 'Y-m-d',
+    disable: [function(date){ return date.getDay()!==2 && date.getDay()!==5; }],
+    onChange: function(sel, ds){ document.getElementById('adreq-delivery-date').value = ds; }
+  });
+}
+
+function adreqInitCustomCalendar() {
+  if(typeof flatpickr === 'undefined') return;
+  var el = document.getElementById('adreq-custom-calendar');
+  if(!el) return;
+  if(el._fp) { el._fp.open(); return; }
+  el._fp = flatpickr(el, {
+    locale: 'ko', dateFormat: 'Y-m-d',
+    onChange: function(sel, ds){ document.getElementById('adreq-custom-date').value = ds; }
+  });
+}
+
 function openAdRequest(adId) {
   const ad = DB.ads.find(a => String(a.id) === String(adId));
   if(!ad) return;
@@ -3283,11 +3365,18 @@ function openAdRequest(adId) {
 
   // 폼 초기화
   ['adreq-dept','adreq-name','adreq-tel','adreq-branch','adreq-deadline',
-   'adreq-qty','adreq-desc','adreq-size-w','adreq-size-h'].forEach(id => {
+   'adreq-qty','adreq-desc','adreq-size-w','adreq-size-h',
+   'adreq-delivery-date','adreq-custom-date','adreq-fixed-calendar','adreq-custom-calendar'].forEach(id => {
     const el = document.getElementById(id); if(el) el.value = '';
   });
   document.getElementById('adreq-site-preview').innerHTML = '';
-  document.getElementById('modalAdRequest').classList.add('open');
+  modalOpen('modalAdRequest');
+  adreqSwitchDeliveryTab('fixed');
+  setTimeout(adreqInitFixedCalendar, 100);
+  var dd = document.getElementById('adreq-delivery-date'); if(dd) dd.value='';
+  var cd = document.getElementById('adreq-custom-date'); if(cd) cd.value='';
+  var fc = document.getElementById('adreq-fixed-calendar'); if(fc) fc.value='';
+  var cc = document.getElementById('adreq-custom-calendar'); if(cc) cc.value='';
 }
 
 function adreqSelectType(el) {
@@ -3336,12 +3425,21 @@ function adreqSubmit() {
   const sizeW    = (document.getElementById('adreq-size-w')?.value||'').trim();
   const sizeH    = (document.getElementById('adreq-size-h')?.value||'').trim();
   const ad = DB.ads.find(a => String(a.id) === String(adreqAdId));
+  // 입고일 읽기
+  const adreqDeliveryDay  = (document.getElementById('adreq-delivery-day')?.value||'').trim();
+  const adreqDeliveryDate = (document.getElementById('adreq-delivery-date')?.value||'')
+                         || (document.getElementById('adreq-custom-date')?.value||'');
+  // 설치 위치 사진 필수 확인
+  const sitePrevImgsCheck = Array.from((document.getElementById('adreq-site-preview')||{}).querySelectorAll?.('img')||[]);
 
   var missing = [];
   if(!dept||!name||!tel) missing.push('요청자 정보');
   if(!deadline) missing.push('마감 요청일');
+  if(!adreqDeliveryDate) missing.push('입고일');
   if(!adType) missing.push('광고물 형태');
   if(adType === '우드락 셀링' && (!sizeW || !sizeH)) missing.push('우드락 셀링 사이즈');
+  if(!qty) missing.push('수량');
+  if(sitePrevImgsCheck.length === 0) missing.push('설치 위치 사진');
 
   if(missing.length > 0) {
     var toast = document.createElement('div');
@@ -3364,6 +3462,7 @@ function adreqSubmit() {
     `광고물 형태: ${sizeText}`,
     qty ? `수량: ${qty}개` : '',
     branch ? `입고 지점: ${branch}` : '',
+    adreqDeliveryDate ? `입고 요청일: ${adreqDeliveryDate} (${adreqDeliveryDay})` : '',
     desc ? `\n${desc}` : ''
   ].filter(Boolean).join('\n');
 
@@ -3376,6 +3475,7 @@ function adreqSubmit() {
     adTitle:ad?.title||'', selling:'',
     eventStart:'', eventEnd:'',
     eventDesc: descLines,
+    branch, deliveryDay: adreqDeliveryDay, deliveryDate: adreqDeliveryDate,
     sitePhotoSrcs, refImageSrcs:[], manager:'', dueDate:''
   };
   if(!DB.requests) DB.requests=[];
@@ -3555,7 +3655,7 @@ function openCatMgr() {
     };
   }
 
-  document.getElementById('modalCatMgr').classList.add('open');
+  modalOpen('modalCatMgr');
   catMgrSelectCat(catMgrCat);
 }
 
@@ -3826,7 +3926,7 @@ function openEditCatModal(mode) {
     desc.textContent = aState.cat + ' > ' + aState.sub + ' · 상품을 관리하세요';
   }
   renderEditCatList();
-  document.getElementById('modalEditCat').classList.add('open');
+  modalOpen('modalEditCat');
 }
 
 function renderEditCatList() {
@@ -4245,11 +4345,14 @@ function openRequestDetail(id) {
 
   var container = document.getElementById('detailContent');
   container.innerHTML =
-    '<div style="display:flex;align-items:center;gap:8px;margin-bottom:12px;">'
-      +'<div id="detail-status-wrap"></div>'
-      +'<div id="detail-manager-wrap"></div>'
+    '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">'
+      +'<div style="display:flex;align-items:center;gap:8px;flex:1;min-width:0;">'
+        +'<div id="detail-status-wrap"></div>'
+        +'<div id="detail-manager-wrap"></div>'
+      +'</div>'
+      +'<button onclick="modalClose(\'modalDetail\')" style="flex-shrink:0;width:32px;height:32px;border-radius:50%;background:#f2f2f2;border:none;cursor:pointer;font-size:18px;line-height:1;color:#666;display:flex;align-items:center;justify-content:center;" title="닫기">✕</button>'
     +'</div>'
-    +'<h2 style="font-size:20px;font-weight:900;letter-spacing:-0.5px;margin-bottom:6px;padding-right:32px;">'+r.title+'</h2>'
+    +'<h2 style="font-size:20px;font-weight:900;letter-spacing:-0.5px;margin-bottom:6px;">'+r.title+'</h2>'
     +'<div style="font-size:12px;color:#999;margin-bottom:20px;border-bottom:1px solid #f2f2f2;padding-bottom:16px;">제출: '+r.submittedAt+'</div>'
     +'<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:10px;margin-bottom:16px;">'+infoGrid+'</div>'
     +'<div style="margin-bottom:16px;"><div style="font-size:11px;font-weight:600;color:#999;letter-spacing:1px;text-transform:uppercase;margin-bottom:8px;">광고 종류</div><div style="display:flex;flex-wrap:wrap;gap:4px;">'+adTypePills+'</div></div>'
@@ -4344,7 +4447,7 @@ function openRequestDetail(id) {
     });
   }
 
-  document.getElementById('modalDetail').classList.add('open');
+  modalOpen('modalDetail');
 }
 
 function deleteRequest(id) {
@@ -4369,7 +4472,7 @@ function formatTelInput(el) {
 function openReqStatusModal() {
   document.getElementById('statusCodeInput').value = '';
   document.getElementById('statusResult').innerHTML = '';
-  document.getElementById('modalReqStatus').classList.add('open');
+  modalOpen('modalReqStatus');
   setTimeout(function(){ document.getElementById('statusCodeInput').focus(); }, 200);
 }
 
@@ -4425,7 +4528,7 @@ function openReqUserDetail(reqId) {
     document.body.appendChild(overlay);
   }
   document.getElementById('modalReqUserDetailContent').innerHTML = html;
-  overlay.classList.add('open');
+  overlay.scrollTop=0; const _s=overlay.querySelector('.kmodal-sheet'); if(_s)_s.scrollTop=0; overlay.classList.add('open');
 }
 
 function searchReqStatus() {
@@ -4503,7 +4606,7 @@ function searchReqStatus() {
 // ══════════════════════════════════════════════════════
 function openRequestSuccess(code) {
   document.getElementById('successReqCode').textContent = code;
-  document.getElementById('modalReqSuccess').classList.add('open');
+  modalOpen('modalReqSuccess');
 }
 
 function copyReqCode() {
