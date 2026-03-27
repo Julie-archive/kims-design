@@ -28,10 +28,10 @@
 <style>
 /* ── CSS Variables ── */
 :root {
-  --bg: #e8e8e5;
-  --bg2: #eff1ec;
+  --bg: #f2f2f2;
+  --bg2: #f2f2f2;
   --bg3: #ffffff;
-  --bg4: #e8ebe3;
+  --bg4: #f2f2f2;
   --kaccent: #111111;
   --kaccent2: #000000;
   --kaccent-glow: rgba(0,0,0,0.06);
@@ -42,8 +42,8 @@
   --kborder: rgba(0,0,0,0.08);
   --kborder2: rgba(0,0,0,0.13);
   --kborder-acc: rgba(0,0,0,0.35);
-  --kr: 16px;
-  --kr2: 10px;
+  --kr: 10px;
+  --kr2: 6px;
 }
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 html, body { height: 100%; overflow: hidden; overflow-x: hidden; max-width: 100%; background: var(--bg); color: var(--ktext); font-family: 'Pretendard', -apple-system, sans-serif; }
@@ -206,7 +206,7 @@ html, body { height: 100%; overflow: hidden; overflow-x: hidden; max-width: 100%
   .admin-catmgr-btn {
     width: auto;
     min-height: 40px;
-    border-radius: 8px;
+    border-radius: 6px;
     font-size: 12px;
     flex-shrink: 0;
     padding: 10px 12px;
@@ -222,7 +222,7 @@ html, body { height: 100%; overflow: hidden; overflow-x: hidden; max-width: 100%
 }
 .ksearch-input {
   width: 100%; background: #f5f5f5; border: none;
-  border-radius: 8px; padding: 10px 40px 10px 42px;
+  border-radius: 6px; padding: 10px 40px 10px 42px;
   font-family: 'Pretendard', sans-serif; font-size: 14px; color: var(--ktext);
   outline: none; transition: background .15s;
   -webkit-appearance: none;
@@ -253,7 +253,7 @@ html, body { height: 100%; overflow: hidden; overflow-x: hidden; max-width: 100%
   padding: 10px 16px;
   background: #111;
   border: none;
-  border-radius: 8px;
+  border-radius: 6px;
   font-size: 13px;
   font-weight: 700;
   color: #fff;
@@ -282,20 +282,20 @@ html, body { height: 100%; overflow: hidden; overflow-x: hidden; max-width: 100%
 /* ── Ad Card ── */
 .kad-card {
   background: #fff; border: 1px solid rgba(0,0,0,0.08);
-  border-radius: 16px; overflow: hidden; cursor: pointer;
+  border-radius: 10px; overflow: hidden; cursor: pointer;
   box-shadow: 0 2px 12px rgba(0,0,0,0.07); transition: box-shadow .22s, transform .22s;
 }
 .kad-card:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(0,0,0,0.13); }
 .kad-thumb-wrap { padding: 10px 10px 0; }
 .kad-thumb {
-  width: 100%; aspect-ratio: 4/3; background: #e8e8e5;
-  border-radius: 10px; display: flex; align-items: center; justify-content: center;
+  width: 100%; aspect-ratio: 4/3; background: #f2f2f2;
+  border-radius: 6px; display: flex; align-items: center; justify-content: center;
   overflow: hidden; position: relative;
 }
 .kad-thumb img { width: 100%; height: 100%; object-fit: cover; }
 .kad-thumb-empty { display: flex; flex-direction: column; align-items: center; gap: 6px; color: #bbb; font-size: 11px; }
 .kad-overlay {
-  position: absolute; inset: 0; background: rgba(0,0,0,.6); border-radius: 10px;
+  position: absolute; inset: 0; background: rgba(0,0,0,.6); border-radius: 6px;
   display: flex; align-items: center; justify-content: center; gap: 10px;
   opacity: 0; transition: opacity .2s;
 }
@@ -310,7 +310,7 @@ html, body { height: 100%; overflow: hidden; overflow-x: hidden; max-width: 100%
 .kad-meta { padding: 10px 14px 14px; }
 .kad-tag {
   display: inline-flex; align-items: center; gap: 4px; font-size: 11px; font-weight: 700;
-  color: #fff; background: #111; border-radius: 20px; padding: 3px 10px; margin-bottom: 7px;
+  color: #fff; background: #111; border-radius: 12px; padding: 3px 10px; margin-bottom: 7px;
   letter-spacing: -0.01em;
 }
 .kad-title { font-size: 15px; font-weight: 700; margin-bottom: 6px; letter-spacing: -0.4px; color: #111; line-height: 1.35; }
@@ -319,7 +319,7 @@ html, body { height: 100%; overflow: hidden; overflow-x: hidden; max-width: 100%
 /* ── Upload zone ── */
 .kupload-zone {
   background: #fff; border: 2px dashed rgba(0,0,0,0.13);
-  border-radius: 16px; aspect-ratio: 4/3; display: flex; flex-direction: column;
+  border-radius: 10px; aspect-ratio: 4/3; display: flex; flex-direction: column;
   align-items: center; justify-content: center; gap: 8px; cursor: pointer; transition: background .2s, color .2s, border-color .2s, box-shadow .2s;
 }
 .kupload-zone:hover { border-color: #111; background: #f9f9f9; }
@@ -355,14 +355,14 @@ html, body { height: 100%; overflow: hidden; overflow-x: hidden; max-width: 100%
 .kmodal-overlay.open { display: flex; }
 
 .kmodal-sheet {
-  background: #fff; border-radius: 20px;
+  background: #fff; border-radius: 12px;
   padding: 28px 24px 40px; width: 100%; max-width: 520px;
   max-height: 90vh; overflow-y: auto;
   font-family: 'Pretendard', sans-serif;
   box-shadow: 0 -4px 40px rgba(0,0,0,0.10);
   animation: sheetUp .25s ease;
 }
-.kmodal-overlay.center .kmodal-sheet { border-radius: 20px; max-width: 540px; }
+.kmodal-overlay.center .kmodal-sheet { border-radius: 12px; max-width: 540px; }
 @keyframes sheetUp { from { transform: translateY(24px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
 @keyframes toastIn { from { opacity:0;transform:translateX(-50%) translateY(10px); } to { opacity:1;transform:translateX(-50%) translateY(0); } }
 .kmodal-handle { width: 36px; height: 4px; background: rgba(0,0,0,0.12); border-radius: 2px; margin: 0 auto 24px; }
@@ -404,7 +404,7 @@ html, body { height: 100%; overflow: hidden; overflow-x: hidden; max-width: 100%
 /* ── Type block ── */
 .ktype-block {
   border: 1.5px solid var(--kborder); border-radius: var(--kr2);
-  overflow: hidden; padding: 14px; margin-bottom: 12px; background: var(--bg4);
+  overflow: hidden; padding: 14px; margin-bottom: 12px; background: #f2f2f2;
 }
 .ktype-block-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; gap: 8px; }
 .ktype-block select { flex:1; background:#fff; border:1.5px solid var(--kborder2); border-radius:var(--kr2); padding:8px 10px; font-size:13px; color:var(--ktext); font-family:'Pretendard',sans-serif; outline:none; -webkit-appearance:none; }
@@ -439,11 +439,11 @@ html, body { height: 100%; overflow: hidden; overflow-x: hidden; max-width: 100%
 
 /* ── Detail modal ── */
 .kdetail-modal {
-  background: #fff; border: 1px solid var(--kborder2); border-radius: 20px;
+  background: #fff; border: 1px solid var(--kborder2); border-radius: 12px;
   max-width: 540px; width: 100%; max-height: 88vh; overflow-y: auto;
   padding: 28px 24px 36px; position: relative; animation: sheetUp .25s ease;
 }
-.kdetail-tag { background: #111; color: #fff; font-size: 13px; font-weight: 700; border-radius: 50px; padding: 6px 14px; }
+.kdetail-tag { background: #4a7cf4; color: #fff; font-size: 13px; font-weight: 600; border-radius: 50px; padding: 5px 12px; }
 .kdetail-tabs { display: flex; gap: 0; border-bottom: 1px solid var(--kborder); margin-bottom: 20px; }
 .kdetail-tab {
   padding: 8px 18px; background: none; border: none; cursor: pointer;
@@ -477,7 +477,7 @@ html, body { height: 100%; overflow: hidden; overflow-x: hidden; max-width: 100%
   padding: 0 52px 52px;
 }
 .kcat-btn {
-  aspect-ratio: 1; background: #f2f2f2; border: none; border-radius: 16px;
+  aspect-ratio: 1; background: #f2f2f2; border: none; border-radius: 10px;
   display: flex; align-items: center; justify-content: center;
   cursor: pointer; transition: background .18s, color .18s, border-color .18s; padding: 0;
 }
@@ -494,7 +494,7 @@ html, body { height: 100%; overflow: hidden; overflow-x: hidden; max-width: 100%
   background: rgba(0,0,0,.85); align-items: center; justify-content: center; padding: 16px;
 }
 .klightbox.open { display: flex; }
-.klightbox img { max-width: 100%; max-height: 90vh; border-radius: 10px; object-fit: contain; }
+.klightbox img { max-width: 100%; max-height: 90vh; border-radius: 6px; object-fit: contain; }
 .klb-close {
   position: absolute; top: 16px; right: 16px;
   background: rgba(255,255,255,.1); border: none; color: white;
@@ -535,7 +535,7 @@ html, body { height: 100%; overflow: hidden; overflow-x: hidden; max-width: 100%
 .kstatus-btn svg { flex-shrink: 0; }
 .kstatus-menu {
   display: none; position: absolute; right: 0; top: calc(100% + 6px);
-  background: #fff; border-radius: 10px; box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+  background: #fff; border-radius: 6px; box-shadow: 0 8px 24px rgba(0,0,0,0.12);
   overflow: hidden; z-index: 100; min-width: 100px;
   border: 1px solid rgba(0,0,0,0.08);
 }
@@ -562,7 +562,7 @@ html, body { height: 100%; overflow: hidden; overflow-x: hidden; max-width: 100%
 .kmgr-btn svg { flex-shrink: 0; }
 .kmgr-menu {
   display: none; position: absolute; left: 0; top: calc(100% + 6px);
-  background: #fff; border-radius: 10px;
+  background: #fff; border-radius: 6px;
   box-shadow: 0 8px 32px rgba(0,0,0,0.15);
   overflow: hidden; z-index: 200; min-width: 110px;
   border: 1px solid rgba(0,0,0,0.08);
@@ -589,15 +589,15 @@ html, body { height: 100%; overflow: hidden; overflow-x: hidden; max-width: 100%
 }
 .kedit-item input {
   flex: 1; padding: 6px 12px; border: 1.5px solid #111;
-  border-radius: 8px; font-size: 14px; font-weight: 600;
+  border-radius: 6px; font-size: 14px; font-weight: 600;
   font-family: Pretendard, sans-serif; outline: none;
 }
 .kedit-item-btn {
-  flex-shrink: 0; padding: 5px 12px; border-radius: 8px;
+  flex-shrink: 0; padding: 5px 12px; border-radius: 6px;
   font-size: 12px; font-weight: 600; cursor: pointer;
   font-family: Pretendard, sans-serif; border: none;
 }
-.kedit-rename-btn { background: #f0f0f0; color: #111; }
+.kedit-rename-btn { background: #f2f2f2; color: #111; }
 .kedit-rename-btn.saving { background: #111; color: #fff; }
 .kedit-del-btn { background: #fff0f0; color: #e03333; }
 
@@ -637,7 +637,7 @@ html, body { height: 100%; overflow: hidden; overflow-x: hidden; max-width: 100%
 /* ── flatpickr 커스텀 ── */
 .flatpickr-calendar {
   font-family: 'Pretendard', sans-serif !important;
-  border-radius: 16px !important;
+  border-radius: 10px !important;
   box-shadow: 0 8px 32px rgba(0,0,0,0.13) !important;
   border: 1px solid rgba(0,0,0,0.08) !important;
 }
@@ -663,7 +663,7 @@ html, body { height: 100%; overflow: hidden; overflow-x: hidden; max-width: 100%
 .rq-adcat-tab {
   width:100%; display:flex; align-items:center; justify-content:center; gap:5px;
   padding:10px 8px; background:#fff; border:1.5px solid #d8dce3;
-  border-radius:10px; cursor:pointer; font-size:13px; font-weight:600; color:#555;
+  border-radius:6px; cursor:pointer; font-size:13px; font-weight:600; color:#555;
   font-family:'Pretendard',sans-serif; transition: background .15s, color .15s, border-color .15s; white-space:nowrap;
 }
 .rq-adcat-tab.open { background:#4a7cf4; color:#fff; border-color:#4a7cf4; }
@@ -672,7 +672,7 @@ html, body { height: 100%; overflow: hidden; overflow-x: hidden; max-width: 100%
 .rq-adcat-col { position:relative; }
 .rq-adcat-dropdown {
   position:absolute; left:0; right:0; top:calc(100% + 3px);
-  background:#fff; border:1.5px solid #d8dce3; border-radius:10px;
+  background:#fff; border:1.5px solid #d8dce3; border-radius:6px;
   overflow:hidden; z-index:100; box-shadow:0 8px 28px rgba(0,0,0,0.10);
   max-height:260px; overflow-y:auto;
 }
@@ -729,7 +729,7 @@ html, body { height: 100%; overflow: hidden; overflow-x: hidden; max-width: 100%
   <!-- MODALS -->
   <!-- Pin Modal -->
   <div class="kmodal-overlay center" id="modalPin">
-    <div class="kmodal-sheet" style="max-width:360px;border-radius:20px;">
+    <div class="kmodal-sheet" style="max-width:360px;border-radius:12px;">
       <div class="kmodal-handle"></div>
       <div class="kmodal-title" style="text-align:center">관리자 <em>로그인</em></div>
       <div class="kform-group">
@@ -836,7 +836,7 @@ html, body { height: 100%; overflow: hidden; overflow-x: hidden; max-width: 100%
 
 <!-- EDIT CATEGORY MODAL -->
 <div class="kmodal-overlay center" id="modalEditCat">
-  <div class="kmodal-sheet" style="max-width:440px;border-radius:20px;">
+  <div class="kmodal-sheet" style="max-width:440px;border-radius:12px;">
     <div class="kmodal-handle"></div>
     <div style="font-size:18px;font-weight:900;margin-bottom:4px;" id="editCatTitle">카테고리 편집</div>
     <div style="font-size:12px;color:#999;margin-bottom:20px;" id="editCatDesc"></div>
@@ -844,15 +844,15 @@ html, body { height: 100%; overflow: hidden; overflow-x: hidden; max-width: 100%
     <!-- 새 항목 추가 -->
     <div style="display:flex;gap:8px;padding-top:12px;border-top:1px solid var(--kborder);">
       <input class="kinput" id="editCatNewInput" placeholder="새 항목 이름" style="flex:1;" />
-      <button onclick="editCatAdd()" style="padding:10px 18px;background:#111;color:#fff;border:none;border-radius:10px;font-size:13px;font-weight:700;cursor:pointer;font-family:Pretendard,sans-serif;flex-shrink:0;">추가</button>
+      <button onclick="editCatAdd()" style="padding:10px 18px;background:#111;color:#fff;border:none;border-radius:6px;font-size:13px;font-weight:700;cursor:pointer;font-family:Pretendard,sans-serif;flex-shrink:0;">추가</button>
     </div>
-    <button onclick="modalClose('modalEditCat')" style="width:100%;margin-top:12px;padding:13px;background:#f0f0f0;color:#111;border:none;border-radius:50px;font-size:14px;font-weight:700;cursor:pointer;font-family:Pretendard,sans-serif;">닫기</button>
+    <button onclick="modalClose('modalEditCat')" style="width:100%;margin-top:12px;padding:13px;background:#f2f2f2;color:#111;border:none;border-radius:50px;font-size:14px;font-weight:700;cursor:pointer;font-family:Pretendard,sans-serif;">닫기</button>
   </div>
 </div>
 
 <!-- 통합 카테고리 관리 모달 -->
 <div class="kmodal-overlay center" id="modalCatMgr">
-  <div class="kmodal-sheet" style="max-width:520px;border-radius:20px;max-height:88vh;overflow:hidden;padding:0;display:flex;flex-direction:column;">
+  <div class="kmodal-sheet" style="max-width:520px;border-radius:12px;max-height:88vh;overflow:hidden;padding:0;display:flex;flex-direction:column;">
     <!-- 헤더 -->
     <div style="padding:28px 28px 0;flex-shrink:0;">
       <div class="kmodal-handle"></div>
@@ -875,7 +875,7 @@ html, body { height: 100%; overflow: hidden; overflow-x: hidden; max-width: 100%
         <div id="catmgr-sub-input-row" style="display:none;margin-bottom:10px;">
           <div style="display:flex;gap:8px;">
             <input class="kinput" id="catmgr-sub-input" placeholder="새 세부 카테고리 이름" style="flex:1;" />
-            <button id="catmgr-sub-add-confirm" style="padding:10px 18px;background:#111;color:#fff;border:none;border-radius:10px;font-size:13px;font-weight:700;cursor:pointer;font-family:Pretendard,sans-serif;white-space:nowrap;">추가</button>
+            <button id="catmgr-sub-add-confirm" style="padding:10px 18px;background:#111;color:#fff;border:none;border-radius:6px;font-size:13px;font-weight:700;cursor:pointer;font-family:Pretendard,sans-serif;white-space:nowrap;">추가</button>
           </div>
         </div>
         <div id="catmgr-sub-list" style="display:flex;flex-direction:column;gap:6px;"></div>
@@ -893,7 +893,7 @@ html, body { height: 100%; overflow: hidden; overflow-x: hidden; max-width: 100%
         <div id="catmgr-prod-input-row" style="display:none;margin-bottom:10px;">
           <div style="display:flex;gap:8px;">
             <input class="kinput" id="catmgr-prod-input" placeholder="새 상품 이름" style="flex:1;" />
-            <button id="catmgr-prod-add-confirm" style="padding:10px 18px;background:#111;color:#fff;border:none;border-radius:10px;font-size:13px;font-weight:700;cursor:pointer;font-family:Pretendard,sans-serif;white-space:nowrap;">추가</button>
+            <button id="catmgr-prod-add-confirm" style="padding:10px 18px;background:#111;color:#fff;border:none;border-radius:6px;font-size:13px;font-weight:700;cursor:pointer;font-family:Pretendard,sans-serif;white-space:nowrap;">추가</button>
           </div>
         </div>
         <div id="catmgr-prod-list" style="display:flex;flex-direction:column;gap:6px;">
@@ -907,9 +907,9 @@ html, body { height: 100%; overflow: hidden; overflow-x: hidden; max-width: 100%
 
 <!-- REQUEST MODAL -->
 <div class="kmodal-overlay center" id="modalRequest">
-  <div class="kmodal-sheet" style="max-width:600px;border-radius:20px;max-height:92vh;overflow:hidden;padding:0;display:flex;flex-direction:column;">
+  <div class="kmodal-sheet" style="max-width:600px;border-radius:12px;max-height:92vh;overflow:hidden;padding:0;display:flex;flex-direction:column;">
     <!-- 공지 바 (상단 고정) -->
-    <div style="background:#4a7cf4;border-radius:20px 20px 0 0;padding:13px 22px;flex-shrink:0;text-align:center;">
+    <div style="background:#4a7cf4;border-radius:14px 14px 0 0;padding:13px 22px;flex-shrink:0;text-align:center;">
       <span style="font-size:14px;font-weight:700;color:#fff;letter-spacing:-0.02em;">광고물 고정 입고일은 <span style="color:#facc15;">화요일 · 금요일</span>입니다</span>
     </div>
     <!-- 스크롤 영역 -->
@@ -922,7 +922,7 @@ html, body { height: 100%; overflow: hidden; overflow-x: hidden; max-width: 100%
 
     <!-- 요청자 정보 -->
     <div class="kform-label" style="margin-bottom:8px;">요청자 정보 <span style="color:#e03333;">*</span></div>
-    <div style="background:#f4f6ff;border:1.5px solid #e2e8ff;border-radius:10px;padding:16px;margin-bottom:16px;">
+    <div style="background:#f4f6ff;border:1.5px solid #e2e8ff;border-radius:6px;padding:16px;margin-bottom:16px;">
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px;">
         <div>
           <div class="kform-label">소속</div>
@@ -990,7 +990,7 @@ html, body { height: 100%; overflow: hidden; overflow-x: hidden; max-width: 100%
     <!-- 입고 방법 (연출물 선택 시 표시) -->
     <div id="rq-delivery-section" style="display:none;">
       <div class="kform-label" style="margin-bottom:8px;">입고 방법 <span style="color:#e03333;">*</span></div>
-      <div style="background:#f4f6ff;border:1.5px solid #e2e8ff;border-radius:10px;padding:16px;margin-bottom:16px;">
+      <div style="background:#f4f6ff;border:1.5px solid #e2e8ff;border-radius:6px;padding:16px;margin-bottom:16px;">
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
           <div>
             <div class="kform-label">입고 지점 <span style="color:#e03333;">*</span></div>
@@ -999,7 +999,7 @@ html, body { height: 100%; overflow: hidden; overflow-x: hidden; max-width: 100%
           <div>
             <div class="kform-label">입고일 <span style="color:#e03333;">*</span></div>
             <!-- 탭: 고정입고일(화/금) / 별도 지정일 -->
-            <div style="display:flex;border:1.5px solid #d8dce3;border-radius:10px;overflow:hidden;background:#fff;margin-bottom:10px;">
+            <div style="display:flex;border:1.5px solid #d8dce3;border-radius:6px;overflow:hidden;background:#fff;margin-bottom:10px;">
               <button type="button" id="rq-tab-fixed" onclick="rqSwitchDeliveryTab('fixed')"
                 style="flex:1;padding:9px 4px;background:#4a7cf4;color:#fff;border:none;font-size:12px;font-weight:700;cursor:pointer;font-family:Pretendard,sans-serif;transition:all .15s;">고정입고일(화/금)</button>
               <button type="button" id="rq-tab-custom" onclick="rqSwitchDeliveryTab('custom')"
@@ -1034,7 +1034,7 @@ html, body { height: 100%; overflow: hidden; overflow-x: hidden; max-width: 100%
 
     <!-- 요청 내용 -->
     <div class="kform-label" style="margin-bottom:8px;">요청 내용</div>
-    <div style="background:#f4f6ff;border:1.5px solid #e2e8ff;border-radius:10px;padding:16px;margin-bottom:16px;">
+    <div style="background:#f4f6ff;border:1.5px solid #e2e8ff;border-radius:6px;padding:16px;margin-bottom:16px;">
       <div style="margin-bottom:10px;">
         <div class="kform-label">타이틀 <span style="color:#e03333;">*</span></div>
         <input class="kinput" type="text" id="rq-ad-title" placeholder="광고 타이틀 문구" />
@@ -1081,7 +1081,7 @@ html, body { height: 100%; overflow: hidden; overflow-x: hidden; max-width: 100%
         <div class="kform-label" style="margin-bottom:2px;">레퍼런스 이미지</div>
         <div style="font-size:11px;color:#aaa;">참고 이미지나 자료 (선택)</div>
       </div>
-      <label style="flex-shrink:0;display:flex;align-items:center;gap:6px;padding:8px 14px;background:#f4f6ff;border:1.5px dashed #c0d0ff;border-radius:10px;cursor:pointer;">
+      <label style="flex-shrink:0;display:flex;align-items:center;gap:6px;padding:8px 14px;background:#f4f6ff;border:1.5px dashed #c0d0ff;border-radius:6px;cursor:pointer;">
         <input type="file" accept="image/*,application/pdf" multiple onchange="rqHandleFiles(this,'ref')" style="display:none;" />
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
         <span style="font-size:12px;color:#777;font-weight:600;white-space:nowrap;">파일 추가</span>
@@ -1100,10 +1100,10 @@ html, body { height: 100%; overflow: hidden; overflow-x: hidden; max-width: 100%
 
 <!-- REQUEST SUCCESS MODAL -->
 <div class="kmodal-overlay center" id="modalReqSuccess">
-  <div class="kmodal-sheet" style="max-width:400px;border-radius:20px;text-align:center;">
+  <div class="kmodal-sheet" style="max-width:400px;border-radius:12px;text-align:center;">
     <div style="font-size:40px;margin-bottom:12px;">✅</div>
     <div style="font-size:20px;font-weight:900;margin-bottom:16px;">신청이 완료되었습니다</div>
-    <div style="background:#f4f6ff;border:1.5px solid #e2e8ff;border-radius:10px;padding:16px;margin-bottom:20px;">
+    <div style="background:#f4f6ff;border:1.5px solid #e2e8ff;border-radius:6px;padding:16px;margin-bottom:20px;">
       <div style="font-size:13px;color:#555;line-height:1.9;">
         홈 화면 <strong style="color:#4a7cf4;">'신청 현황 조회'</strong>에서<br>
         입력하신 <strong style="color:#4a7cf4;">연락처</strong>로 확인하세요.
@@ -1117,7 +1117,7 @@ html, body { height: 100%; overflow: hidden; overflow-x: hidden; max-width: 100%
 <!-- REQUEST STATUS MODAL -->
 <!-- REQUEST STATUS MODAL -->
 <div class="kmodal-overlay center" id="modalReqStatus">
-  <div class="kmodal-sheet" style="max-width:480px;border-radius:20px;">
+  <div class="kmodal-sheet" style="max-width:480px;border-radius:12px;">
     <div class="kmodal-handle"></div>
     <div style="font-size:20px;font-weight:900;margin-bottom:8px;letter-spacing:-0.03em;">신청 현황 조회</div>
     <div style="font-size:13px;color:#999;margin-bottom:20px;">신청 시 입력한 연락처로 조회합니다</div>
@@ -1140,9 +1140,9 @@ html, body { height: 100%; overflow: hidden; overflow-x: hidden; max-width: 100%
 
 <!-- AD REQUEST MODAL (기존 광고 기반 간략 신청) -->
 <div class="kmodal-overlay center" id="modalAdRequest">
-  <div class="kmodal-sheet" style="max-width:520px;border-radius:20px;max-height:92vh;overflow:hidden;padding:0;display:flex;flex-direction:column;">
+  <div class="kmodal-sheet" style="max-width:520px;border-radius:12px;max-height:92vh;overflow:hidden;padding:0;display:flex;flex-direction:column;">
     <!-- 공지 바 -->
-    <div style="background:#4a7cf4;border-radius:20px 20px 0 0;padding:13px 22px;flex-shrink:0;text-align:center;">
+    <div style="background:#4a7cf4;border-radius:14px 14px 0 0;padding:13px 22px;flex-shrink:0;text-align:center;">
       <span style="font-size:14px;font-weight:700;color:#fff;letter-spacing:-0.02em;">이 광고를 기반으로 신청합니다</span>
     </div>
     <!-- 스크롤 영역 -->
@@ -1150,8 +1150,8 @@ html, body { height: 100%; overflow: hidden; overflow-x: hidden; max-width: 100%
     <div class="kmodal-handle" style="margin-bottom:16px;"></div>
 
     <!-- 참고 광고 헤더 -->
-    <div style="display:flex;align-items:center;gap:12px;background:#e8e8e5;border-radius:10px;padding:14px 16px;margin-bottom:20px;">
-      <div id="adreq-thumb" style="width:52px;height:52px;border-radius:8px;overflow:hidden;flex-shrink:0;background:#e8e8e5;display:flex;align-items:center;justify-content:center;">
+    <div style="display:flex;align-items:center;gap:12px;background:#f2f2f2;border-radius:6px;padding:14px 16px;margin-bottom:20px;">
+      <div id="adreq-thumb" style="width:52px;height:52px;border-radius:6px;overflow:hidden;flex-shrink:0;background:#f2f2f2;display:flex;align-items:center;justify-content:center;">
         <svg viewBox="0 0 24 24" fill="none" stroke="#ccc" stroke-width="1.5" width="20" height="20"><rect x="3" y="7" width="18" height="13" rx="2"/><circle cx="9" cy="13" r="2"/><path d="m3 18 5-4 4 4 3-3 6 5"/></svg>
       </div>
       <div style="flex:1;min-width:0;">
@@ -1162,7 +1162,7 @@ html, body { height: 100%; overflow: hidden; overflow-x: hidden; max-width: 100%
 
     <!-- 요청자 정보 -->
     <div class="kform-label" style="margin-bottom:8px;">요청자 정보 <span style="color:#e03333;">*</span></div>
-    <div style="background:#f4f6ff;border:1.5px solid #e2e8ff;border-radius:10px;padding:14px;margin-bottom:16px;">
+    <div style="background:#f4f6ff;border:1.5px solid #e2e8ff;border-radius:6px;padding:14px;margin-bottom:16px;">
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px;">
         <div>
           <div class="kform-label">소속</div>
@@ -1552,7 +1552,7 @@ function renderHomeA() {
           ${['S.I','지점 운영 광고'].map(cat=>`
             <button onclick="homeCatSelect('${cat}')" style="
               width:100%;padding:22px 28px;
-              background:#fff;border:1.5px solid rgba(0,0,0,0.12);border-radius:16px;
+              background:#fff;border:1.5px solid rgba(0,0,0,0.12);border-radius:10px;
               display:flex;align-items:center;justify-content:center;
               cursor:pointer;transition: background .18s, color .18s, border-color .18s;
             " onmouseenter="this.style.background='#111';this.style.borderColor='#111';this.querySelector('span').style.color='#fff'"
@@ -1788,7 +1788,7 @@ function renderAdmin() {
             <input class="ksearch-input" id="adminSearchInput" type="text" placeholder="광고 검색..." value="${aState.search||''}"
               oninput="adminSearchChange(this.value)"
               onkeydown="if(event.key==='Escape'){adminSearchChange('');this.value='';}"
-              style="background:#f5f5f5;border:none;border-radius:8px;" />
+              style="background:#f5f5f5;border:none;border-radius:6px;" />
             <button class="ksearch-clear ${aState.search?'visible':''}" id="adminSearchClear" onclick="adminSearchChange('');document.getElementById('adminSearchInput').value='';document.getElementById('adminSearchInput').focus();">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="14" height="14"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
             </button>
@@ -2098,7 +2098,7 @@ function typeBlockInnerHTML(idx,prefix) {
   </div>
   <label class="kupload-label">
     <input type="file" accept="image/*" onchange="typeFileChange('${prefix}','${idx}',this)" />
-    <img id="${prefix}TypePrev_${idx}" style="width:100%;max-height:120px;object-fit:contain;border-radius:8px;display:none;" />
+    <img id="${prefix}TypePrev_${idx}" style="width:100%;max-height:120px;object-fit:contain;border-radius:6px;display:none;" />
     <div id="${prefix}TypeIcon_${idx}">
       <svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.5" width="28" height="28" style="opacity:.3;margin:0 auto;display:block;"><rect x="6" y="14" width="36" height="26" rx="4"/><path d="M24 8v16m-6-6 6-6 6 6"/></svg>
       <p style="font-size:11px;color:var(--ktext3);margin-top:4px;">클릭하여 이미지 업로드</p>
@@ -2292,7 +2292,7 @@ function renderDetail() {
         <button onclick="modalClose('modalDetail')" style="background:none;border:none;cursor:pointer;color:var(--ktext3);font-size:20px;line-height:1;padding:2px 4px;flex-shrink:0;">✕</button>
       </div>
     </div>
-    <h2 style="font-size:26px;font-weight:800;letter-spacing:-0.5px;margin-bottom:${(detailMode==='admin'&&adminLoggedIn)?16:20}px;">${ad.title}</h2>
+    <h2 style="font-size:22px;font-weight:800;letter-spacing:-0.5px;margin-bottom:${(detailMode==='admin'&&adminLoggedIn)?16:20}px;">${ad.title}</h2>
   `;
 
   if(detailMode === 'admin' && adminLoggedIn) {
@@ -2316,24 +2316,24 @@ function renderDetail() {
           <div style="margin-bottom:10px;">
             <span style="font-size:14px;font-weight:700;letter-spacing:-0.02em;">${t.name}</span>
           </div>
-          <div onclick="${t.src?`openLightbox('${t.src}')`:''}" style="width:100%;background:${t.src?'transparent':'#f0f0f0'};border-radius:10px;overflow:hidden;min-height:140px;display:flex;align-items:center;justify-content:center;cursor:${t.src?'zoom-in':'default'};">
-            ${t.src?`<img src="${t.src}" style="width:100%;display:block;border-radius:10px;" />`:`<span style="color:#999;font-size:13px;">이미지 없음</span>`}
+          <div onclick="${t.src?`openLightbox('${t.src}')`:''}" style="width:100%;background:${t.src?'transparent':'#f2f2f2'};border-radius:6px;overflow:hidden;min-height:140px;display:flex;align-items:center;justify-content:center;cursor:${t.src?'zoom-in':'default'};">
+            ${t.src?`<img src="${t.src}" style="width:100%;display:block;border-radius:6px;" />`:`<span style="color:#999;font-size:13px;">이미지 없음</span>`}
           </div>
           ${(t.width&&t.height)||t.unitPrice?`
           <div style="position:relative;">
             ${t.unitPrice?`<div style="text-align:right;font-size:11px;color:#bbb;font-weight:400;margin-bottom:5px;">단가는 사이즈에 따라 변동될 수 있습니다.</div>`:``}
-            <div style="background:#e8e8e5;border-radius:10px;overflow:hidden;display:flex;align-items:stretch;">
+            <div style="background:#f2f2f2;border-radius:6px;overflow:hidden;display:flex;align-items:stretch;">
               ${t.width&&t.height?`<div style="flex:1;padding:13px 16px;display:flex;align-items:center;gap:8px;"><span style="font-size:12px;font-weight:700;color:#111;white-space:nowrap;flex-shrink:0;">사이즈</span><span style="font-size:13px;color:#333;font-weight:500;">${t.width}×${t.height}mm</span></div>`:``}
               ${(t.width&&t.height)&&t.unitPrice?`<div style="width:1px;background:rgba(0,0,0,0.1);flex-shrink:0;margin:12px 0;"></div>`:``}
               ${t.unitPrice?`<div style="flex:2;padding:13px 16px;display:flex;align-items:center;gap:8px;"><span style="font-size:12px;font-weight:700;color:#111;white-space:nowrap;flex-shrink:0;">단가</span><span style="font-size:13px;color:#333;font-weight:600;">${Number(t.unitPrice).toLocaleString()}원/개</span></div>`:``}
             </div>
           </div>`:``}
-          ${t.memo?`<div style="margin-top:10px;background:#e8e8e5;border-radius:10px;padding:14px 16px;"><div style="font-size:11px;font-weight:700;color:#aaa;margin-bottom:5px;letter-spacing:0.02em;">메모</div><div style="font-size:13px;color:#555;line-height:1.6;white-space:pre-wrap;">${t.memo}</div></div>`:``}
+          ${t.memo?`<div style="margin-top:10px;background:#f2f2f2;border-radius:6px;padding:14px 16px;"><div style="font-size:11px;font-weight:700;color:#aaa;margin-bottom:5px;letter-spacing:0.02em;">메모</div><div style="font-size:13px;color:#555;line-height:1.6;white-space:pre-wrap;">${t.memo}</div></div>`:``}
         </div>
       `).join('');
       if(detailMode==='admin' && adminLoggedIn) {
         if(ad.memo) {
-          html+=`<div style="margin-top:20px;padding:14px 16px;background:#e8e8e5;border-radius:10px;">
+          html+=`<div style="margin-top:20px;padding:14px 16px;background:#f2f2f2;border-radius:6px;">
             <div style="font-size:11px;font-weight:700;color:#aaa;margin-bottom:6px;letter-spacing:0.02em;">메모</div>
             <div style="font-size:13px;color:#555;line-height:1.6;white-space:pre-wrap;">${ad.memo}</div>
           </div>`;
@@ -2342,17 +2342,17 @@ function renderDetail() {
           html+=`<div style="margin-top:16px;">
             <div style="font-size:12px;font-weight:700;color:#555;margin-bottom:8px;">셋팅 사진</div>
             <div style="display:flex;flex-direction:column;gap:10px;">
-              ${(ad.settingPhotos||[]).map(p=>{const src=typeof p==='object'?(p.src||''):p;const store=typeof p==='object'?(p.storeName||''):'';return `<div style="border-radius:12px;overflow:hidden;border:1.5px solid rgba(0,0,0,0.08);">${store?`<div style="padding:8px 12px;background:#e8e8e5;font-size:12px;font-weight:600;color:#555;border-bottom:1px solid rgba(0,0,0,0.07);">📍 ${store}</div>`:''}<img src="${src}" onclick="openLightbox('${src}')" style="width:100%;display:block;cursor:zoom-in;" /></div>`;}).join('')}
+              ${(ad.settingPhotos||[]).map(p=>{const src=typeof p==='object'?(p.src||''):p;const store=typeof p==='object'?(p.storeName||''):'';return `<div style="border-radius:6px;overflow:hidden;border:1px solid rgba(0,0,0,0.08);">${store?`<div style="padding:8px 12px;background:#f2f2f2;font-size:12px;font-weight:600;color:#555;border-bottom:1px solid rgba(0,0,0,0.07);">📍 ${store}</div>`:''}<img src="${src}" onclick="openLightbox('${src}')" style="width:100%;display:block;cursor:zoom-in;" /></div>`;}).join('')}
             </div>
           </div>`;
         }
         html+=`<div style="display:flex;gap:10px;margin-top:20px;">
-          <button onclick="modalClose('modalDetail')" style="flex:1;padding:13px;background:#f0f0f0;color:#111;border:none;border-radius:50px;font-size:14px;font-weight:700;cursor:pointer;font-family:'Pretendard',sans-serif;">닫기</button>
+          <button onclick="modalClose('modalDetail')" style="flex:1;padding:13px;background:#f2f2f2;color:#666;border:1px solid #d8dce3;border-radius:50px;font-size:14px;font-weight:700;cursor:pointer;font-family:'Pretendard',sans-serif;">닫기</button>
           <button onclick="detailTab='edit';renderDetail();" style="flex:2;padding:13px;background:#4a7cf4;color:#fff;border:none;border-radius:50px;font-size:14px;font-weight:700;cursor:pointer;font-family:'Pretendard',sans-serif;">✎ 수정하기</button>
         </div>`;
       } else {
         if(ad.memo) {
-          html+=`<div style="margin-top:20px;padding:14px 16px;background:#e8e8e5;border-radius:10px;">
+          html+=`<div style="margin-top:20px;padding:14px 16px;background:#f2f2f2;border-radius:6px;">
             <div style="font-size:11px;font-weight:700;color:#aaa;margin-bottom:6px;letter-spacing:0.02em;">메모</div>
             <div style="font-size:13px;color:#555;line-height:1.6;white-space:pre-wrap;">${ad.memo}</div>
           </div>`;
@@ -2361,7 +2361,7 @@ function renderDetail() {
           html+=`<div style="margin-top:16px;">
             <div style="font-size:12px;font-weight:700;color:#555;margin-bottom:8px;">셋팅 사진</div>
             <div style="display:flex;flex-direction:column;gap:10px;">
-              ${(ad.settingPhotos||[]).map(p=>{const src=typeof p==='object'?(p.src||''):p;const store=typeof p==='object'?(p.storeName||''):'';return `<div style="border-radius:12px;overflow:hidden;border:1.5px solid rgba(0,0,0,0.08);">${store?`<div style="padding:8px 12px;background:#e8e8e5;font-size:12px;font-weight:600;color:#555;border-bottom:1px solid rgba(0,0,0,0.07);">📍 ${store}</div>`:''}<img src="${src}" onclick="openLightbox('${src}')" style="width:100%;display:block;cursor:zoom-in;" /></div>`;}).join('')}
+              ${(ad.settingPhotos||[]).map(p=>{const src=typeof p==='object'?(p.src||''):p;const store=typeof p==='object'?(p.storeName||''):'';return `<div style="border-radius:6px;overflow:hidden;border:1px solid rgba(0,0,0,0.08);">${store?`<div style="padding:8px 12px;background:#f2f2f2;font-size:12px;font-weight:600;color:#555;border-bottom:1px solid rgba(0,0,0,0.07);">📍 ${store}</div>`:''}<img src="${src}" onclick="openLightbox('${src}')" style="width:100%;display:block;cursor:zoom-in;" /></div>`;}).join('')}
             </div>
           </div>`;
         }
@@ -2400,8 +2400,8 @@ function renderDetail() {
         </div>
         <label class="kupload-label">
           <input type="file" accept="image/*" onchange="typeFileChange('edit','${i}',this)" />
-          ${t.src?`<img id="editTypePrev_${i}" src="${t.src}" style="width:100%;max-height:120px;object-fit:contain;border-radius:8px;" /><div id="editTypeIcon_${i}" style="display:none;"></div>`:`
-          <img id="editTypePrev_${i}" style="width:100%;max-height:120px;object-fit:contain;border-radius:8px;display:none;" />
+          ${t.src?`<img id="editTypePrev_${i}" src="${t.src}" style="width:100%;max-height:120px;object-fit:contain;border-radius:6px;" /><div id="editTypeIcon_${i}" style="display:none;"></div>`:`
+          <img id="editTypePrev_${i}" style="width:100%;max-height:120px;object-fit:contain;border-radius:6px;display:none;" />
           <div id="editTypeIcon_${i}"><svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.5" width="28" height="28" style="opacity:.3;margin:0 auto;display:block;"><rect x="6" y="14" width="36" height="26" rx="4"/><path d="M24 8v16m-6-6 6-6 6 6"/></svg><p style="font-size:11px;color:var(--ktext3);margin-top:4px;">클릭해서 변경</p></div>`}
         </label>
         <div style="margin-top:8px;display:flex;gap:6px;align-items:center;">
@@ -2421,16 +2421,16 @@ function renderDetail() {
         ${(ad.settingPhotos||[]).map((p,i)=>{
           const src = typeof p === 'object' ? (p.src||'') : p;
           const storeName = typeof p === 'object' ? (p.storeName||'') : '';
-          return `<div style="border:1.5px solid rgba(0,0,0,0.1);border-radius:10px;overflow:hidden;">
+          return `<div style="border:1.5px solid rgba(0,0,0,0.1);border-radius:6px;overflow:hidden;">
             <img src="${src}" style="width:100%;max-height:200px;object-fit:cover;display:block;" />
-            <div style="display:flex;align-items:center;gap:8px;padding:8px 10px;background:#e8e8e5;">
+            <div style="display:flex;align-items:center;gap:8px;padding:8px 10px;background:#f2f2f2;">
               <input class="kinput" type="text" id="editSettingStore_${i}" value="${storeName.replace(/"/g,'&quot;')}" placeholder="매장명 (예: 강서점)" style="flex:1;font-size:13px;" />
-              <button onclick="editRemoveSettingPhoto(${i})" style="padding:5px 12px;background:#ffe0e0;border:none;border-radius:8px;color:#e03333;font-size:12px;font-weight:700;cursor:pointer;white-space:nowrap;">삭제</button>
+              <button onclick="editRemoveSettingPhoto(${i})" style="padding:5px 12px;background:#ffe0e0;border:none;border-radius:6px;color:#e03333;font-size:12px;font-weight:700;cursor:pointer;white-space:nowrap;">삭제</button>
             </div>
           </div>`;
         }).join('')}
       </div>
-      <label style="display:flex;align-items:center;justify-content:center;gap:8px;padding:12px;background:#f4f6ff;border-radius:10px;border:1.5px dashed #c0d0ff;cursor:pointer;">
+      <label style="display:flex;align-items:center;justify-content:center;gap:8px;padding:12px;background:#f4f6ff;border-radius:6px;border:1.5px dashed #c0d0ff;cursor:pointer;">
         <input type="file" accept="image/*" multiple onchange="editAddSettingPhotos(this)" style="display:none;" />
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
         <span style="font-size:13px;color:#999;">셋팅 사진 추가</span>
@@ -2472,11 +2472,11 @@ function editAddSettingPhotos(input) {
       var i = current.length - 1;
       var div = document.createElement('div');
       div.id = 'editSettingItem_' + i;
-      div.style.cssText = 'border:1.5px solid rgba(0,0,0,0.1);border-radius:10px;overflow:hidden;';
+      div.style.cssText = 'border:1.5px solid rgba(0,0,0,0.1);border-radius:6px;overflow:hidden;';
       div.innerHTML = `<img src="${e.target.result}" style="width:100%;max-height:200px;object-fit:cover;display:block;" />
-        <div style="display:flex;align-items:center;gap:8px;padding:8px 10px;background:#e8e8e5;">
+        <div style="display:flex;align-items:center;gap:8px;padding:8px 10px;background:#f2f2f2;">
           <input class="kinput" type="text" id="editSettingStore_${i}" placeholder="매장명 (예: 강서점)" style="flex:1;font-size:13px;" />
-          <button onclick="editRemoveSettingPhoto(${i})" style="padding:5px 12px;background:#ffe0e0;border:none;border-radius:8px;color:#e03333;font-size:12px;font-weight:700;cursor:pointer;white-space:nowrap;">삭제</button>
+          <button onclick="editRemoveSettingPhoto(${i})" style="padding:5px 12px;background:#ffe0e0;border:none;border-radius:6px;color:#e03333;font-size:12px;font-weight:700;cursor:pointer;white-space:nowrap;">삭제</button>
         </div>`;
       if(preview) preview.appendChild(div);
     };
@@ -2494,11 +2494,11 @@ function editRemoveSettingPhoto(idx) {
     preview.innerHTML = current.map(function(p, i) {
       var src = typeof p === 'object' ? (p.src||'') : p;
       var storeName = typeof p === 'object' ? (p.storeName||'') : '';
-      return `<div style="border:1.5px solid rgba(0,0,0,0.1);border-radius:10px;overflow:hidden;">
+      return `<div style="border:1.5px solid rgba(0,0,0,0.1);border-radius:6px;overflow:hidden;">
         <img src="${src}" style="width:100%;max-height:200px;object-fit:cover;display:block;" />
-        <div style="display:flex;align-items:center;gap:8px;padding:8px 10px;background:#e8e8e5;">
+        <div style="display:flex;align-items:center;gap:8px;padding:8px 10px;background:#f2f2f2;">
           <input class="kinput" type="text" id="editSettingStore_${i}" value="${storeName.replace(/"/g,'&quot;')}" placeholder="매장명 (예: 강서점)" style="flex:1;font-size:13px;" />
-          <button onclick="editRemoveSettingPhoto(${i})" style="padding:5px 12px;background:#ffe0e0;border:none;border-radius:8px;color:#e03333;font-size:12px;font-weight:700;cursor:pointer;white-space:nowrap;">삭제</button>
+          <button onclick="editRemoveSettingPhoto(${i})" style="padding:5px 12px;background:#ffe0e0;border:none;border-radius:6px;color:#e03333;font-size:12px;font-weight:700;cursor:pointer;white-space:nowrap;">삭제</button>
         </div>
       </div>`;
     }).join('');
@@ -2843,8 +2843,12 @@ function renderAdTypeDetails() {
             + '<span style="font-size:13px;color:#888;font-weight:500;flex-shrink:0;white-space:nowrap;">mm</span>'
             + '<span style="width:1px;height:22px;background:#d8dce3;flex-shrink:0;margin:0 2px;"></span>'
           : '';
-        return '<div style="background:#f4f6ff;border:1.5px solid #e2e8ff;border-radius:10px;padding:14px 16px;">'
-          + '<div style="font-size:12px;font-weight:700;color:#4a7cf4;margin-bottom:10px;letter-spacing:-0.01em;">'+label+'</div>'
+        var origKey = Array.from(rqSelectedTypes).find(function(k){ return k.split('::')[1]===label; });
+        return '<div style="position:relative;background:#f2f2f2;border-radius:6px;padding:14px 16px;">'
+          + '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">'
+          + '<span style="font-size:12px;font-weight:700;color:#4a7cf4;letter-spacing:-0.01em;">'+label+'</span>'
+          + '<button type="button" onclick="rqRemoveItem(\''+( origKey||('?::'+label) )+'\')" style="width:20px;height:20px;border-radius:50%;background:rgba(74,124,244,0.12);border:none;cursor:pointer;font-size:14px;line-height:1;color:#4a7cf4;flex-shrink:0;">×</button>'
+          + '</div>'
           + '<div style="display:flex;align-items:center;gap:8px;">'
           + sizeBlock
           + '<input class="kinput" type="number" placeholder="수량" id="rq-qty-'+safeLabel+'" min="1" style="'+(isQtyOnly?'flex:1;':'width:72px;flex-shrink:0;')+'" />'
@@ -2856,6 +2860,33 @@ function renderAdTypeDetails() {
 }
 
 
+
+function rqRemoveItem(key) {
+  // key: "카테고리::값" 형태
+  var cat = key.split('::')[0];
+  var val = key.split('::').slice(1).join('::');
+  rqSelectedTypes.delete(key);
+  // 드롭다운 selected 상태 해제
+  var bodyEl = document.getElementById('rqbody-'+cat);
+  if(bodyEl) {
+    var items = bodyEl.querySelectorAll('.rq-adcat-item');
+    items.forEach(function(el){ if(el.dataset.val===val) el.classList.remove('selected'); });
+  }
+  // 기타 입력란 숨기기
+  if(val==='기타' && cat==='연출물') {
+    var ci = document.getElementById('rq-custom-type-input');
+    if(ci) ci.style.display = 'none';
+  }
+  // 배지 업데이트
+  var catCount = Array.from(rqSelectedTypes).filter(function(k){ return k.startsWith(cat+'::'); }).length;
+  var badge = document.getElementById('rqbadge-'+cat);
+  if(badge) { badge.textContent = catCount||''; badge.classList.toggle('visible', catCount>0); }
+  // 탭 상태 업데이트
+  var tab = document.getElementById('rqtab-'+cat);
+  if(tab && catCount===0) tab.classList.remove('open');
+  renderAdTypeDetails();
+  rqUpdateConditionalSections();
+}
 let rqProductFiles = [];
 
 function rqHandleFiles(input, type) {
@@ -2869,7 +2900,7 @@ function rqHandleFiles(input, type) {
     reader.onload = e => {
       const isPdf = file.type === 'application/pdf';
       const div = document.createElement('div');
-      div.style.cssText = 'position:relative;width:80px;height:80px;border-radius:8px;overflow:hidden;border:1px solid rgba(0,0,0,0.1);flex-shrink:0;background:#f0f0f0;display:flex;align-items:center;justify-content:center;';
+      div.style.cssText = 'position:relative;width:80px;height:80px;border-radius:6px;overflow:hidden;border:1px solid rgba(0,0,0,0.1);flex-shrink:0;background:#f2f2f2;display:flex;align-items:center;justify-content:center;';
       div.innerHTML = isPdf
         ? `<div style="font-size:10px;font-weight:700;color:#555;text-align:center;padding:4px;">${file.name.slice(0,15)}...</div>`
         : `<img src="${e.target.result}" style="width:100%;height:100%;object-fit:cover;" />`;
@@ -2952,7 +2983,7 @@ function rqSubmit() {
 
   if(missing.length > 0) {
     var toast = document.createElement('div');
-    toast.style.cssText = 'position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:#fff;border:1.5px solid #e03333;color:#e03333;padding:20px 28px;border-radius:16px;font-size:14px;font-weight:700;z-index:9999;box-shadow:0 8px 32px rgba(0,0,0,0.15);text-align:center;line-height:1.6;animation:toastIn .2s ease;';
+    toast.style.cssText = 'position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:#fff;border:1.5px solid #e03333;color:#e03333;padding:20px 28px;border-radius:10px;font-size:14px;font-weight:700;z-index:9999;box-shadow:0 8px 32px rgba(0,0,0,0.15);text-align:center;line-height:1.6;animation:toastIn .2s ease;';
     toast.innerHTML = '<div style="font-size:16px;margin-bottom:6px;">필수 항목을 작성해주세요</div><div style="font-size:12px;font-weight:500;color:#999;">' + missing.join(', ') + '</div>';
     document.body.appendChild(toast);
     setTimeout(function(){ toast.remove(); }, 2500);
@@ -3052,7 +3083,7 @@ function rqEditSave() {
   if(!deadline) missing.push('마감 요청일');
   if(missing.length > 0) {
     var toast = document.createElement('div');
-    toast.style.cssText = 'position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:#fff;border:1.5px solid #e03333;color:#e03333;padding:20px 28px;border-radius:16px;font-size:14px;font-weight:700;z-index:9999;box-shadow:0 8px 32px rgba(0,0,0,0.15);text-align:center;line-height:1.6;';
+    toast.style.cssText = 'position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:#fff;border:1.5px solid #e03333;color:#e03333;padding:20px 28px;border-radius:10px;font-size:14px;font-weight:700;z-index:9999;box-shadow:0 8px 32px rgba(0,0,0,0.15);text-align:center;line-height:1.6;';
     toast.innerHTML = '<div style="font-size:16px;margin-bottom:6px;">필수 항목을 작성해주세요</div><div style="font-size:12px;font-weight:500;color:#999;">'+missing.join(', ')+'</div>';
     document.body.appendChild(toast);
     setTimeout(function(){ toast.remove(); }, 2500);
@@ -3162,7 +3193,7 @@ function openReqEdit(reqId) {
     if(spEl && (req.sitePhotoSrcs||[]).length > 0) {
       spEl.innerHTML = (req.sitePhotoSrcs||[]).map(function(src, i) {
         return '<div style="position:relative;display:inline-block;">'
-          + '<img src="'+src+'" data-existing="true" style="width:80px;height:80px;object-fit:cover;border-radius:8px;border:1px solid rgba(0,0,0,0.1);" />'
+          + '<img src="'+src+'" data-existing="true" style="width:80px;height:80px;object-fit:cover;border-radius:6px;border:1px solid rgba(0,0,0,0.1);" />'
           + '</div>';
       }).join('');
     }
@@ -3172,7 +3203,7 @@ function openReqEdit(reqId) {
     if(rpEl && (req.refImageSrcs||[]).length > 0) {
       rpEl.innerHTML = (req.refImageSrcs||[]).map(function(src) {
         return '<div style="position:relative;display:inline-block;">'
-          + '<img src="'+src+'" data-existing="true" style="width:80px;height:80px;object-fit:cover;border-radius:8px;border:1px solid rgba(0,0,0,0.1);" />'
+          + '<img src="'+src+'" data-existing="true" style="width:80px;height:80px;object-fit:cover;border-radius:6px;border:1px solid rgba(0,0,0,0.1);" />'
           + '</div>';
       }).join('');
     }
@@ -3182,7 +3213,7 @@ function openReqEdit(reqId) {
     if(ppEl && (req.productPhotoSrcs||[]).length > 0) {
       ppEl.innerHTML = (req.productPhotoSrcs||[]).map(function(src) {
         return '<div style="position:relative;display:inline-block;">'
-          + '<img src="'+src+'" data-existing="true" style="width:80px;height:80px;object-fit:cover;border-radius:8px;border:1px solid rgba(0,0,0,0.1);" />'
+          + '<img src="'+src+'" data-existing="true" style="width:80px;height:80px;object-fit:cover;border-radius:6px;border:1px solid rgba(0,0,0,0.1);" />'
           + '</div>';
       }).join('');
     }
@@ -3278,7 +3309,7 @@ function adreqHandlePhotos(input) {
     reader.onload = e => {
       const preview = document.getElementById('adreq-site-preview');
       const div = document.createElement('div');
-      div.style.cssText = 'position:relative;width:72px;height:72px;border-radius:8px;overflow:hidden;border:1px solid rgba(0,0,0,0.1);flex-shrink:0;';
+      div.style.cssText = 'position:relative;width:72px;height:72px;border-radius:6px;overflow:hidden;border:1px solid rgba(0,0,0,0.1);flex-shrink:0;';
       div.innerHTML = `<img src="${e.target.result}" style="width:100%;height:100%;object-fit:cover;" />`;
       const del = document.createElement('button');
       del.innerHTML = '×';
@@ -3314,7 +3345,7 @@ function adreqSubmit() {
 
   if(missing.length > 0) {
     var toast = document.createElement('div');
-    toast.style.cssText = 'position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:#fff;border:1.5px solid #e03333;color:#e03333;padding:20px 28px;border-radius:16px;font-size:14px;font-weight:700;z-index:9999;box-shadow:0 8px 32px rgba(0,0,0,0.15);text-align:center;line-height:1.6;';
+    toast.style.cssText = 'position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:#fff;border:1.5px solid #e03333;color:#e03333;padding:20px 28px;border-radius:10px;font-size:14px;font-weight:700;z-index:9999;box-shadow:0 8px 32px rgba(0,0,0,0.15);text-align:center;line-height:1.6;';
     toast.innerHTML = '<div style="font-size:16px;margin-bottom:6px;">필수 항목을 작성해주세요</div><div style="font-size:12px;font-weight:500;color:#999;">'+missing.join(', ')+'</div>';
     document.body.appendChild(toast); setTimeout(()=>toast.remove(), 2500); return;
   }
@@ -3570,7 +3601,7 @@ function catMgrRenderSubs() {
     var isSelected = s.name === catMgrSub;
     var row = document.createElement('div');
     row.id = 'catmgr-sub-row-' + s.id;
-    row.style.cssText = 'display:flex;align-items:center;gap:8px;padding:14px 16px;border-radius:12px;cursor:pointer;transition:background .15s,border .15s;'
+    row.style.cssText = 'display:flex;align-items:center;gap:8px;padding:14px 16px;border-radius:8px;cursor:pointer;transition:background .15s,border .15s;'
       + (isSelected ? 'background:#111;border:1.5px solid #111;' : 'background:#fff;border:1.5px solid rgba(0,0,0,0.1);');
     var nameSpan = document.createElement('span');
     nameSpan.id = 'catmgr-sub-name-' + s.id;
@@ -3579,7 +3610,7 @@ function catMgrRenderSubs() {
     var renameBtn = document.createElement('button');
     renameBtn.id = 'catmgr-sub-rename-' + s.id;
     renameBtn.textContent = '수정';
-    renameBtn.style.cssText = 'padding:5px 14px;background:'+(isSelected?'rgba(255,255,255,0.15)':'#f0f0f0')+';border:none;border-radius:7px;font-size:12px;font-weight:600;cursor:pointer;font-family:Pretendard,sans-serif;color:'+(isSelected?'#fff':'#555')+';';
+    renameBtn.style.cssText = 'padding:5px 14px;background:'+(isSelected?'rgba(255,255,255,0.15)':'#f2f2f2')+';border:none;border-radius:7px;font-size:12px;font-weight:600;cursor:pointer;font-family:Pretendard,sans-serif;color:'+(isSelected?'#fff':'#555')+';';
     var deleteBtn = document.createElement('button');
     deleteBtn.textContent = '삭제';
     deleteBtn.style.cssText = 'padding:5px 14px;background:#e03333;border:none;border-radius:7px;font-size:12px;font-weight:700;cursor:pointer;font-family:Pretendard,sans-serif;color:#fff;';
@@ -3603,7 +3634,7 @@ function catMgrSelectSub(sub) {
     row.style.background = isSel ? '#111' : '#fff';
     row.style.border = isSel ? '1.5px solid #111' : '1.5px solid rgba(0,0,0,0.1)';
     nameSpan.style.color = isSel ? '#fff' : '#111';
-    if(renameBtn) { renameBtn.style.background = isSel ? 'rgba(255,255,255,0.15)' : '#f0f0f0'; renameBtn.style.color = isSel ? '#fff' : '#555'; }
+    if(renameBtn) { renameBtn.style.background = isSel ? 'rgba(255,255,255,0.15)' : '#f2f2f2'; renameBtn.style.color = isSel ? '#fff' : '#555'; }
   });
   catMgrRenderProds();
 }
@@ -3630,7 +3661,7 @@ function catMgrRenderProds() {
     prods.forEach(function(p) {
       var row = document.createElement('div');
       row.id = 'catmgr-prod-row-' + p.id;
-      row.style.cssText = 'display:flex;align-items:center;gap:8px;padding:14px 16px;border-radius:12px;background:#fff;border:1.5px solid rgba(0,0,0,0.1);';
+      row.style.cssText = 'display:flex;align-items:center;gap:8px;padding:14px 16px;border-radius:8px;background:#fff;border:1.5px solid rgba(0,0,0,0.1);';
       var nameSpan = document.createElement('span');
       nameSpan.id = 'catmgr-prod-name-' + p.id;
       nameSpan.textContent = p.name;
@@ -3638,7 +3669,7 @@ function catMgrRenderProds() {
       var renameBtn = document.createElement('button');
       renameBtn.id = 'catmgr-prod-rename-' + p.id;
       renameBtn.textContent = '수정';
-      renameBtn.style.cssText = 'padding:5px 14px;background:#f0f0f0;border:none;border-radius:7px;font-size:12px;font-weight:600;cursor:pointer;font-family:Pretendard,sans-serif;color:#555;';
+      renameBtn.style.cssText = 'padding:5px 14px;background:#f2f2f2;border:none;border-radius:7px;font-size:12px;font-weight:600;cursor:pointer;font-family:Pretendard,sans-serif;color:#555;';
       var deleteBtn = document.createElement('button');
       deleteBtn.textContent = '삭제';
       deleteBtn.style.cssText = 'padding:5px 14px;background:#e03333;border:none;border-radius:7px;font-size:12px;font-weight:700;cursor:pointer;font-family:Pretendard,sans-serif;color:#fff;';
@@ -3743,7 +3774,7 @@ function catMgrDeleteSub(id, name) {
   targetRow.innerHTML =
     '<span style="flex:1;font-size:13px;font-weight:600;color:#e03333;">\''+name+'\' 삭제할까요?</span>'
     +'<button id="catdel-confirm-'+id+'" style="padding:5px 16px;background:#e03333;border:none;border-radius:7px;font-size:12px;font-weight:700;cursor:pointer;color:#fff;font-family:Pretendard,sans-serif;">삭제</button>'
-    +'<button id="catdel-cancel-'+id+'" style="padding:5px 16px;background:#f0f0f0;border:none;border-radius:7px;font-size:12px;font-weight:600;cursor:pointer;color:#555;font-family:Pretendard,sans-serif;">취소</button>';
+    +'<button id="catdel-cancel-'+id+'" style="padding:5px 16px;background:#f2f2f2;border:none;border-radius:7px;font-size:12px;font-weight:600;cursor:pointer;color:#555;font-family:Pretendard,sans-serif;">취소</button>';
   document.getElementById('catdel-confirm-'+id).addEventListener('click', function() {
     DB.ads = DB.ads.filter(function(a){ return !(a.mainCat===catMgrCat && a.subCat===name); });
     DB.products = DB.products.filter(function(p){ return !(p.mainCat===catMgrCat && p.subCat===name); });
@@ -3767,7 +3798,7 @@ function catMgrDeleteProd(id, name) {
   targetRow.innerHTML =
     '<span style="flex:1;font-size:13px;font-weight:600;color:#e03333;">\''+name+'\' 삭제할까요?</span>'
     +'<button id="proddel-confirm-'+id+'" style="padding:5px 16px;background:#e03333;border:none;border-radius:7px;font-size:12px;font-weight:700;cursor:pointer;color:#fff;font-family:Pretendard,sans-serif;">삭제</button>'
-    +'<button id="proddel-cancel-'+id+'" style="padding:5px 16px;background:#f0f0f0;border:none;border-radius:7px;font-size:12px;font-weight:600;cursor:pointer;color:#555;font-family:Pretendard,sans-serif;">취소</button>';
+    +'<button id="proddel-cancel-'+id+'" style="padding:5px 16px;background:#f2f2f2;border:none;border-radius:7px;font-size:12px;font-weight:600;cursor:pointer;color:#555;font-family:Pretendard,sans-serif;">취소</button>';
   document.getElementById('proddel-confirm-'+id).addEventListener('click', function() {
     DB.ads = DB.ads.filter(function(a){ return !(a.product===name && a.subCat===catMgrSub && a.mainCat===catMgrCat); });
     DB.products = DB.products.filter(function(p){ return p.id!==id; });
@@ -3869,8 +3900,8 @@ function editCatDelete(id, name) {
   if(!row) return;
   row.innerHTML =
     '<span style="flex:1;font-size:12px;color:#e03333;font-weight:600;">\''+name+'\' 삭제할까요?</span>'
-    +'<button id="editdel-confirm-'+id+'" style="padding:4px 12px;background:#e03333;border:none;border-radius:8px;font-size:11px;font-weight:700;cursor:pointer;color:#fff;font-family:Pretendard,sans-serif;">삭제</button>'
-    +'<button id="editdel-cancel-'+id+'" style="padding:4px 12px;background:#e8e8e8;border:none;border-radius:8px;font-size:11px;font-weight:600;cursor:pointer;color:#555;font-family:Pretendard,sans-serif;">취소</button>';
+    +'<button id="editdel-confirm-'+id+'" style="padding:4px 12px;background:#e03333;border:none;border-radius:6px;font-size:11px;font-weight:700;cursor:pointer;color:#fff;font-family:Pretendard,sans-serif;">삭제</button>'
+    +'<button id="editdel-cancel-'+id+'" style="padding:4px 12px;background:#e8e8e8;border:none;border-radius:6px;font-size:11px;font-weight:600;cursor:pointer;color:#555;font-family:Pretendard,sans-serif;">취소</button>';
   document.getElementById('editdel-confirm-'+id).addEventListener('click', function() {
     if(editCatMode === 'sub') {
       DB.ads = DB.ads.filter(function(a){ return !(a.mainCat===aState.cat && a.subCat===name); });
@@ -4069,7 +4100,7 @@ function renderAdminRequests() {
     + '<div class="kdash-grid" style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;">';
   DASH_STATUS.forEach(function(s) {
     var cnt = requests.filter(function(r){ return r.status === s.label; }).length;
-    dashHTML += '<div style="background:' + s.bg + ';border-radius:14px;padding:14px 16px;display:flex;align-items:center;justify-content:space-between;">'
+    dashHTML += '<div style="background:' + s.bg + ';border-radius:10px;padding:14px 16px;display:flex;align-items:center;justify-content:space-between;">'
       + '<div style="display:flex;align-items:center;gap:6px;">'
         + '<span style="width:7px;height:7px;border-radius:50%;background:' + s.dot + ';flex-shrink:0;display:inline-block;"></span>'
         + '<span style="font-size:13px;font-weight:700;color:' + s.color + ';font-family:Pretendard,sans-serif;">' + s.label + '</span>'
@@ -4091,7 +4122,7 @@ function renderAdminRequests() {
 
   function makeCard(r, i, total) {
   var card = document.createElement('div');
-  card.style.cssText = 'background:#fff;border:1.5px solid rgba(0,0,0,0.1);border-radius:14px;padding:18px 20px;cursor:pointer;transition:all .2s;display:flex;align-items:center;gap:16px;';
+  card.style.cssText = 'background:#fff;border:1.5px solid rgba(0,0,0,0.1);border-radius:10px;padding:18px 20px;cursor:pointer;transition:all .2s;display:flex;align-items:center;gap:16px;';
   card.addEventListener('mouseenter', function(){ this.style.borderColor='#111'; this.style.boxShadow='0 4px 16px rgba(0,0,0,0.1)'; });
   card.addEventListener('mouseleave', function(){ this.style.borderColor='rgba(0,0,0,0.1)'; this.style.boxShadow='none'; });
   card.addEventListener('click', function(){ openRequestDetail(r.id); });
@@ -4186,7 +4217,7 @@ function openRequestDetail(id) {
     ['입고 지점', r.branch||''],
     ['입고 요청일', r.deliveryDay||'']
   ].filter(function(kv){ return kv[1]; }).map(function(kv){
-    return '<div style="background:#f4f6ff;border-radius:10px;padding:12px;">'
+    return '<div style="background:#f4f6ff;border-radius:6px;padding:12px;">'
       +'<div style="font-size:10px;font-weight:600;color:#999;text-transform:uppercase;margin-bottom:4px;">'+kv[0]+'</div>'
       +'<div style="font-size:13px;font-weight:600;color:#111;">'+(kv[1]||'-')+'</div>'
       +'</div>';
@@ -4203,7 +4234,7 @@ function openRequestDetail(id) {
     return '<span style="background:#4a7cf4;color:#fff;font-size:12px;font-weight:600;padding:5px 12px;border-radius:50px;margin:2px;display:inline-flex;align-items:center;gap:4px;">'+t+detailStr+'</span>';
   }).join('');
   if(r.bannerType) adTypePills += '<span style="background:#555;color:#fff;font-size:12px;font-weight:600;padding:5px 12px;border-radius:50px;margin:2px;">'+r.bannerType+'</span>';
-  if(r.customSize) adTypePills += '<span style="background:#f0f0f0;color:#555;font-size:12px;padding:5px 12px;border-radius:50px;margin:2px;">'+r.customSize+'</span>';
+  if(r.customSize) adTypePills += '<span style="background:#f2f2f2;color:#555;font-size:12px;padding:5px 12px;border-radius:50px;margin:2px;">'+r.customSize+'</span>';
 
   var contentRows = [['타이틀',r.adTitle],['셀링 문구',r.selling],['행사 기간',r.eventStart&&r.eventEnd?r.eventStart+' ~ '+r.eventEnd:''],['행사 내용',r.eventDesc]].filter(function(kv){return kv[1];}).map(function(kv){
     return '<div style="margin-bottom:10px;">'
@@ -4219,16 +4250,16 @@ function openRequestDetail(id) {
       +'<div id="detail-manager-wrap"></div>'
     +'</div>'
     +'<h2 style="font-size:20px;font-weight:900;letter-spacing:-0.5px;margin-bottom:6px;padding-right:32px;">'+r.title+'</h2>'
-    +'<div style="font-size:12px;color:#999;margin-bottom:20px;border-bottom:1px solid #f0f0f0;padding-bottom:16px;">제출: '+r.submittedAt+'</div>'
+    +'<div style="font-size:12px;color:#999;margin-bottom:20px;border-bottom:1px solid #f2f2f2;padding-bottom:16px;">제출: '+r.submittedAt+'</div>'
     +'<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:10px;margin-bottom:16px;">'+infoGrid+'</div>'
     +'<div style="margin-bottom:16px;"><div style="font-size:11px;font-weight:600;color:#999;letter-spacing:1px;text-transform:uppercase;margin-bottom:8px;">광고 종류</div><div style="display:flex;flex-wrap:wrap;gap:4px;">'+adTypePills+'</div></div>'
-    +'<div style="background:#f4f6ff;border:1.5px solid #e2e8ff;border-radius:10px;padding:16px;margin-bottom:16px;"><div style="font-size:11px;font-weight:600;color:#999;letter-spacing:1px;text-transform:uppercase;margin-bottom:12px;">요청 내용</div>'+contentRows+'</div>'
+    +'<div style="background:#f4f6ff;border:1.5px solid #e2e8ff;border-radius:6px;padding:16px;margin-bottom:16px;"><div style="font-size:11px;font-weight:600;color:#999;letter-spacing:1px;text-transform:uppercase;margin-bottom:12px;">요청 내용</div>'+contentRows+'</div>'
     +'<div id="detail-site-pics"></div>'
     +'<div id="detail-ref-pics"></div>'
-    +'<div style="background:#f4f6ff;border:1.5px solid #e2e8ff;border-radius:10px;padding:16px;margin-bottom:16px;" id="detail-due-section">'
+    +'<div style="background:#f4f6ff;border:1.5px solid #e2e8ff;border-radius:6px;padding:16px;margin-bottom:16px;" id="detail-due-section">'
       +'<div style="font-size:11px;font-weight:600;color:#999;letter-spacing:1px;text-transform:uppercase;margin-bottom:10px;">완료 예정일</div>'
       +'<div style="display:flex;align-items:center;gap:10px;">'
-        +'<input type="date" id="detail-due-date" value="'+(r.dueDate||'')+'" style="flex:1;background:#fff;border:1.5px solid rgba(0,0,0,0.12);border-radius:10px;padding:10px 14px;font-family:Pretendard,sans-serif;font-size:14px;color:#111;outline:none;" />'
+        +'<input type="date" id="detail-due-date" value="'+(r.dueDate||'')+'" style="flex:1;background:#fff;border:1.5px solid rgba(0,0,0,0.12);border-radius:6px;padding:10px 14px;font-family:Pretendard,sans-serif;font-size:14px;color:#111;outline:none;" />'
         
       +'</div>'
     +'</div>'
@@ -4295,7 +4326,7 @@ function openRequestDetail(id) {
     sp.innerHTML = '<div style="margin-bottom:16px;"><div style="font-size:11px;font-weight:600;color:#999;letter-spacing:1px;text-transform:uppercase;margin-bottom:8px;">현장 사진</div><div id="sp-imgs" style="display:flex;flex-wrap:wrap;gap:8px;"></div></div>';
     (r.sitePhotoSrcs||[]).forEach(function(src){
       var img = document.createElement('img');
-      img.src = src; img.style.cssText = 'width:80px;height:80px;object-fit:cover;border-radius:8px;cursor:zoom-in;border:1px solid rgba(0,0,0,0.1);';
+      img.src = src; img.style.cssText = 'width:80px;height:80px;object-fit:cover;border-radius:6px;cursor:zoom-in;border:1px solid rgba(0,0,0,0.1);';
       img.addEventListener('click', function(){ openLightbox(src); });
       sp.querySelector('#sp-imgs').appendChild(img);
     });
@@ -4307,7 +4338,7 @@ function openRequestDetail(id) {
     rp.innerHTML = '<div style="margin-bottom:16px;"><div style="font-size:11px;font-weight:600;color:#999;letter-spacing:1px;text-transform:uppercase;margin-bottom:8px;">레퍼런스</div><div id="rp-imgs" style="display:flex;flex-wrap:wrap;gap:8px;"></div></div>';
     (r.refImageSrcs||[]).forEach(function(src){
       var img = document.createElement('img');
-      img.src = src; img.style.cssText = 'width:80px;height:80px;object-fit:cover;border-radius:8px;cursor:zoom-in;border:1px solid rgba(0,0,0,0.1);';
+      img.src = src; img.style.cssText = 'width:80px;height:80px;object-fit:cover;border-radius:6px;cursor:zoom-in;border:1px solid rgba(0,0,0,0.1);';
       img.addEventListener('click', function(){ openLightbox(src); });
       rp.querySelector('#rp-imgs').appendChild(img);
     });
@@ -4367,7 +4398,7 @@ function openReqUserDetail(reqId) {
 
   // 사진 미리보기
   var sitePics = (req.sitePhotoSrcs||[]).map(function(src){
-    return '<img src="'+src+'" onclick="openLightbox(\''+src+'\')" style="width:80px;height:80px;object-fit:cover;border-radius:8px;cursor:zoom-in;border:1px solid rgba(0,0,0,0.08);" />';
+    return '<img src="'+src+'" onclick="openLightbox(\''+src+'\')" style="width:80px;height:80px;object-fit:cover;border-radius:6px;cursor:zoom-in;border:1px solid rgba(0,0,0,0.08);" />';
   }).join('');
 
   var html = '<div style="padding:0;">'
@@ -4378,7 +4409,7 @@ function openReqUserDetail(reqId) {
     +'<div style="font-size:18px;font-weight:900;letter-spacing:-0.03em;margin-bottom:4px;">'+req.title+'</div>'
     +'<div style="font-size:12px;color:#bbb;margin-bottom:20px;">신청: '+req.submittedAt+'</div>'
     + (adTypePills ? '<div style="margin-bottom:16px;"><div style="font-size:10px;font-weight:700;color:#aaa;margin-bottom:6px;text-transform:uppercase;">광고 종류</div><div>'+adTypePills+'</div></div>' : '')
-    +'<div style="background:#e8e8e5;border-radius:10px;padding:16px;margin-bottom:16px;">'+rows+'</div>'
+    +'<div style="background:#f8faff;border:1px solid #e2e8ff;border-radius:6px;padding:16px;margin-bottom:16px;">'+rows+'</div>'
     + (sitePics ? '<div style="margin-bottom:16px;"><div style="font-size:10px;font-weight:700;color:#aaa;margin-bottom:8px;text-transform:uppercase;">현장 사진</div><div style="display:flex;flex-wrap:wrap;gap:8px;">'+sitePics+'</div></div>' : '')
     +'<button onclick="this.closest(\'.kmodal-overlay\').classList.remove(\'open\')" style="width:100%;padding:13px;background:#4a7cf4;color:#fff;border:none;border-radius:50px;font-size:14px;font-weight:700;cursor:pointer;font-family:Pretendard,sans-serif;">닫기</button>'
   +'</div>';
@@ -4389,7 +4420,7 @@ function openReqUserDetail(reqId) {
     overlay = document.createElement('div');
     overlay.id = 'modalReqUserDetail';
     overlay.className = 'kmodal-overlay center';
-    overlay.innerHTML = '<div class="kmodal-sheet" style="max-width:480px;border-radius:20px;max-height:90vh;overflow-y:auto;"><div class="kmodal-handle"></div><div id="modalReqUserDetailContent"></div></div>';
+    overlay.innerHTML = '<div class="kmodal-sheet" style="max-width:480px;border-radius:12px;max-height:90vh;overflow-y:auto;"><div class="kmodal-handle"></div><div id="modalReqUserDetailContent"></div></div>';
     overlay.addEventListener('click', function(e){ if(e.target===overlay) overlay.classList.remove('open'); });
     document.body.appendChild(overlay);
   }
@@ -4432,17 +4463,17 @@ function searchReqStatus() {
     var sc = statusColors[req.status]||'#111';
     var editBtn = '';
     var statusNote = '';
-    var detailBtn = '<button onclick="openReqUserDetail(\''+req.id+'\')" style="flex:1;padding:10px;background:#f4f6ff;border:1.5px solid #d8e4ff;border-radius:10px;font-size:13px;font-weight:600;color:#555;cursor:pointer;font-family:Pretendard,sans-serif;">📋 신청 내용 보기</button>';
+    var detailBtn = '<button onclick="openReqUserDetail(\''+req.id+'\')" style="flex:1;padding:10px;background:#f8faff;border:1px solid #e2e8ff;border-radius:6px;font-size:13px;font-weight:600;color:#555;cursor:pointer;font-family:Pretendard,sans-serif;">📋 신청 내용 보기</button>';
     if(req.status === '검토 중') {
-      editBtn = '<button onclick="openReqEdit(\''+req.id+'\')" style="flex:1;padding:10px;background:#4a7cf4;border:none;border-radius:10px;font-size:13px;font-weight:700;color:#fff;cursor:pointer;font-family:Pretendard,sans-serif;">✎ 수정</button>';
+      editBtn = '<button onclick="openReqEdit(\''+req.id+'\')" style="flex:1;padding:10px;background:#4a7cf4;border:none;border-radius:6px;font-size:13px;font-weight:700;color:#fff;cursor:pointer;font-family:Pretendard,sans-serif;">✎ 수정</button>';
     } else if(req.status === '진행 중') {
-      statusNote = '<div style="margin-top:10px;background:#eff6ff;border-radius:8px;padding:10px 12px;font-size:12px;color:#1d4ed8;line-height:1.6;">진행 중인 신청은 수정할 수 없습니다.<br>변경이 필요하면 담당자 <strong>'+(req.manager||'')+'</strong>에게 문의해주세요.</div>';
+      statusNote = '<div style="margin-top:10px;background:#eff6ff;border-radius:6px;padding:10px 12px;font-size:12px;color:#1d4ed8;line-height:1.6;">진행 중인 신청은 수정할 수 없습니다.<br>변경이 필요하면 담당자 <strong>'+(req.manager||'')+'</strong>에게 문의해주세요.</div>';
     } else if(req.status === '반려') {
-      statusNote = '<div style="margin-top:10px;background:#fff0f0;border-radius:8px;padding:10px 12px;font-size:12px;color:#e03333;">반려 처리되었습니다. 담당자에게 문의해주세요.</div>';
+      statusNote = '<div style="margin-top:10px;background:#fff0f0;border-radius:6px;padding:10px 12px;font-size:12px;color:#e03333;">반려 처리되었습니다. 담당자에게 문의해주세요.</div>';
     } else if(req.status === '완료') {
-      statusNote = '<div style="margin-top:10px;background:#edfaed;border-radius:8px;padding:10px 12px;font-size:12px;color:#2d7a2d;">작업이 완료되었습니다.</div>';
+      statusNote = '<div style="margin-top:10px;background:#edfaed;border-radius:6px;padding:10px 12px;font-size:12px;color:#2d7a2d;">작업이 완료되었습니다.</div>';
     }
-    return '<div style="border:1.5px solid rgba(0,0,0,0.08);border-radius:14px;overflow:hidden;margin-bottom:10px;">'
+    return '<div style="border:1.5px solid rgba(0,0,0,0.08);border-radius:10px;overflow:hidden;margin-bottom:10px;">'
       + '<div style="background:#f4f6ff;padding:12px 16px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid rgba(0,0,0,0.06);">'
         + '<div style="font-size:11px;font-weight:700;color:#999;letter-spacing:1px;">'+(req.reqCode||'번호 없음')+'</div>'
         + '<span style="background:'+sc+';color:#fff;font-size:11px;font-weight:700;padding:3px 10px;border-radius:50px;">'+req.status+'</span>'
@@ -4451,8 +4482,8 @@ function searchReqStatus() {
         + '<div style="font-size:15px;font-weight:800;color:#111;margin-bottom:4px;letter-spacing:-0.02em;">'+(req.title||'제목 없음')+'</div>'
         + '<div style="font-size:12px;color:#999;margin-bottom:12px;">'+(req.name||'')+(req.dept?' · '+req.dept:'')+'</div>'
         + '<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px;">'
-          + '<div style="background:#f4f6ff;border-radius:8px;padding:10px 12px;"><div style="font-size:10px;color:#999;font-weight:600;margin-bottom:3px;">담당자</div><div style="font-size:13px;font-weight:600;color:#111;">'+(req.manager||'미지정')+'</div></div>'
-          + '<div style="background:#f4f6ff;border-radius:8px;padding:10px 12px;"><div style="font-size:10px;color:#999;font-weight:600;margin-bottom:3px;">완료 예정일</div><div style="font-size:13px;font-weight:600;color:#111;">'+(req.dueDate||'미정')+'</div></div>'
+          + '<div style="background:#f4f6ff;border-radius:6px;padding:10px 12px;"><div style="font-size:10px;color:#999;font-weight:600;margin-bottom:3px;">담당자</div><div style="font-size:13px;font-weight:600;color:#111;">'+(req.manager||'미지정')+'</div></div>'
+          + '<div style="background:#f4f6ff;border-radius:6px;padding:10px 12px;"><div style="font-size:10px;color:#999;font-weight:600;margin-bottom:3px;">완료 예정일</div><div style="font-size:13px;font-weight:600;color:#111;">'+(req.dueDate||'미정')+'</div></div>'
         + '</div>'
         + '<div style="font-size:12px;color:#bbb;">마감: '+(req.deadline||'미정')+' · 신청: '+req.submittedAt+'</div>'
         + statusNote
