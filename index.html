@@ -28,7 +28,7 @@
 <style>
 /* ── CSS Variables ── */
 :root {
-  --bg: #f7f8f5;
+  --bg: #e8e8e5;
   --bg2: #eff1ec;
   --bg3: #ffffff;
   --bg4: #e8ebe3;
@@ -206,7 +206,7 @@ html, body { height: 100%; overflow: hidden; overflow-x: hidden; max-width: 100%
   .admin-catmgr-btn {
     width: auto;
     min-height: 40px;
-    border-radius: 6px;
+    border-radius: 8px;
     font-size: 12px;
     flex-shrink: 0;
     padding: 10px 12px;
@@ -222,7 +222,7 @@ html, body { height: 100%; overflow: hidden; overflow-x: hidden; max-width: 100%
 }
 .ksearch-input {
   width: 100%; background: #f5f5f5; border: none;
-  border-radius: 6px; padding: 10px 40px 10px 42px;
+  border-radius: 8px; padding: 10px 40px 10px 42px;
   font-family: 'Pretendard', sans-serif; font-size: 14px; color: var(--ktext);
   outline: none; transition: background .15s;
   -webkit-appearance: none;
@@ -253,7 +253,7 @@ html, body { height: 100%; overflow: hidden; overflow-x: hidden; max-width: 100%
   padding: 10px 16px;
   background: #111;
   border: none;
-  border-radius: 6px;
+  border-radius: 8px;
   font-size: 13px;
   font-weight: 700;
   color: #fff;
@@ -372,32 +372,34 @@ html, body { height: 100%; overflow: hidden; overflow-x: hidden; max-width: 100%
 /* ── Form elements ── */
 .kform-group { margin-bottom: 16px; }
 .kform-label {
-  display: block; font-size: 13px; font-weight: 700; color: #111;
+  display: block; font-size: 13px; font-weight: 600; color: #444;
   margin-bottom: 6px; letter-spacing: -0.01em;
 }
 .kinput {
-  width: 100%; background: var(--bg); border: 1.5px solid var(--kborder2);
-  border-radius: var(--kr2); padding: 11px 14px; color: var(--ktext);
+  width: 100%; background: #fff; border: 1.5px solid #d8dce3;
+  border-radius: var(--kr2); padding: 11px 14px; color: #222;
   font-family: 'Pretendard', sans-serif; font-size: 14px; outline: none;
   -webkit-appearance: none; transition: border-color .15s, box-shadow .15s;
 }
-.kinput:focus { border-color: #111; box-shadow: 0 0 0 3px var(--kaccent-glow); }
-.kinput-sm { flex: 1; min-width: 0; padding: 8px 10px; font-size: 16px; border-radius: var(--kr2); border: 1.5px solid var(--kborder2); background: #fff; color: var(--ktext); font-family: 'Pretendard',sans-serif; outline:none; flex:1; }
-.kinput-sm:focus { border-color: #111; }
+.kinput:focus { border-color: #5a8ef5; box-shadow: 0 0 0 3px rgba(90,142,245,0.12); }
+.kinput::placeholder { color: #bbc0cc; }
+.kinput-sm { flex: 1; min-width: 0; padding: 8px 10px; font-size: 16px; border-radius: var(--kr2); border: 1.5px solid #d8dce3; background: #fff; color: #222; font-family: 'Pretendard',sans-serif; outline:none; flex:1; }
+.kinput-sm:focus { border-color: #5a8ef5; }
 
 /* ── Modal action buttons ── */
 .kmodal-actions { display: flex; gap: 10px; margin-top: 20px; }
 .kbtn-cancel {
-  flex: 1; padding: 13px; background: none; border: 1.5px solid var(--kborder2);
-  color: var(--ktext2); border-radius: 50px; font-family: 'Pretendard', sans-serif;
-  font-size: 14px; font-weight: 600; cursor: pointer;
+  flex: 1; padding: 13px; background: #fff; border: 1.5px solid #d8dce3;
+  color: #666; border-radius: 50px; font-family: 'Pretendard', sans-serif;
+  font-size: 14px; font-weight: 600; cursor: pointer; transition: border-color .15s;
 }
+.kbtn-cancel:hover { border-color: #aaa; color: #333; }
 .kbtn-confirm {
-  flex: 2; padding: 13px; background: #111; color: #fff;
+  flex: 2; padding: 13px; background: #4a7cf4; color: #fff;
   border: none; border-radius: 50px; font-family: 'Pretendard', sans-serif;
   font-size: 14px; font-weight: 700; cursor: pointer; transition: background .2s;
 }
-.kbtn-confirm:hover { background: #333; }
+.kbtn-confirm:hover { background: #3a6ce3; }
 
 /* ── Type block ── */
 .ktype-block {
@@ -411,9 +413,11 @@ html, body { height: 100%; overflow: hidden; overflow-x: hidden; max-width: 100%
 .ktype-size-row { display: flex; gap: 6px; margin-bottom: 10px; align-items: center; width: 100%; box-sizing: border-box; }
 .ktype-size-row span { color: #999; font-size: 13px; }
 .kupload-label {
-  border: 1.5px dashed var(--kborder2); border-radius: var(--kr2); padding: 16px;
+  border: 1.5px dashed #c0d0ff; border-radius: var(--kr2); padding: 16px;
+  background: #f4f6ff;
   text-align: center; cursor: pointer; display: block; transition: background .2s, color .2s, border-color .2s, box-shadow .2s; position: relative;
 }
+.kupload-label:hover { border-color: #4a7cf4; background: #edf2ff; }
 .kupload-label:hover { border-color: #111; background: var(--kaccent-glow); }
 .kupload-label input[type=file] { position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%; height: 100%; }
 .kadd-type-btn {
@@ -490,7 +494,7 @@ html, body { height: 100%; overflow: hidden; overflow-x: hidden; max-width: 100%
   background: rgba(0,0,0,.85); align-items: center; justify-content: center; padding: 16px;
 }
 .klightbox.open { display: flex; }
-.klightbox img { max-width: 100%; max-height: 90vh; border-radius: 12px; object-fit: contain; }
+.klightbox img { max-width: 100%; max-height: 90vh; border-radius: 10px; object-fit: contain; }
 .klb-close {
   position: absolute; top: 16px; right: 16px;
   background: rgba(255,255,255,.1); border: none; color: white;
@@ -531,7 +535,7 @@ html, body { height: 100%; overflow: hidden; overflow-x: hidden; max-width: 100%
 .kstatus-btn svg { flex-shrink: 0; }
 .kstatus-menu {
   display: none; position: absolute; right: 0; top: calc(100% + 6px);
-  background: #fff; border-radius: 12px; box-shadow: 0 8px 32px rgba(0,0,0,0.15);
+  background: #fff; border-radius: 10px; box-shadow: 0 8px 24px rgba(0,0,0,0.12);
   overflow: hidden; z-index: 100; min-width: 100px;
   border: 1px solid rgba(0,0,0,0.08);
 }
@@ -558,7 +562,7 @@ html, body { height: 100%; overflow: hidden; overflow-x: hidden; max-width: 100%
 .kmgr-btn svg { flex-shrink: 0; }
 .kmgr-menu {
   display: none; position: absolute; left: 0; top: calc(100% + 6px);
-  background: #fff; border-radius: 12px;
+  background: #fff; border-radius: 10px;
   box-shadow: 0 8px 32px rgba(0,0,0,0.15);
   overflow: hidden; z-index: 200; min-width: 110px;
   border: 1px solid rgba(0,0,0,0.08);
@@ -626,7 +630,7 @@ html, body { height: 100%; overflow: hidden; overflow-x: hidden; max-width: 100%
   transition: background .15s, color .15s, border-color .15s; white-space: nowrap;
 }
 .adreq-type-tab.active {
-  background: #111; color: #fff; border-color: #111;
+  background: #4a7cf4; color: #fff; border-color: #4a7cf4;
 }
 #adreq-type-tabs::-webkit-scrollbar { display: none; }
 
@@ -639,42 +643,42 @@ html, body { height: 100%; overflow: hidden; overflow-x: hidden; max-width: 100%
 }
 .flatpickr-day.selected,
 .flatpickr-day.selected:hover {
-  background: #111 !important;
-  border-color: #111 !important;
+  background: #4a7cf4 !important;
+  border-color: #4a7cf4 !important;
 }
-.flatpickr-day:hover { background: #f0f0f0 !important; }
+.flatpickr-day:hover { background: #f0f4ff !important; }
 .flatpickr-day.disabled,
 .flatpickr-day.disabled:hover {
   color: #ddd !important;
   background: transparent !important;
   cursor: not-allowed !important;
 }
-.flatpickr-months .flatpickr-month { color: #111 !important; }
+.flatpickr-months .flatpickr-month { color: #333 !important; }
 .flatpickr-current-month { font-weight: 700 !important; font-size: 14px !important; }
 .flatpickr-weekday { color: #999 !important; font-weight: 600 !important; font-size: 11px !important; }
-.flatpickr-day.today { border-color: #111 !important; }
-.flatpickr-day.today:hover { background: #f0f0f0 !important; }
+.flatpickr-day.today { border-color: #4a7cf4 !important; }
+.flatpickr-day.today:hover { background: #f0f4ff !important; }
 
 /* ── Ad category horizontal tabs + dropdown overlay ── */
 .rq-adcat-tab {
   width:100%; display:flex; align-items:center; justify-content:center; gap:5px;
-  padding:10px 8px; background:#fff; border:1.5px solid rgba(0,0,0,0.12);
-  border-radius:10px; cursor:pointer; font-size:13px; font-weight:700; color:#555;
+  padding:10px 8px; background:#fff; border:1.5px solid #d8dce3;
+  border-radius:10px; cursor:pointer; font-size:13px; font-weight:600; color:#555;
   font-family:'Pretendard',sans-serif; transition: background .15s, color .15s, border-color .15s; white-space:nowrap;
 }
-.rq-adcat-tab.open { background:#111; color:#fff; border-color:#111; }
+.rq-adcat-tab.open { background:#4a7cf4; color:#fff; border-color:#4a7cf4; }
 .rq-adcat-tab.open .rq-adcat-arrow { filter:invert(1); transform:rotate(180deg); }
 .rq-adcat-arrow { transition:transform .2s; flex-shrink:0; }
 .rq-adcat-col { position:relative; }
 .rq-adcat-dropdown {
   position:absolute; left:0; right:0; top:calc(100% + 3px);
-  background:#fff; border:1.5px solid rgba(0,0,0,0.13); border-radius:12px;
-  overflow:hidden; z-index:100; box-shadow:0 8px 28px rgba(0,0,0,0.13);
+  background:#fff; border:1.5px solid #d8dce3; border-radius:10px;
+  overflow:hidden; z-index:100; box-shadow:0 8px 28px rgba(0,0,0,0.10);
   max-height:260px; overflow-y:auto;
 }
 .rq-adcat-badge {
   display:none; min-width:16px; height:16px; border-radius:50px;
-  background:#facc15; color:#111; font-size:10px; font-weight:800;
+  background:#facc15; color:#333; font-size:10px; font-weight:800;
   align-items:center; justify-content:center; padding:0 4px; flex-shrink:0;
 }
 .rq-adcat-badge.visible { display:inline-flex; }
@@ -684,32 +688,32 @@ html, body { height: 100%; overflow: hidden; overflow-x: hidden; max-width: 100%
   transition:background .12s; user-select:none; border-bottom:1px solid rgba(0,0,0,0.05);
 }
 .rq-adcat-item:last-of-type { border-bottom:none; }
-.rq-adcat-item:hover { background:#f5f5f5; }
-.rq-adcat-item.selected { background:#111; color:#fff; font-weight:700; }
+.rq-adcat-item:hover { background:#f0f4ff; }
+.rq-adcat-item.selected { background:#4a7cf4; color:#fff; font-weight:700; }
 .rq-adcat-dot {
   width:15px; height:15px; border-radius:50%; border:1.5px solid #ccc;
   flex-shrink:0; display:flex; align-items:center; justify-content:center; transition: background .12s, color .12s;
 }
-.rq-adcat-item.selected .rq-adcat-dot { background:#fff; border-color:#fff; box-shadow:inset 0 0 0 3px #111; }
+.rq-adcat-item.selected .rq-adcat-dot { background:#fff; border-color:#fff; box-shadow:inset 0 0 0 3px #4a7cf4; }
 .rq-inline-size {
-  background:#f0f0ee; padding:8px 14px;
+  background:#f4f5f7; padding:8px 14px;
   display:flex; align-items:center; gap:6px; flex-wrap:wrap;
   border-bottom:1px solid rgba(0,0,0,0.05);
 }
 .rq-inline-size input { width:80px; font-size:13px; }
 .kinline-add { display: flex; gap: 6px; flex-shrink: 0; align-items: center; }
 .kinline-input {
-  flex: 1; background: var(--bg); border: 1.5px solid #111;
-  border-radius: var(--kr2); padding: 8px 12px; color: var(--ktext);
+  flex: 1; background: #fff; border: 1.5px solid #d8dce3;
+  border-radius: var(--kr2); padding: 8px 12px; color: #222;
   font-family: 'Pretendard',sans-serif; font-size: 13px; outline: none; min-width: 100px;
 }
 .kinline-ok {
-  flex-shrink: 0; height: 36px; padding: 0 12px; background: #111; color: #fff;
+  flex-shrink: 0; height: 36px; padding: 0 12px; background: #4a7cf4; color: #fff;
   border: none; border-radius: var(--kr2); font-family:'Pretendard',sans-serif; font-size:12px; font-weight:700; cursor:pointer;
 }
 .kinline-cancel {
   flex-shrink: 0; height: 36px; padding: 0 10px; background: none;
-  border: 1.5px solid var(--kborder2); color: #999; border-radius: var(--kr2);
+  border: 1.5px solid #d8dce3; color: #888; border-radius: var(--kr2);
   font-family:'Pretendard',sans-serif; font-size:12px; cursor:pointer;
 }
 </style>
@@ -905,9 +909,8 @@ html, body { height: 100%; overflow: hidden; overflow-x: hidden; max-width: 100%
 <div class="kmodal-overlay center" id="modalRequest">
   <div class="kmodal-sheet" style="max-width:600px;border-radius:20px;max-height:92vh;overflow:hidden;padding:0;display:flex;flex-direction:column;">
     <!-- 공지 바 (상단 고정) -->
-    <div style="background:#111;border-radius:20px 20px 0 0;padding:12px 20px;display:flex;align-items:center;gap:10px;flex-shrink:0;">
-      <svg viewBox="0 0 24 24" fill="none" stroke="#facc15" stroke-width="2" width="16" height="16" style="flex-shrink:0;"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
-      <span style="font-size:12px;font-weight:700;color:#fff;letter-spacing:-0.01em;">광고물 고정 입고일은 <span style="color:#facc15;">화요일 · 금요일</span>입니다</span>
+    <div style="background:#4a7cf4;border-radius:20px 20px 0 0;padding:13px 22px;flex-shrink:0;text-align:center;">
+      <span style="font-size:14px;font-weight:700;color:#fff;letter-spacing:-0.02em;">광고물 고정 입고일은 <span style="color:#facc15;">화요일 · 금요일</span>입니다</span>
     </div>
     <!-- 스크롤 영역 -->
     <div id="rq-scroll-area" style="overflow-y:auto;padding:24px 24px 40px;flex:1;">
@@ -919,7 +922,7 @@ html, body { height: 100%; overflow: hidden; overflow-x: hidden; max-width: 100%
 
     <!-- 요청자 정보 -->
     <div class="kform-label" style="margin-bottom:8px;">요청자 정보 <span style="color:#e03333;">*</span></div>
-    <div style="background:#f7f7f7;border-radius:12px;padding:16px;margin-bottom:16px;">
+    <div style="background:#f4f6ff;border:1.5px solid #e2e8ff;border-radius:10px;padding:16px;margin-bottom:16px;">
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px;">
         <div>
           <div class="kform-label">소속</div>
@@ -987,7 +990,7 @@ html, body { height: 100%; overflow: hidden; overflow-x: hidden; max-width: 100%
     <!-- 입고 방법 (연출물 선택 시 표시) -->
     <div id="rq-delivery-section" style="display:none;">
       <div class="kform-label" style="margin-bottom:8px;">입고 방법 <span style="color:#e03333;">*</span></div>
-      <div style="background:#f7f7f7;border-radius:12px;padding:16px;margin-bottom:16px;">
+      <div style="background:#f4f6ff;border:1.5px solid #e2e8ff;border-radius:10px;padding:16px;margin-bottom:16px;">
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
           <div>
             <div class="kform-label">입고 지점 <span style="color:#e03333;">*</span></div>
@@ -996,9 +999,9 @@ html, body { height: 100%; overflow: hidden; overflow-x: hidden; max-width: 100%
           <div>
             <div class="kform-label">입고일 <span style="color:#e03333;">*</span></div>
             <!-- 탭: 고정입고일(화/금) / 별도 지정일 -->
-            <div style="display:flex;border:1.5px solid rgba(0,0,0,0.13);border-radius:10px;overflow:hidden;background:#fff;margin-bottom:10px;">
+            <div style="display:flex;border:1.5px solid #d8dce3;border-radius:10px;overflow:hidden;background:#fff;margin-bottom:10px;">
               <button type="button" id="rq-tab-fixed" onclick="rqSwitchDeliveryTab('fixed')"
-                style="flex:1;padding:9px 4px;background:#111;color:#fff;border:none;font-size:12px;font-weight:700;cursor:pointer;font-family:Pretendard,sans-serif;transition:all .15s;">고정입고일(화/금)</button>
+                style="flex:1;padding:9px 4px;background:#4a7cf4;color:#fff;border:none;font-size:12px;font-weight:700;cursor:pointer;font-family:Pretendard,sans-serif;transition:all .15s;">고정입고일(화/금)</button>
               <button type="button" id="rq-tab-custom" onclick="rqSwitchDeliveryTab('custom')"
                 style="flex:1;padding:9px 4px;background:none;color:#999;border:none;font-size:12px;font-weight:600;cursor:pointer;font-family:Pretendard,sans-serif;transition:all .15s;">별도 지정일</button>
             </div>
@@ -1031,7 +1034,7 @@ html, body { height: 100%; overflow: hidden; overflow-x: hidden; max-width: 100%
 
     <!-- 요청 내용 -->
     <div class="kform-label" style="margin-bottom:8px;">요청 내용</div>
-    <div style="background:#f7f7f7;border-radius:12px;padding:16px;margin-bottom:16px;">
+    <div style="background:#f4f6ff;border:1.5px solid #e2e8ff;border-radius:10px;padding:16px;margin-bottom:16px;">
       <div style="margin-bottom:10px;">
         <div class="kform-label">타이틀 <span style="color:#e03333;">*</span></div>
         <input class="kinput" type="text" id="rq-ad-title" placeholder="광고 타이틀 문구" />
@@ -1078,7 +1081,7 @@ html, body { height: 100%; overflow: hidden; overflow-x: hidden; max-width: 100%
         <div class="kform-label" style="margin-bottom:2px;">레퍼런스 이미지</div>
         <div style="font-size:11px;color:#aaa;">참고 이미지나 자료 (선택)</div>
       </div>
-      <label style="flex-shrink:0;display:flex;align-items:center;gap:6px;padding:8px 14px;background:#f7f7f7;border:1.5px dashed rgba(0,0,0,0.15);border-radius:10px;cursor:pointer;">
+      <label style="flex-shrink:0;display:flex;align-items:center;gap:6px;padding:8px 14px;background:#f4f6ff;border:1.5px dashed #c0d0ff;border-radius:10px;cursor:pointer;">
         <input type="file" accept="image/*,application/pdf" multiple onchange="rqHandleFiles(this,'ref')" style="display:none;" />
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
         <span style="font-size:12px;color:#777;font-weight:600;white-space:nowrap;">파일 추가</span>
@@ -1098,15 +1101,15 @@ html, body { height: 100%; overflow: hidden; overflow-x: hidden; max-width: 100%
 <!-- REQUEST SUCCESS MODAL -->
 <div class="kmodal-overlay center" id="modalReqSuccess">
   <div class="kmodal-sheet" style="max-width:400px;border-radius:20px;text-align:center;">
-    <div style="font-size:32px;margin-bottom:16px;color:#111;">✓</div>
+    <div style="font-size:40px;margin-bottom:12px;">✅</div>
     <div style="font-size:20px;font-weight:900;margin-bottom:16px;">신청이 완료되었습니다</div>
-    <div style="background:#f7f7f7;border-radius:12px;padding:16px;margin-bottom:20px;">
-      <div style="font-size:13px;color:#555;line-height:1.8;">
-        홈 화면 <strong style="color:#111;">'신청 현황 조회'</strong>에서<br>
-        입력하신 <strong style="color:#111;">연락처</strong>로 확인하세요.
+    <div style="background:#f4f6ff;border:1.5px solid #e2e8ff;border-radius:10px;padding:16px;margin-bottom:20px;">
+      <div style="font-size:13px;color:#555;line-height:1.9;">
+        홈 화면 <strong style="color:#4a7cf4;">'신청 현황 조회'</strong>에서<br>
+        입력하신 <strong style="color:#4a7cf4;">연락처</strong>로 확인하세요.
       </div>
     </div>
-    <button onclick="modalClose('modalReqSuccess')" style="width:100%;padding:14px;background:#111;color:#fff;border:none;border-radius:50px;font-size:15px;font-weight:700;cursor:pointer;font-family:Pretendard,sans-serif;">확인</button>
+    <button onclick="modalClose('modalReqSuccess')" style="width:100%;padding:14px;background:#4a7cf4;color:#fff;border:none;border-radius:50px;font-size:15px;font-weight:700;cursor:pointer;font-family:Pretendard,sans-serif;">확인</button>
     <div style="margin-top:14px;font-size:11px;color:#ccc;">신청 번호: <span id="successReqCode"></span></div>
   </div>
 </div>
@@ -1125,7 +1128,7 @@ html, body { height: 100%; overflow: hidden; overflow-x: hidden; max-width: 100%
           style="flex:1;"
           oninput="formatTelInput(this)"
           onkeydown="if(event.key==='Enter')searchReqStatus();" />
-        <button onclick="searchReqStatus()" style="flex-shrink:0;padding:0 20px;background:#111;color:#fff;border:none;border-radius:var(--kr2);font-family:Pretendard,sans-serif;font-size:14px;font-weight:700;cursor:pointer;">조회</button>
+        <button onclick="searchReqStatus()" style="flex-shrink:0;padding:0 20px;background:#4a7cf4;color:#fff;border:none;border-radius:var(--kr2);font-family:Pretendard,sans-serif;font-size:14px;font-weight:700;cursor:pointer;">조회</button>
       </div>
     </div>
     <div id="statusResult" style="margin-top:4px;max-height:55vh;overflow-y:auto;"></div>
@@ -1137,11 +1140,17 @@ html, body { height: 100%; overflow: hidden; overflow-x: hidden; max-width: 100%
 
 <!-- AD REQUEST MODAL (기존 광고 기반 간략 신청) -->
 <div class="kmodal-overlay center" id="modalAdRequest">
-  <div class="kmodal-sheet" style="max-width:520px;border-radius:20px;max-height:92vh;overflow-y:auto;">
-    <div class="kmodal-handle"></div>
+  <div class="kmodal-sheet" style="max-width:520px;border-radius:20px;max-height:92vh;overflow:hidden;padding:0;display:flex;flex-direction:column;">
+    <!-- 공지 바 -->
+    <div style="background:#4a7cf4;border-radius:20px 20px 0 0;padding:13px 22px;flex-shrink:0;text-align:center;">
+      <span style="font-size:14px;font-weight:700;color:#fff;letter-spacing:-0.02em;">이 광고를 기반으로 신청합니다</span>
+    </div>
+    <!-- 스크롤 영역 -->
+    <div style="overflow-y:auto;padding:24px 24px 40px;flex:1;">
+    <div class="kmodal-handle" style="margin-bottom:16px;"></div>
 
     <!-- 참고 광고 헤더 -->
-    <div style="display:flex;align-items:center;gap:12px;background:#f7f8f5;border-radius:14px;padding:14px 16px;margin-bottom:20px;">
+    <div style="display:flex;align-items:center;gap:12px;background:#e8e8e5;border-radius:10px;padding:14px 16px;margin-bottom:20px;">
       <div id="adreq-thumb" style="width:52px;height:52px;border-radius:8px;overflow:hidden;flex-shrink:0;background:#e8e8e5;display:flex;align-items:center;justify-content:center;">
         <svg viewBox="0 0 24 24" fill="none" stroke="#ccc" stroke-width="1.5" width="20" height="20"><rect x="3" y="7" width="18" height="13" rx="2"/><circle cx="9" cy="13" r="2"/><path d="m3 18 5-4 4 4 3-3 6 5"/></svg>
       </div>
@@ -1153,24 +1162,24 @@ html, body { height: 100%; overflow: hidden; overflow-x: hidden; max-width: 100%
 
     <!-- 요청자 정보 -->
     <div class="kform-label" style="margin-bottom:8px;">요청자 정보 <span style="color:#e03333;">*</span></div>
-    <div style="background:#f7f7f7;border-radius:12px;padding:14px;margin-bottom:16px;">
+    <div style="background:#f4f6ff;border:1.5px solid #e2e8ff;border-radius:10px;padding:14px;margin-bottom:16px;">
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px;">
         <div>
-          <div class="kform-label" style="font-size:11px;color:#999;margin-bottom:4px;">소속</div>
+          <div class="kform-label">소속</div>
           <input class="kinput" type="text" id="adreq-dept" placeholder="예) 농산팀" />
         </div>
         <div>
-          <div class="kform-label" style="font-size:11px;color:#999;margin-bottom:4px;">이름</div>
+          <div class="kform-label">이름</div>
           <input class="kinput" type="text" id="adreq-name" placeholder="이름" />
         </div>
       </div>
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
         <div>
-          <div class="kform-label" style="font-size:11px;color:#999;margin-bottom:4px;">연락처</div>
+          <div class="kform-label">연락처</div>
           <input class="kinput" type="tel" id="adreq-tel" placeholder="010-0000-0000" oninput="formatTelInput(this)" />
         </div>
         <div>
-          <div class="kform-label" style="font-size:11px;color:#999;margin-bottom:4px;">입고 지점</div>
+          <div class="kform-label">입고 지점</div>
           <input class="kinput" type="text" id="adreq-branch" placeholder="예) 강서점" />
         </div>
       </div>
@@ -1232,6 +1241,7 @@ html, body { height: 100%; overflow: hidden; overflow-x: hidden; max-width: 100%
       <button class="kbtn-cancel" onclick="modalClose('modalAdRequest')">취소</button>
       <button class="kbtn-confirm" onclick="adreqSubmit()">신청하기</button>
     </div>
+    </div><!-- end scroll -->
   </div>
 </div>
 
@@ -1778,7 +1788,7 @@ function renderAdmin() {
             <input class="ksearch-input" id="adminSearchInput" type="text" placeholder="광고 검색..." value="${aState.search||''}"
               oninput="adminSearchChange(this.value)"
               onkeydown="if(event.key==='Escape'){adminSearchChange('');this.value='';}"
-              style="background:#f5f5f5;border:none;border-radius:6px;" />
+              style="background:#f5f5f5;border:none;border-radius:8px;" />
             <button class="ksearch-clear ${aState.search?'visible':''}" id="adminSearchClear" onclick="adminSearchChange('');document.getElementById('adminSearchInput').value='';document.getElementById('adminSearchInput').focus();">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="14" height="14"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
             </button>
@@ -2310,17 +2320,20 @@ function renderDetail() {
             ${t.src?`<img src="${t.src}" style="width:100%;display:block;border-radius:10px;" />`:`<span style="color:#999;font-size:13px;">이미지 없음</span>`}
           </div>
           ${(t.width&&t.height)||t.unitPrice?`
-          <div style="margin-top:10px;background:#f7f8f5;border-radius:10px;overflow:hidden;display:flex;align-items:stretch;">
-            ${t.width&&t.height?`<div style="flex:1;padding:14px 16px;display:flex;align-items:center;gap:8px;"><span style="font-size:12px;font-weight:700;color:#111;white-space:nowrap;flex-shrink:0;">사이즈</span><span style="font-size:13px;color:#333;font-weight:500;">${t.width}×${t.height}mm</span></div>`:''}
-            ${(t.width&&t.height)&&t.unitPrice?`<div style="width:1px;background:rgba(0,0,0,0.1);flex-shrink:0;margin:12px 0;"></div>`:''}
-            ${t.unitPrice?`<div style="flex:2;padding:14px 16px;display:flex;flex-direction:column;gap:4px;justify-content:center;"><div style="display:flex;align-items:center;gap:8px;"><span style="font-size:12px;font-weight:700;color:#111;white-space:nowrap;flex-shrink:0;">단가</span><span style="font-size:13px;color:#333;font-weight:600;">${Number(t.unitPrice).toLocaleString()}원/개</span></div><div style="font-size:11px;color:#bbb;font-weight:400;">단가는 사이즈에 따라 변동될 수 있습니다.</div></div>`:''}
-          </div>`:''}
-          ${t.memo?`<div style="margin-top:10px;background:#f7f8f5;border-radius:10px;padding:14px 16px;"><div style="font-size:11px;font-weight:700;color:#aaa;margin-bottom:5px;letter-spacing:0.02em;">메모</div><div style="font-size:13px;color:#555;line-height:1.6;white-space:pre-wrap;">${t.memo}</div></div>`:''}
+          <div style="position:relative;">
+            ${t.unitPrice?`<div style="text-align:right;font-size:11px;color:#bbb;font-weight:400;margin-bottom:5px;">단가는 사이즈에 따라 변동될 수 있습니다.</div>`:``}
+            <div style="background:#e8e8e5;border-radius:10px;overflow:hidden;display:flex;align-items:stretch;">
+              ${t.width&&t.height?`<div style="flex:1;padding:13px 16px;display:flex;align-items:center;gap:8px;"><span style="font-size:12px;font-weight:700;color:#111;white-space:nowrap;flex-shrink:0;">사이즈</span><span style="font-size:13px;color:#333;font-weight:500;">${t.width}×${t.height}mm</span></div>`:``}
+              ${(t.width&&t.height)&&t.unitPrice?`<div style="width:1px;background:rgba(0,0,0,0.1);flex-shrink:0;margin:12px 0;"></div>`:``}
+              ${t.unitPrice?`<div style="flex:2;padding:13px 16px;display:flex;align-items:center;gap:8px;"><span style="font-size:12px;font-weight:700;color:#111;white-space:nowrap;flex-shrink:0;">단가</span><span style="font-size:13px;color:#333;font-weight:600;">${Number(t.unitPrice).toLocaleString()}원/개</span></div>`:``}
+            </div>
+          </div>`:``}
+          ${t.memo?`<div style="margin-top:10px;background:#e8e8e5;border-radius:10px;padding:14px 16px;"><div style="font-size:11px;font-weight:700;color:#aaa;margin-bottom:5px;letter-spacing:0.02em;">메모</div><div style="font-size:13px;color:#555;line-height:1.6;white-space:pre-wrap;">${t.memo}</div></div>`:``}
         </div>
       `).join('');
       if(detailMode==='admin' && adminLoggedIn) {
         if(ad.memo) {
-          html+=`<div style="margin-top:20px;padding:14px 16px;background:#f7f8f5;border-radius:12px;">
+          html+=`<div style="margin-top:20px;padding:14px 16px;background:#e8e8e5;border-radius:10px;">
             <div style="font-size:11px;font-weight:700;color:#aaa;margin-bottom:6px;letter-spacing:0.02em;">메모</div>
             <div style="font-size:13px;color:#555;line-height:1.6;white-space:pre-wrap;">${ad.memo}</div>
           </div>`;
@@ -2329,17 +2342,17 @@ function renderDetail() {
           html+=`<div style="margin-top:16px;">
             <div style="font-size:12px;font-weight:700;color:#555;margin-bottom:8px;">셋팅 사진</div>
             <div style="display:flex;flex-direction:column;gap:10px;">
-              ${(ad.settingPhotos||[]).map(p=>{const src=typeof p==='object'?(p.src||''):p;const store=typeof p==='object'?(p.storeName||''):'';return `<div style="border-radius:12px;overflow:hidden;border:1.5px solid rgba(0,0,0,0.08);">${store?`<div style="padding:8px 12px;background:#f7f7f7;font-size:12px;font-weight:600;color:#555;border-bottom:1px solid rgba(0,0,0,0.07);">📍 ${store}</div>`:''}<img src="${src}" onclick="openLightbox('${src}')" style="width:100%;display:block;cursor:zoom-in;" /></div>`;}).join('')}
+              ${(ad.settingPhotos||[]).map(p=>{const src=typeof p==='object'?(p.src||''):p;const store=typeof p==='object'?(p.storeName||''):'';return `<div style="border-radius:12px;overflow:hidden;border:1.5px solid rgba(0,0,0,0.08);">${store?`<div style="padding:8px 12px;background:#e8e8e5;font-size:12px;font-weight:600;color:#555;border-bottom:1px solid rgba(0,0,0,0.07);">📍 ${store}</div>`:''}<img src="${src}" onclick="openLightbox('${src}')" style="width:100%;display:block;cursor:zoom-in;" /></div>`;}).join('')}
             </div>
           </div>`;
         }
         html+=`<div style="display:flex;gap:10px;margin-top:20px;">
           <button onclick="modalClose('modalDetail')" style="flex:1;padding:13px;background:#f0f0f0;color:#111;border:none;border-radius:50px;font-size:14px;font-weight:700;cursor:pointer;font-family:'Pretendard',sans-serif;">닫기</button>
-          <button onclick="detailTab='edit';renderDetail();" style="flex:2;padding:13px;background:#111;color:#fff;border:none;border-radius:50px;font-size:14px;font-weight:700;cursor:pointer;font-family:'Pretendard',sans-serif;">✎ 수정하기</button>
+          <button onclick="detailTab='edit';renderDetail();" style="flex:2;padding:13px;background:#4a7cf4;color:#fff;border:none;border-radius:50px;font-size:14px;font-weight:700;cursor:pointer;font-family:'Pretendard',sans-serif;">✎ 수정하기</button>
         </div>`;
       } else {
         if(ad.memo) {
-          html+=`<div style="margin-top:20px;padding:14px 16px;background:#f7f8f5;border-radius:12px;">
+          html+=`<div style="margin-top:20px;padding:14px 16px;background:#e8e8e5;border-radius:10px;">
             <div style="font-size:11px;font-weight:700;color:#aaa;margin-bottom:6px;letter-spacing:0.02em;">메모</div>
             <div style="font-size:13px;color:#555;line-height:1.6;white-space:pre-wrap;">${ad.memo}</div>
           </div>`;
@@ -2348,11 +2361,11 @@ function renderDetail() {
           html+=`<div style="margin-top:16px;">
             <div style="font-size:12px;font-weight:700;color:#555;margin-bottom:8px;">셋팅 사진</div>
             <div style="display:flex;flex-direction:column;gap:10px;">
-              ${(ad.settingPhotos||[]).map(p=>{const src=typeof p==='object'?(p.src||''):p;const store=typeof p==='object'?(p.storeName||''):'';return `<div style="border-radius:12px;overflow:hidden;border:1.5px solid rgba(0,0,0,0.08);">${store?`<div style="padding:8px 12px;background:#f7f7f7;font-size:12px;font-weight:600;color:#555;border-bottom:1px solid rgba(0,0,0,0.07);">📍 ${store}</div>`:''}<img src="${src}" onclick="openLightbox('${src}')" style="width:100%;display:block;cursor:zoom-in;" /></div>`;}).join('')}
+              ${(ad.settingPhotos||[]).map(p=>{const src=typeof p==='object'?(p.src||''):p;const store=typeof p==='object'?(p.storeName||''):'';return `<div style="border-radius:12px;overflow:hidden;border:1.5px solid rgba(0,0,0,0.08);">${store?`<div style="padding:8px 12px;background:#e8e8e5;font-size:12px;font-weight:600;color:#555;border-bottom:1px solid rgba(0,0,0,0.07);">📍 ${store}</div>`:''}<img src="${src}" onclick="openLightbox('${src}')" style="width:100%;display:block;cursor:zoom-in;" /></div>`;}).join('')}
             </div>
           </div>`;
         }
-        html+=`<button onclick="openAdRequest(${ad.id})" style="width:100%;margin-top:20px;padding:14px;background:#111;color:#fff;border:none;border-radius:50px;font-size:15px;font-weight:700;cursor:pointer;font-family:'Pretendard',sans-serif;letter-spacing:-0.02em;">이 광고로 신청하기</button>`;
+        html+=`<button onclick="openAdRequest(${ad.id})" style="width:100%;margin-top:20px;padding:14px;background:#4a7cf4;color:#fff;border:none;border-radius:50px;font-size:15px;font-weight:700;cursor:pointer;font-family:'Pretendard',sans-serif;letter-spacing:-0.02em;">이 광고로 신청하기</button>`;
       }
     }
   } else {
@@ -2410,14 +2423,14 @@ function renderDetail() {
           const storeName = typeof p === 'object' ? (p.storeName||'') : '';
           return `<div style="border:1.5px solid rgba(0,0,0,0.1);border-radius:10px;overflow:hidden;">
             <img src="${src}" style="width:100%;max-height:200px;object-fit:cover;display:block;" />
-            <div style="display:flex;align-items:center;gap:8px;padding:8px 10px;background:#f7f7f7;">
+            <div style="display:flex;align-items:center;gap:8px;padding:8px 10px;background:#e8e8e5;">
               <input class="kinput" type="text" id="editSettingStore_${i}" value="${storeName.replace(/"/g,'&quot;')}" placeholder="매장명 (예: 강서점)" style="flex:1;font-size:13px;" />
-              <button onclick="editRemoveSettingPhoto(${i})" style="padding:5px 12px;background:#ffe0e0;border:none;border-radius:6px;color:#e03333;font-size:12px;font-weight:700;cursor:pointer;white-space:nowrap;">삭제</button>
+              <button onclick="editRemoveSettingPhoto(${i})" style="padding:5px 12px;background:#ffe0e0;border:none;border-radius:8px;color:#e03333;font-size:12px;font-weight:700;cursor:pointer;white-space:nowrap;">삭제</button>
             </div>
           </div>`;
         }).join('')}
       </div>
-      <label style="display:flex;align-items:center;justify-content:center;gap:8px;padding:12px;background:#f7f7f7;border-radius:10px;border:1.5px dashed var(--kborder2);cursor:pointer;">
+      <label style="display:flex;align-items:center;justify-content:center;gap:8px;padding:12px;background:#f4f6ff;border-radius:10px;border:1.5px dashed #c0d0ff;cursor:pointer;">
         <input type="file" accept="image/*" multiple onchange="editAddSettingPhotos(this)" style="display:none;" />
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
         <span style="font-size:13px;color:#999;">셋팅 사진 추가</span>
@@ -2461,9 +2474,9 @@ function editAddSettingPhotos(input) {
       div.id = 'editSettingItem_' + i;
       div.style.cssText = 'border:1.5px solid rgba(0,0,0,0.1);border-radius:10px;overflow:hidden;';
       div.innerHTML = `<img src="${e.target.result}" style="width:100%;max-height:200px;object-fit:cover;display:block;" />
-        <div style="display:flex;align-items:center;gap:8px;padding:8px 10px;background:#f7f7f7;">
+        <div style="display:flex;align-items:center;gap:8px;padding:8px 10px;background:#e8e8e5;">
           <input class="kinput" type="text" id="editSettingStore_${i}" placeholder="매장명 (예: 강서점)" style="flex:1;font-size:13px;" />
-          <button onclick="editRemoveSettingPhoto(${i})" style="padding:5px 12px;background:#ffe0e0;border:none;border-radius:6px;color:#e03333;font-size:12px;font-weight:700;cursor:pointer;white-space:nowrap;">삭제</button>
+          <button onclick="editRemoveSettingPhoto(${i})" style="padding:5px 12px;background:#ffe0e0;border:none;border-radius:8px;color:#e03333;font-size:12px;font-weight:700;cursor:pointer;white-space:nowrap;">삭제</button>
         </div>`;
       if(preview) preview.appendChild(div);
     };
@@ -2483,9 +2496,9 @@ function editRemoveSettingPhoto(idx) {
       var storeName = typeof p === 'object' ? (p.storeName||'') : '';
       return `<div style="border:1.5px solid rgba(0,0,0,0.1);border-radius:10px;overflow:hidden;">
         <img src="${src}" style="width:100%;max-height:200px;object-fit:cover;display:block;" />
-        <div style="display:flex;align-items:center;gap:8px;padding:8px 10px;background:#f7f7f7;">
+        <div style="display:flex;align-items:center;gap:8px;padding:8px 10px;background:#e8e8e5;">
           <input class="kinput" type="text" id="editSettingStore_${i}" value="${storeName.replace(/"/g,'&quot;')}" placeholder="매장명 (예: 강서점)" style="flex:1;font-size:13px;" />
-          <button onclick="editRemoveSettingPhoto(${i})" style="padding:5px 12px;background:#ffe0e0;border:none;border-radius:6px;color:#e03333;font-size:12px;font-weight:700;cursor:pointer;white-space:nowrap;">삭제</button>
+          <button onclick="editRemoveSettingPhoto(${i})" style="padding:5px 12px;background:#ffe0e0;border:none;border-radius:8px;color:#e03333;font-size:12px;font-weight:700;cursor:pointer;white-space:nowrap;">삭제</button>
         </div>
       </div>`;
     }).join('');
@@ -2828,10 +2841,10 @@ function renderAdTypeDetails() {
             + '<span style="font-size:15px;color:#bbb;font-weight:400;flex-shrink:0;">×</span>'
             + '<input class="kinput" type="number" placeholder="세로" id="rq-h-'+safeLabel+'" style="flex:1;min-width:60px;" />'
             + '<span style="font-size:13px;color:#888;font-weight:500;flex-shrink:0;white-space:nowrap;">mm</span>'
-            + '<span style="width:1px;height:22px;background:rgba(0,0,0,0.12);flex-shrink:0;margin:0 2px;"></span>'
+            + '<span style="width:1px;height:22px;background:#d8dce3;flex-shrink:0;margin:0 2px;"></span>'
           : '';
-        return '<div style="background:#f7f8f5;border-radius:10px;padding:14px 16px;">'
-          + '<div style="font-size:12px;font-weight:700;color:#555;margin-bottom:10px;letter-spacing:-0.01em;">'+label+'</div>'
+        return '<div style="background:#f4f6ff;border:1.5px solid #e2e8ff;border-radius:10px;padding:14px 16px;">'
+          + '<div style="font-size:12px;font-weight:700;color:#4a7cf4;margin-bottom:10px;letter-spacing:-0.01em;">'+label+'</div>'
           + '<div style="display:flex;align-items:center;gap:8px;">'
           + sizeBlock
           + '<input class="kinput" type="number" placeholder="수량" id="rq-qty-'+safeLabel+'" min="1" style="'+(isQtyOnly?'flex:1;':'width:72px;flex-shrink:0;')+'" />'
@@ -3116,7 +3129,7 @@ function rqEditSave() {
     modalClose('modalRequest');
 
     var toast2 = document.createElement('div');
-    toast2.style.cssText = 'position:fixed;top:24px;left:50%;transform:translateX(-50%);background:#111;color:#fff;padding:12px 28px;border-radius:50px;font-size:13px;font-weight:700;z-index:9999;';
+    toast2.style.cssText = 'position:fixed;top:24px;left:50%;transform:translateX(-50%);background:#4a7cf4;color:#fff;padding:12px 28px;border-radius:50px;font-size:13px;font-weight:700;z-index:9999;';
     toast2.textContent = '✓ 신청 내용이 수정되었습니다';
     document.body.appendChild(toast2);
     setTimeout(function(){ toast2.remove(); }, 2500);
@@ -3856,8 +3869,8 @@ function editCatDelete(id, name) {
   if(!row) return;
   row.innerHTML =
     '<span style="flex:1;font-size:12px;color:#e03333;font-weight:600;">\''+name+'\' 삭제할까요?</span>'
-    +'<button id="editdel-confirm-'+id+'" style="padding:4px 12px;background:#e03333;border:none;border-radius:6px;font-size:11px;font-weight:700;cursor:pointer;color:#fff;font-family:Pretendard,sans-serif;">삭제</button>'
-    +'<button id="editdel-cancel-'+id+'" style="padding:4px 12px;background:#e8e8e8;border:none;border-radius:6px;font-size:11px;font-weight:600;cursor:pointer;color:#555;font-family:Pretendard,sans-serif;">취소</button>';
+    +'<button id="editdel-confirm-'+id+'" style="padding:4px 12px;background:#e03333;border:none;border-radius:8px;font-size:11px;font-weight:700;cursor:pointer;color:#fff;font-family:Pretendard,sans-serif;">삭제</button>'
+    +'<button id="editdel-cancel-'+id+'" style="padding:4px 12px;background:#e8e8e8;border:none;border-radius:8px;font-size:11px;font-weight:600;cursor:pointer;color:#555;font-family:Pretendard,sans-serif;">취소</button>';
   document.getElementById('editdel-confirm-'+id).addEventListener('click', function() {
     if(editCatMode === 'sub') {
       DB.ads = DB.ads.filter(function(a){ return !(a.mainCat===aState.cat && a.subCat===name); });
@@ -4173,7 +4186,7 @@ function openRequestDetail(id) {
     ['입고 지점', r.branch||''],
     ['입고 요청일', r.deliveryDay||'']
   ].filter(function(kv){ return kv[1]; }).map(function(kv){
-    return '<div style="background:#f7f7f7;border-radius:10px;padding:12px;">'
+    return '<div style="background:#f4f6ff;border-radius:10px;padding:12px;">'
       +'<div style="font-size:10px;font-weight:600;color:#999;text-transform:uppercase;margin-bottom:4px;">'+kv[0]+'</div>'
       +'<div style="font-size:13px;font-weight:600;color:#111;">'+(kv[1]||'-')+'</div>'
       +'</div>';
@@ -4187,7 +4200,7 @@ function openRequestDetail(id) {
       if(detail.w && detail.h) detailStr += ' <span style="font-size:10px;opacity:.7;">'+detail.w+'×'+detail.h+'mm</span>';
       if(detail.qty) detailStr += ' <span style="font-size:10px;opacity:.7;">×'+detail.qty+'개</span>';
     }
-    return '<span style="background:#111;color:#fff;font-size:12px;font-weight:600;padding:5px 12px;border-radius:50px;margin:2px;display:inline-flex;align-items:center;gap:4px;">'+t+detailStr+'</span>';
+    return '<span style="background:#4a7cf4;color:#fff;font-size:12px;font-weight:600;padding:5px 12px;border-radius:50px;margin:2px;display:inline-flex;align-items:center;gap:4px;">'+t+detailStr+'</span>';
   }).join('');
   if(r.bannerType) adTypePills += '<span style="background:#555;color:#fff;font-size:12px;font-weight:600;padding:5px 12px;border-radius:50px;margin:2px;">'+r.bannerType+'</span>';
   if(r.customSize) adTypePills += '<span style="background:#f0f0f0;color:#555;font-size:12px;padding:5px 12px;border-radius:50px;margin:2px;">'+r.customSize+'</span>';
@@ -4209,10 +4222,10 @@ function openRequestDetail(id) {
     +'<div style="font-size:12px;color:#999;margin-bottom:20px;border-bottom:1px solid #f0f0f0;padding-bottom:16px;">제출: '+r.submittedAt+'</div>'
     +'<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:10px;margin-bottom:16px;">'+infoGrid+'</div>'
     +'<div style="margin-bottom:16px;"><div style="font-size:11px;font-weight:600;color:#999;letter-spacing:1px;text-transform:uppercase;margin-bottom:8px;">광고 종류</div><div style="display:flex;flex-wrap:wrap;gap:4px;">'+adTypePills+'</div></div>'
-    +'<div style="background:#f7f7f7;border-radius:12px;padding:16px;margin-bottom:16px;"><div style="font-size:11px;font-weight:600;color:#999;letter-spacing:1px;text-transform:uppercase;margin-bottom:12px;">요청 내용</div>'+contentRows+'</div>'
+    +'<div style="background:#f4f6ff;border:1.5px solid #e2e8ff;border-radius:10px;padding:16px;margin-bottom:16px;"><div style="font-size:11px;font-weight:600;color:#999;letter-spacing:1px;text-transform:uppercase;margin-bottom:12px;">요청 내용</div>'+contentRows+'</div>'
     +'<div id="detail-site-pics"></div>'
     +'<div id="detail-ref-pics"></div>'
-    +'<div style="background:#f7f7f7;border-radius:12px;padding:16px;margin-bottom:16px;" id="detail-due-section">'
+    +'<div style="background:#f4f6ff;border:1.5px solid #e2e8ff;border-radius:10px;padding:16px;margin-bottom:16px;" id="detail-due-section">'
       +'<div style="font-size:11px;font-weight:600;color:#999;letter-spacing:1px;text-transform:uppercase;margin-bottom:10px;">완료 예정일</div>'
       +'<div style="display:flex;align-items:center;gap:10px;">'
         +'<input type="date" id="detail-due-date" value="'+(r.dueDate||'')+'" style="flex:1;background:#fff;border:1.5px solid rgba(0,0,0,0.12);border-radius:10px;padding:10px 14px;font-family:Pretendard,sans-serif;font-size:14px;color:#111;outline:none;" />'
@@ -4340,7 +4353,7 @@ function openReqUserDetail(reqId) {
     var d = (req.adTypeDetails||{})[t];
     var dStr = '';
     if(d){ if(d.w&&d.h) dStr+=' '+d.w+'×'+d.h+'mm'; if(d.qty) dStr+=' ×'+d.qty+'개'; }
-    return '<span style="background:#111;color:#fff;font-size:12px;font-weight:600;padding:4px 12px;border-radius:50px;display:inline-block;margin:2px;">'+t+dStr+'</span>';
+    return '<span style="background:#4a7cf4;color:#fff;font-size:12px;font-weight:600;padding:4px 12px;border-radius:50px;display:inline-block;margin:2px;">'+t+dStr+'</span>';
   }).join('');
 
   var rows = [
@@ -4365,9 +4378,9 @@ function openReqUserDetail(reqId) {
     +'<div style="font-size:18px;font-weight:900;letter-spacing:-0.03em;margin-bottom:4px;">'+req.title+'</div>'
     +'<div style="font-size:12px;color:#bbb;margin-bottom:20px;">신청: '+req.submittedAt+'</div>'
     + (adTypePills ? '<div style="margin-bottom:16px;"><div style="font-size:10px;font-weight:700;color:#aaa;margin-bottom:6px;text-transform:uppercase;">광고 종류</div><div>'+adTypePills+'</div></div>' : '')
-    +'<div style="background:#f7f8f5;border-radius:12px;padding:16px;margin-bottom:16px;">'+rows+'</div>'
+    +'<div style="background:#e8e8e5;border-radius:10px;padding:16px;margin-bottom:16px;">'+rows+'</div>'
     + (sitePics ? '<div style="margin-bottom:16px;"><div style="font-size:10px;font-weight:700;color:#aaa;margin-bottom:8px;text-transform:uppercase;">현장 사진</div><div style="display:flex;flex-wrap:wrap;gap:8px;">'+sitePics+'</div></div>' : '')
-    +'<button onclick="this.closest(\'.kmodal-overlay\').classList.remove(\'open\')" style="width:100%;padding:13px;background:#111;color:#fff;border:none;border-radius:50px;font-size:14px;font-weight:700;cursor:pointer;font-family:Pretendard,sans-serif;">닫기</button>'
+    +'<button onclick="this.closest(\'.kmodal-overlay\').classList.remove(\'open\')" style="width:100%;padding:13px;background:#4a7cf4;color:#fff;border:none;border-radius:50px;font-size:14px;font-weight:700;cursor:pointer;font-family:Pretendard,sans-serif;">닫기</button>'
   +'</div>';
 
   // 팝업 모달 동적 생성
@@ -4419,9 +4432,9 @@ function searchReqStatus() {
     var sc = statusColors[req.status]||'#111';
     var editBtn = '';
     var statusNote = '';
-    var detailBtn = '<button onclick="openReqUserDetail(\''+req.id+'\')" style="flex:1;padding:10px;background:#f7f7f7;border:1.5px solid rgba(0,0,0,0.1);border-radius:10px;font-size:13px;font-weight:600;color:#555;cursor:pointer;font-family:Pretendard,sans-serif;">📋 신청 내용 보기</button>';
+    var detailBtn = '<button onclick="openReqUserDetail(\''+req.id+'\')" style="flex:1;padding:10px;background:#f4f6ff;border:1.5px solid #d8e4ff;border-radius:10px;font-size:13px;font-weight:600;color:#555;cursor:pointer;font-family:Pretendard,sans-serif;">📋 신청 내용 보기</button>';
     if(req.status === '검토 중') {
-      editBtn = '<button onclick="openReqEdit(\''+req.id+'\')" style="flex:1;padding:10px;background:#111;border:none;border-radius:10px;font-size:13px;font-weight:700;color:#fff;cursor:pointer;font-family:Pretendard,sans-serif;">✎ 수정</button>';
+      editBtn = '<button onclick="openReqEdit(\''+req.id+'\')" style="flex:1;padding:10px;background:#4a7cf4;border:none;border-radius:10px;font-size:13px;font-weight:700;color:#fff;cursor:pointer;font-family:Pretendard,sans-serif;">✎ 수정</button>';
     } else if(req.status === '진행 중') {
       statusNote = '<div style="margin-top:10px;background:#eff6ff;border-radius:8px;padding:10px 12px;font-size:12px;color:#1d4ed8;line-height:1.6;">진행 중인 신청은 수정할 수 없습니다.<br>변경이 필요하면 담당자 <strong>'+(req.manager||'')+'</strong>에게 문의해주세요.</div>';
     } else if(req.status === '반려') {
@@ -4430,7 +4443,7 @@ function searchReqStatus() {
       statusNote = '<div style="margin-top:10px;background:#edfaed;border-radius:8px;padding:10px 12px;font-size:12px;color:#2d7a2d;">작업이 완료되었습니다.</div>';
     }
     return '<div style="border:1.5px solid rgba(0,0,0,0.08);border-radius:14px;overflow:hidden;margin-bottom:10px;">'
-      + '<div style="background:#f7f7f7;padding:12px 16px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid rgba(0,0,0,0.06);">'
+      + '<div style="background:#f4f6ff;padding:12px 16px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid rgba(0,0,0,0.06);">'
         + '<div style="font-size:11px;font-weight:700;color:#999;letter-spacing:1px;">'+(req.reqCode||'번호 없음')+'</div>'
         + '<span style="background:'+sc+';color:#fff;font-size:11px;font-weight:700;padding:3px 10px;border-radius:50px;">'+req.status+'</span>'
       + '</div>'
@@ -4438,8 +4451,8 @@ function searchReqStatus() {
         + '<div style="font-size:15px;font-weight:800;color:#111;margin-bottom:4px;letter-spacing:-0.02em;">'+(req.title||'제목 없음')+'</div>'
         + '<div style="font-size:12px;color:#999;margin-bottom:12px;">'+(req.name||'')+(req.dept?' · '+req.dept:'')+'</div>'
         + '<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px;">'
-          + '<div style="background:#f7f7f7;border-radius:8px;padding:10px 12px;"><div style="font-size:10px;color:#999;font-weight:600;margin-bottom:3px;">담당자</div><div style="font-size:13px;font-weight:600;color:#111;">'+(req.manager||'미지정')+'</div></div>'
-          + '<div style="background:#f7f7f7;border-radius:8px;padding:10px 12px;"><div style="font-size:10px;color:#999;font-weight:600;margin-bottom:3px;">완료 예정일</div><div style="font-size:13px;font-weight:600;color:#111;">'+(req.dueDate||'미정')+'</div></div>'
+          + '<div style="background:#f4f6ff;border-radius:8px;padding:10px 12px;"><div style="font-size:10px;color:#999;font-weight:600;margin-bottom:3px;">담당자</div><div style="font-size:13px;font-weight:600;color:#111;">'+(req.manager||'미지정')+'</div></div>'
+          + '<div style="background:#f4f6ff;border-radius:8px;padding:10px 12px;"><div style="font-size:10px;color:#999;font-weight:600;margin-bottom:3px;">완료 예정일</div><div style="font-size:13px;font-weight:600;color:#111;">'+(req.dueDate||'미정')+'</div></div>'
         + '</div>'
         + '<div style="font-size:12px;color:#bbb;">마감: '+(req.deadline||'미정')+' · 신청: '+req.submittedAt+'</div>'
         + statusNote
