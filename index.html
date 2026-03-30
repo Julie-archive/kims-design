@@ -777,7 +777,7 @@ html, body { height: 100%; overflow: hidden; overflow-x: hidden; max-width: 100%
       <button class="kadd-type-btn" onclick="aiAddType()">+ 타입 추가</button>
       <div class="kmodal-actions">
         <button class="kbtn-cancel" onclick="modalClose('modalAddImg')">취소</button>
-        <button class="kbtn-confirm" onclick="aiConfirm()">등록</button>
+        <button class="kbtn-confirm" id="aiConfirmBtn" onclick="aiConfirm()">등록</button>
       </div>
     </div>
   </div>
@@ -1341,10 +1341,38 @@ async function sbLoadAll() {
     DB.products = prodsRes.data.map(function(r){ return {id:r.id, mainCat:r.main_cat, subCat:r.sub_cat, name:r.name}; });
     DB.ads = adsRes.data.map(function(r){ return {id:r.id, mainCat:r.main_cat, subCat:r.sub_cat, product:r.product, title:r.title, adDate:r.ad_date, types:r.types||[], memo:r.memo||'', settingPhotos:r.setting_photos||[], orderAmount:r.order_amount||''}; });
 
-    // base64 자동 복구
+    // base64 또는 __pending__ 자동 복구
     setTimeout(async function() {
+      // localStorage 백업과 Supabase 데이터 병합 - 로컬에는 있는데 Supabase에 없는 경우 복구
+      try {
+        var raw = localStorage.getItem(STORAGE_KEY);
+        if(raw) {
+          var local = JSON.parse(raw);
+          var localAds = local.ads || [];
+          var dbIds = new Set(DB.ads.map(function(a){ return a.id; }));
+          // 로컬에만 있는 광고 (Supabase 저장 실패한 것들)
+          var orphans = localAds.filter(function(la){ return !dbIds.has(la.id) && la.title; });
+          if(orphans.length > 0) {
+            console.warn('[sbLoadAll] 로컬에만 있는 광고 발견:', orphans.length, '개 - 재저장 시도');
+            for(var oi=0; oi<orphans.length; oi++) {
+              var oad = orphans[oi];
+              // base64 이미지 Storage 업로드 후 재저장 시도
+              var fixedTypes = await processAdTypes(oad.types||[]);
+              oad.types = fixedTypes;
+              var saved = await sbSaveAd(oad);
+              if(saved) {
+                DB.ads.push(oad);
+                console.log('[sbLoadAll] 복구 성공:', oad.title);
+              }
+            }
+            saveData();
+          }
+        }
+      } catch(recErr) { console.warn('[sbLoadAll] 복구 시도 중 오류:', recErr); }
+
+      // base64가 남아있는 광고 Storage 재업로드
       var toFix = DB.ads.filter(function(ad){
-        return (ad.types||[]).some(function(t){ return t.src && t.src.startsWith('data:'); });
+        return (ad.types||[]).some(function(t){ return t.src && (t.src.startsWith('data:') || t.src === '__pending__'); });
       });
       for(var i=0; i<toFix.length; i++) {
         var ad = toFix[i];
@@ -1357,7 +1385,7 @@ async function sbLoadAll() {
         if(homeScreen==='B') renderHomeContent();
         if(curView==='admin') renderAdminContent();
       }
-    }, 500);
+    }, 1000);
   } catch(e) {
     console.warn('Supabase load failed:', e);
     return false;
@@ -1412,41 +1440,73 @@ async function sbDeleteProd(id) {
 }
 
 async function sbSaveAd(ad) {
+  // types에 base64가 남아있으면 Supabase JSONB에 저장 실패하므로 제거 후 시도
+  var typesForDB = (ad.types||[]).map(function(t) {
+    return {name:t.name, width:t.width, height:t.height, memo:t.memo||'', unitPrice:t.unitPrice||'',
+            src: (t.src && t.src.startsWith('data:')) ? '__pending__' : (t.src||'')};
+  });
+  // 전체 컬럼 시도
   try {
     const res = await sb.from('ads').insert({
       main_cat:ad.mainCat, sub_cat:ad.subCat, product:ad.product,
-      title:ad.title, ad_date:ad.adDate, types:ad.types, memo:ad.memo||'',
-      setting_photos:ad.settingPhotos||[], order_amount:ad.orderAmount||''
-    }).select().single();
-    if(res.error) {
-      // 새 컬럼 없을 때 fallback
-      const res2 = await sb.from('ads').insert({
-        main_cat:ad.mainCat, sub_cat:ad.subCat, product:ad.product,
-        title:ad.title, ad_date:ad.adDate, types:ad.types, memo:ad.memo||''
-      }).select().single();
-      if(res2.error) throw res2.error;
-      ad.id = res2.data.id;
-      return;
+      title:ad.title, ad_date:ad.adDate, types:typesForDB, memo:ad.memo||'',
+      setting_photos:(ad.settingPhotos||[]).map(function(p){
+        return {src:(typeof p==='object'?p.src:p)||'', storeName:(typeof p==='object'?p.storeName:'')||''};
+      }),
+      order_amount:ad.orderAmount||''
+    }).select('id').single();
+    if(!res.error && res.data) {
+      ad.id = res.data.id;
+      console.log('[sbSaveAd] 저장 성공, id:', ad.id);
+      return true;
     }
-    ad.id = res.data.id;
-  } catch(e) { console.warn('sbSaveAd error:', e); }
+    console.warn('[sbSaveAd] 1차 실패:', res.error?.message);
+  } catch(e) { console.warn('[sbSaveAd] 1차 예외:', e); }
+
+  // 기본 컬럼만 fallback
+  try {
+    const res2 = await sb.from('ads').insert({
+      main_cat:ad.mainCat, sub_cat:ad.subCat, product:ad.product,
+      title:ad.title, ad_date:ad.adDate, types:typesForDB, memo:ad.memo||''
+    }).select('id').single();
+    if(!res2.error && res2.data) {
+      ad.id = res2.data.id;
+      console.log('[sbSaveAd] fallback 저장 성공, id:', ad.id);
+      return true;
+    }
+    console.error('[sbSaveAd] fallback도 실패:', res2.error?.message);
+  } catch(e2) { console.error('[sbSaveAd] fallback 예외:', e2); }
+
+  return false; // 저장 실패 명시적 반환
 }
 
 async function sbUpdateAd(ad) {
+  if(!ad.id) { console.warn('[sbUpdateAd] id 없음, 저장 불가'); return false; }
+  var typesForDB = (ad.types||[]).map(function(t) {
+    return {name:t.name, width:t.width, height:t.height, memo:t.memo||'', unitPrice:t.unitPrice||'',
+            src: (t.src && t.src.startsWith('data:')) ? '__pending__' : (t.src||'')};
+  });
+  try {
+    var res = await sb.from('ads').update({
+      title:ad.title, ad_date:ad.adDate, types:typesForDB, memo:ad.memo||'',
+      setting_photos:(ad.settingPhotos||[]).map(function(p){
+        return {src:(typeof p==='object'?p.src:p)||'', storeName:(typeof p==='object'?p.storeName:'')||''};
+      }),
+      order_amount:ad.orderAmount||''
+    }).eq('id', ad.id);
+    if(!res.error) { console.log('[sbUpdateAd] 업데이트 성공, id:', ad.id); return true; }
+    console.warn('[sbUpdateAd] 1차 실패:', res.error?.message);
+  } catch(e) { console.warn('[sbUpdateAd] 1차 예외:', e); }
+
+  // fallback
   try {
     await sb.from('ads').update({
-      title:ad.title, ad_date:ad.adDate, types:ad.types, memo:ad.memo||'',
-      setting_photos:ad.settingPhotos||[], order_amount:ad.orderAmount||''
+      title:ad.title, ad_date:ad.adDate, types:typesForDB, memo:ad.memo||''
     }).eq('id', ad.id);
-  } catch(e) {
-    console.warn('sbUpdateAd error (setting_photos/order_amount 컬럼 없을 수 있음):', e);
-    // 컬럼 없을 때 기본 필드만 저장
-    try {
-      await sb.from('ads').update({
-        title:ad.title, ad_date:ad.adDate, types:ad.types, memo:ad.memo||''
-      }).eq('id', ad.id);
-    } catch(e2) { console.warn('sbUpdateAd fallback error:', e2); }
-  }
+    console.log('[sbUpdateAd] fallback 성공');
+    return true;
+  } catch(e2) { console.error('[sbUpdateAd] fallback 실패:', e2); }
+  return false;
 }
 
 async function sbDeleteAd(id) {
@@ -2252,24 +2312,51 @@ function aiConfirm() {
   if(!prod){alert('상품을 선택하세요');return;}
   const typesRaw=collectTypes('ai');
   // 이미지 Supabase에 업로드
+  // 저장 진행 중 UI 표시
+  var confirmBtn = document.getElementById('aiConfirmBtn');
+  if(confirmBtn) { confirmBtn.disabled = true; confirmBtn.textContent = '저장 중...'; }
+
   processAdTypes(typesRaw).then(async function(types) {
+    var uploadFailed = window._uploadFailed;
     const ad={
       id:nextId(), mainCat:cat, subCat:sub, product:prod,
       title, adDate:new Date().toLocaleDateString('ko-KR'), types,
     };
     DB.ads.push(ad);
-    saveData();
-    await sbSaveAd(ad);
-    saveData();
+    saveData(); // localStorage 먼저 저장 (세션 보호)
+
+    var dbSaved = await sbSaveAd(ad);
+    saveData(); // id 업데이트 후 다시 저장
+
+    if(confirmBtn) { confirmBtn.disabled = false; confirmBtn.textContent = '저장'; }
+
+    if(!dbSaved) {
+      // Supabase 저장 실패 - 사용자에게 명시적으로 알림
+      var errMsg = document.createElement('div');
+      errMsg.style.cssText = 'position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:#fff;border:2px solid #e03333;color:#e03333;padding:24px 28px;border-radius:12px;font-size:14px;font-weight:700;z-index:9999;box-shadow:0 8px 32px rgba(0,0,0,0.2);text-align:center;max-width:320px;line-height:1.7;';
+      errMsg.innerHTML = '<div style="font-size:18px;margin-bottom:8px;">⚠️ 서버 저장 실패</div>'
+        + '<div style="font-size:13px;font-weight:500;color:#555;">이미지가 이번 세션에는 보이지만<br>새로고침 시 사라질 수 있습니다.<br><br><strong>지금 바로 광고를 수정 저장하거나<br>다시 등록해주세요.</strong></div>'
+        + '<button onclick="this.parentNode.remove()" style="margin-top:16px;padding:10px 28px;background:#e03333;color:#fff;border:none;border-radius:50px;font-size:13px;font-weight:700;cursor:pointer;">확인</button>';
+      document.body.appendChild(errMsg);
+      console.error('[aiConfirm] Supabase 저장 실패 - 로컬에만 저장됨');
+    } else if(uploadFailed && uploadFailed.length > 0) {
+      // DB 저장은 성공했지만 이미지 Storage 업로드 실패
+      var warnMsg = document.createElement('div');
+      warnMsg.style.cssText = 'position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:#fff;border:1.5px solid #f59e0b;color:#92400e;padding:16px 24px;border-radius:10px;font-size:13px;font-weight:600;z-index:9999;box-shadow:0 4px 16px rgba(0,0,0,0.12);text-align:center;';
+      warnMsg.innerHTML = '⚠️ <strong>' + uploadFailed.join(', ') + '</strong> 이미지 업로드 실패.<br>광고는 저장됐지만 이미지가 보이지 않을 수 있습니다.';
+      document.body.appendChild(warnMsg);
+      setTimeout(function(){ warnMsg.remove(); }, 5000);
+    }
+
     modalClose('modalAddImg');
     aState={cat,sub,prod};
     renderAdmin();
     if(homeScreen==='B'&&hState.cat===cat) renderHomeContent();
+  }).catch(function(err) {
+    if(confirmBtn) { confirmBtn.disabled = false; confirmBtn.textContent = '저장'; }
+    console.error('[aiConfirm] 예외:', err);
+    alert('저장 중 오류가 발생했습니다:\n' + err.message);
   });
-  return;
-  aState={cat,sub,prod};
-  renderAdmin();
-  if(homeScreen==='B'&&hState.cat===cat) renderHomeContent();
 }
 
 // ══════════════════════════════════════════════════════
@@ -3574,38 +3661,61 @@ function adreqSubmit() {
 
 // ── Supabase Storage 이미지 업로드 ──
 async function uploadImageToStorage(base64DataUrl, fileName) {
-  try {
-    var arr = base64DataUrl.split(',');
-    var mime = arr[0].match(/:(.*?);/)[1];
-    var bstr = atob(arr[1]);
-    var n = bstr.length;
-    var u8arr = new Uint8Array(n);
-    while(n--) { u8arr[n] = bstr.charCodeAt(n); }
-    var blob = new Blob([u8arr], {type: mime});
-    var ext = mime.split('/')[1] || 'jpg';
-    var safeName = fileName.replace(/[^a-zA-Z0-9_-]/g, '_').replace(/_+/g,'_');
-    var path = safeName + '_' + Date.now() + '.' + ext;
-    var res = await sb.storage.from('images').upload(path, blob, {contentType: mime, upsert: true});
-    if(res.error) throw res.error;
-    var urlRes = sb.storage.from('images').getPublicUrl(path);
-    return urlRes.data.publicUrl;
-  } catch(e) {
-    console.warn('Storage upload failed, using base64:', e);
-    return null;
+  // 최대 2회 재시도
+  for(var attempt = 0; attempt < 2; attempt++) {
+    try {
+      var arr = base64DataUrl.split(',');
+      var mime = arr[0].match(/:(.*?);/)[1];
+      var bstr = atob(arr[1]);
+      var n = bstr.length;
+      var u8arr = new Uint8Array(n);
+      while(n--) { u8arr[n] = bstr.charCodeAt(n); }
+      var blob = new Blob([u8arr], {type: mime});
+      // HEIC/HEIF → jpeg 강제 변환
+      if(mime === 'image/heic' || mime === 'image/heif') mime = 'image/jpeg';
+      var ext = mime.split('/')[1] || 'jpg';
+      if(ext === 'jpeg') ext = 'jpg';
+      var safeName = fileName.replace(/[^a-zA-Z0-9_-]/g, '_').replace(/_+/g,'_');
+      var path = 'ads/' + safeName + '_' + Date.now() + (attempt > 0 ? '_r' + attempt : '') + '.' + ext;
+      var res = await sb.storage.from('images').upload(path, blob, {contentType: mime, upsert: true});
+      if(res.error) throw res.error;
+      var urlRes = sb.storage.from('images').getPublicUrl(path);
+      console.log('[Storage] 업로드 성공:', path);
+      return urlRes.data.publicUrl;
+    } catch(e) {
+      console.warn('[Storage] 업로드 실패 (시도 ' + (attempt+1) + '):', e);
+      if(attempt < 1) await new Promise(r => setTimeout(r, 1000)); // 1초 대기 후 재시도
+    }
   }
+  console.error('[Storage] 최종 업로드 실패 - 이미지를 저장할 수 없습니다');
+  return null;
 }
 
 async function processAdTypes(types) {
   var result = [];
+  var failedUploads = [];
   for(var i=0; i<types.length; i++) {
     var t = types[i];
     if(t.src && t.src.startsWith('data:')) {
       var url = await uploadImageToStorage(t.src, 'ad_' + (t.name||'type').replace(/[^a-zA-Z0-9]/g,'_'));
-      // Storage 업로드 성공 시 URL 사용, 실패 시 기존 src 유지 (base64는 저장 안 함)
-      result.push({name:t.name, width:t.width, height:t.height, memo:t.memo||'', unitPrice:t.unitPrice||'', src: url || ''});
+      if(url) {
+        // 업로드 성공 → Storage URL 사용
+        result.push({name:t.name, width:t.width, height:t.height, memo:t.memo||'', unitPrice:t.unitPrice||'', src: url});
+      } else {
+        // 업로드 실패 → base64 원본 유지 (Supabase 저장 실패해도 localStorage엔 보존)
+        failedUploads.push(t.name || ('타입' + (i+1)));
+        result.push({name:t.name, width:t.width, height:t.height, memo:t.memo||'', unitPrice:t.unitPrice||'', src: t.src});
+      }
     } else {
       result.push({name:t.name, width:t.width, height:t.height, memo:t.memo||'', unitPrice:t.unitPrice||'', src:t.src||''});
     }
+  }
+  if(failedUploads.length > 0) {
+    console.error('[processAdTypes] Storage 업로드 실패 타입:', failedUploads);
+    // 전역 플래그로 aiConfirm에서 감지
+    window._uploadFailed = failedUploads;
+  } else {
+    window._uploadFailed = null;
   }
   return result;
 }
