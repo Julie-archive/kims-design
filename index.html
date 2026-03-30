@@ -2071,26 +2071,27 @@ document.addEventListener('keydown',e=>{
 //  MODAL HELPERS
 // ══════════════════════════════════════════════════════
 function _resetModalScroll(el) {
-  // CSS 클래스 기반 overflow 포함 모든 스크롤 영역 리셋
-  el.querySelectorAll('.kmodal-sheet, .kdetail-modal, .kmodal-sheet *, .kdetail-modal *').forEach(function(node) {
-    if(node.scrollTop > 0) node.scrollTop = 0;
+  // display:flex/.open 상태에서만 scrollTop 리셋 가능하므로 직접 지정
+  ['.kmodal-sheet', '.kdetail-modal', '#rq-scroll-area', '#adreq-scroll-area'].forEach(function(sel) {
+    el.querySelectorAll(sel).forEach(function(node) { node.scrollTop = 0; });
   });
-  // overlay 자체도 리셋
-  if(el.scrollTop > 0) el.scrollTop = 0;
+  el.scrollTop = 0;
 }
 function modalClose(id) {
   const el = document.getElementById(id);
   if(!el) return;
-  _resetModalScroll(el);
   el.classList.remove('open');
+  // 닫힌 뒤 스크롤 리셋 (다음에 열릴 때 최상단 보장)
+  setTimeout(function(){ _resetModalScroll(el); }, 0);
 }
 function modalOpen(id) {
   const el = document.getElementById(id);
   if(!el) return;
-  _resetModalScroll(el);
   el.classList.add('open');
-  // open 후 한 프레임 뒤 한번 더 (렌더링 후 스크롤 위치 보정)
-  requestAnimationFrame(function(){ _resetModalScroll(el); });
+  // open → display:flex 된 직후 리셋
+  requestAnimationFrame(function(){
+    _resetModalScroll(el);
+  });
 }
 
 // close on overlay click
@@ -2468,14 +2469,7 @@ function openDetail(id, mode) {
   detailMode = (mode === 'home') ? 'home' : (adminLoggedIn ? 'admin' : 'home');
   detailTab='view';
   renderDetail();
-  // renderDetail 후 DOM 업데이트 완료 시점에 스크롤 리셋
-  const dm = document.querySelector('.kdetail-modal');
-  if(dm) dm.scrollTop = 0;
-  requestAnimationFrame(function(){
-    if(dm) dm.scrollTop = 0;
-    modalOpen('modalDetail');
-    requestAnimationFrame(function(){ if(dm) dm.scrollTop = 0; });
-  });
+  modalOpen('modalDetail');
 }
 
 function renderDetail() {
@@ -3833,6 +3827,8 @@ function refreshAdminView() {
     });
     subScroll.innerHTML = html;
   }
+  // prod bar 갱신
+  if(typeof renderAdminProdRow === 'function') renderAdminProdRow();
   // content 갱신
   renderAdminContent();
 }
@@ -4035,6 +4031,7 @@ function catMgrAddProd() {
   input.value = '';
   document.getElementById('catmgr-prod-input-row').style.display = 'none';
   catMgrRenderProds();
+  refreshAdminView();
 }
 
 function catMgrRenameSub(id, oldName) {
