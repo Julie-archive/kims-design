@@ -1282,7 +1282,14 @@ html, body { height: 100%; overflow: hidden; overflow-x: hidden; max-width: 100%
 //  DATA STORE (localStorage)
 // ══════════════════════════════════════════════════════
 const MAIN_CATS = ['농산','축산','수산','공산','S.I','지점 운영 광고'];
-const PRESET_TYPES = ['행잉형','스탠드형','A3 가로형','A3 세로형','배너형','현수막형'];
+const PRESET_TYPES = ['행잉형','스탠드형','A3 가로형','A4 세로형','배너형','현수막형'];
+
+// 고정 사이즈 타입 (선택 시 자동 입력)
+const FIXED_SIZE_TYPES = {
+  'A3 가로형': {w: '420', h: '297'},
+  'A4 세로형': {w: '210', h: '297'}
+};
+
 const ADMIN_PIN = '1234';
 const SUPABASE_URL = 'https://qayhutfedlhzhtrlserh.supabase.co';
 const SUPABASE_KEY = 'sb_publishable_NoUBNfjDdpbJJgBDsdpKxw_K9IEg4UP';
@@ -1537,6 +1544,12 @@ function switchView(v) {
   document.getElementById('viewAdmin').classList.toggle('active', v==='admin');
   if(v==='home') {
     renderHomeA();
+  }
+  if(v==='admin') {
+    // 관리자 모드 진입 시 항상 첫 번째 카테고리(농산>전체보기)로 초기화
+    aState = {cat:MAIN_CATS[0], sub:'', prod:'__all__', search:''};
+    adminTab = 'archive';
+    renderAdmin();
   }
 }
 
@@ -1947,7 +1960,6 @@ function emptyAdMsg() {
 // ══════════════════════════════════════════════════════
 function goAdmin() {
   switchView('admin');
-  renderAdmin();
   if(!adminLoggedIn) setTimeout(()=>pinOpen(), 80);
 }
 
@@ -2121,6 +2133,8 @@ function aiAddType() {
   block.className='ktype-block'; block.id=`aiTypeBlock_${idx}`;
   block.innerHTML=typeBlockInnerHTML(idx,'ai');
   container.appendChild(block);
+  // 첫 번째 옵션(행잉형)은 고정 사이즈 아님 → 초기화
+  typeNameChange('ai', idx, PRESET_TYPES[0]);
 }
 
 function typeBlockInnerHTML(idx,prefix) {
@@ -2159,6 +2173,32 @@ function typeBlockInnerHTML(idx,prefix) {
 function typeNameChange(prefix,idx,val) {
   const customDiv=document.getElementById(`${prefix}TypeCustom_${idx}`);
   if(customDiv) customDiv.style.display=val==='__custom__'?'block':'none';
+
+  // 고정 사이즈 타입 선택 시 자동 입력
+  const wInput = document.getElementById(`${prefix}TypeW_${idx}`);
+  const hInput = document.getElementById(`${prefix}TypeH_${idx}`);
+  if(wInput && hInput) {
+    var fixedSize = FIXED_SIZE_TYPES[val];
+    if(fixedSize) {
+      wInput.value = fixedSize.w;
+      hInput.value = fixedSize.h;
+      wInput.readOnly = true;
+      hInput.readOnly = true;
+      wInput.style.background = '#f2f2f2';
+      hInput.style.background = '#f2f2f2';
+      wInput.title = '고정 사이즈';
+      hInput.title = '고정 사이즈';
+    } else {
+      wInput.readOnly = false;
+      hInput.readOnly = false;
+      wInput.style.background = '';
+      hInput.style.background = '';
+      wInput.title = '';
+      hInput.title = '';
+      // 고정 사이즈에서 다른 타입으로 변경 시 초기화
+      if(wInput.value && ['420','210'].includes(wInput.value)) { wInput.value = ''; hInput.value = ''; }
+    }
+  }
 }
 function removeTypeBlock(prefix,idx) {
   const block=document.getElementById(`${prefix}TypeBlock_${idx}`);
@@ -2486,6 +2526,17 @@ function renderDetail() {
   }
 
   container.innerHTML=html;
+  // 기존 타입에서 고정 사이즈 타입 readOnly 처리
+  setTimeout(function() {
+    existingTypes.forEach(function(t, i) {
+      if(FIXED_SIZE_TYPES && FIXED_SIZE_TYPES[t.name]) {
+        var wEl = document.getElementById('editTypeW_'+i);
+        var hEl = document.getElementById('editTypeH_'+i);
+        if(wEl) { wEl.readOnly = true; wEl.style.background = '#f2f2f2'; wEl.title='고정 사이즈'; }
+        if(hEl) { hEl.readOnly = true; hEl.style.background = '#f2f2f2'; hEl.title='고정 사이즈'; }
+      }
+    });
+  }, 50);
 }
 
 function editAddType() {
@@ -2496,6 +2547,7 @@ function editAddType() {
   block.className='ktype-block'; block.id=`editTypeBlock_${idx}`;
   block.innerHTML=typeBlockInnerHTML(idx,'edit');
   container.appendChild(block);
+  typeNameChange('edit', idx, PRESET_TYPES[0]);
 }
 
 // 셋팅 사진 관련
@@ -3623,6 +3675,26 @@ function adminRenameProd(id, oldName) {
 // ══════════════════════════════════════════════════════
 //  통합 카테고리 관리 모달
 // ══════════════════════════════════════════════════════
+// catMgr 모달이 열려있는 동안 admin 뷰를 부분 갱신 (모달 닫지 않음)
+function refreshAdminView() {
+  // sub bar 갱신
+  var subScroll = document.getElementById('adminSubScroll');
+  if(subScroll) {
+    var subs = getSubs(aState.cat);
+    var html = '<button class="ksub-pill '+(aState.sub?'':'active')+'" onclick="adminSubSelect(\'\')">전체보기</button>';
+    subs.forEach(function(s) {
+      html += '<div style="display:flex;align-items:center;gap:2px;flex-shrink:0;">'
+        + '<button class="ksub-pill '+(aState.sub===s.name?'active':'')+'" data-id="'+s.id+'" onclick="adminSubSelect(\''+s.name+'\')">'+s.name+'</button>'
+        + '<button class="ksub-pill-del" title="'+s.name+' 삭제" onclick="adminDeleteSub('+s.id+',\''+s.name+'\')">×</button>'
+        + '</div>';
+    });
+    subScroll.innerHTML = html;
+  }
+  // content 갱신
+  renderAdminContent();
+}
+
+
 var catMgrCat = '';
 var catMgrSub = '';
 
@@ -3806,7 +3878,7 @@ function catMgrAddSub() {
   input.value = '';
   document.getElementById('catmgr-sub-input-row').style.display = 'none';
   catMgrRenderSubs();
-  renderAdmin();
+  refreshAdminView();
 }
 
 function catMgrAddProd() {
@@ -3844,7 +3916,7 @@ function catMgrRenameSub(id, oldName) {
       saveData(); sb.from('subs').update({name:newName}).eq('id',id);
     }
     if(catMgrSub===oldName) catMgrSub=newName;
-    catMgrRenderSubs(); catMgrRenderProds(); renderAdmin();
+    catMgrRenderSubs(); catMgrRenderProds(); refreshAdminView();
   }
   renameBtn.onclick = doSave;
   input.addEventListener('keydown', function(e){ if(e.key==='Enter') doSave(); if(e.key==='Escape') catMgrRenderSubs(); });
@@ -3895,7 +3967,7 @@ function catMgrDeleteSub(id, name) {
     DB.subs = DB.subs.filter(function(s){ return s.id!==id; });
     saveData(); sbDeleteSub(id);
     if(catMgrSub===name) catMgrSub='';
-    catMgrRenderSubs(); catMgrRenderProds(); renderAdmin();
+    catMgrRenderSubs(); catMgrRenderProds(); refreshAdminView();
   });
   document.getElementById('catdel-cancel-'+id).addEventListener('click', function() { catMgrRenderSubs(); });
 }
@@ -3917,7 +3989,7 @@ function catMgrDeleteProd(id, name) {
     DB.ads = DB.ads.filter(function(a){ return !(a.product===name && a.subCat===catMgrSub && a.mainCat===catMgrCat); });
     DB.products = DB.products.filter(function(p){ return p.id!==id; });
     saveData(); sbDeleteProd(id);
-    catMgrRenderProds(); renderAdmin();
+    catMgrRenderProds(); refreshAdminView();
   });
   document.getElementById('proddel-cancel-'+id).addEventListener('click', function() { catMgrRenderProds(); });
 }
