@@ -349,83 +349,23 @@ html, body { height: 100%; overflow: hidden; overflow-x: hidden; max-width: 100%
 .kmodal-overlay {
   display: none; position: fixed; inset: 0; z-index: 200;
   background: rgba(0,0,0,.45);
-  align-items: flex-end; justify-content: center;
-  padding: 0;
-}
-.kmodal-overlay.open { display: flex; }
-.kmodal-overlay.center {
-  align-items: center;
+  align-items: center; justify-content: center;
   padding: 20px;
 }
+.kmodal-overlay.open { display: flex; }
 
 .kmodal-sheet {
-  background: #fff;
-  border-radius: 20px 20px 0 0;
-  padding: 0 24px 40px;
-  width: 100%; max-width: 600px;
-  max-height: 92vh; overflow-y: auto; overflow-x: hidden;
+  background: #fff; border-radius: 12px;
+  padding: 28px 24px 40px; width: 100%; max-width: 520px;
+  max-height: 90vh; overflow-y: auto; overflow-x: hidden;
   font-family: 'Pretendard', sans-serif;
-  box-shadow: 0 -8px 40px rgba(0,0,0,0.15);
-  animation: sheetUp .28s cubic-bezier(.32,1,.23,1);
+  box-shadow: 0 -4px 40px rgba(0,0,0,0.10);
+  animation: sheetUp .25s ease;
 }
-.kmodal-overlay.center .kmodal-sheet {
-  border-radius: 16px;
-  max-width: 540px;
-  padding: 0 24px 32px;
-  animation: sheetFade .22s ease;
-}
-@keyframes sheetUp { from { transform: translateY(60px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
-@keyframes sheetFade { from { transform: translateY(16px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+.kmodal-overlay.center .kmodal-sheet { border-radius: 12px; max-width: 540px; }
+@keyframes sheetUp { from { transform: translateY(24px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
 @keyframes toastIn { from { opacity:0;transform:translateX(-50%) translateY(10px); } to { opacity:1;transform:translateX(-50%) translateY(0); } }
-
-/* 핸들 + 스와이프 힌트 */
-.kmodal-handle {
-  width: 36px; height: 4px;
-  background: rgba(0,0,0,0.15);
-  border-radius: 2px;
-  margin: 14px auto 20px;
-  cursor: grab;
-  touch-action: none;
-  display: block;
-}
-.kmodal-swipe-hint {
-  display: block;
-  text-align: center;
-  font-size: 10px;
-  color: #ccc;
-  font-weight: 500;
-  margin-top: -14px;
-  margin-bottom: 20px;
-  letter-spacing: 0.02em;
-  pointer-events: none;
-}
-/* 데스크탑에서는 힌트 숨김, 모달 스타일 변경 */
-@media(min-width: 601px) {
-  .kmodal-swipe-hint { display: none; }
-  .kmodal-overlay:not(.center) {
-    align-items: center;
-    padding: 20px;
-  }
-  .kmodal-overlay:not(.center) .kmodal-sheet {
-    border-radius: 16px;
-    max-width: 540px;
-    animation: sheetFade .22s ease;
-  }
-  .kmodal-handle { margin: 0 auto 24px; }
-}
-/* 모바일: center 모달도 바텀시트 */
-@media(max-width: 600px) {
-  .kmodal-overlay.center {
-    align-items: flex-end;
-    padding: 0;
-  }
-  .kmodal-overlay.center .kmodal-sheet {
-    border-radius: 20px 20px 0 0;
-    max-width: 100%;
-    padding: 0 20px 36px;
-    animation: sheetUp .28s cubic-bezier(.32,1,.23,1);
-  }
-}
+.kmodal-handle { width: 36px; height: 4px; background: rgba(0,0,0,0.12); border-radius: 2px; margin: 0 auto 24px; cursor: grab; touch-action: none; }
 .kmodal-title { font-size: 18px; font-weight: 800; margin-bottom: 20px; color: var(--ktext); }
 .kmodal-title em { color: #111; font-style: normal; }
 
@@ -790,7 +730,7 @@ html, body { height: 100%; overflow: hidden; overflow-x: hidden; max-width: 100%
   <!-- Pin Modal -->
   <div class="kmodal-overlay center" id="modalPin">
     <div class="kmodal-sheet" style="max-width:360px;border-radius:12px;">
-      <div class="kmodal-handle"></div><span class="kmodal-swipe-hint">아래로 내려서 닫기</span>
+      <div class="kmodal-handle"></div>
       <div class="kmodal-title" style="text-align:center">관리자 <em>로그인</em></div>
       <div class="kform-group">
         <label class="kform-label">비밀번호</label>
@@ -815,7 +755,7 @@ html, body { height: 100%; overflow: hidden; overflow-x: hidden; max-width: 100%
   <!-- Add Image Modal -->
   <div class="kmodal-overlay" id="modalAddImg">
     <div class="kmodal-sheet" style="max-height:90vh;overflow-y:auto;">
-      <div class="kmodal-handle"></div><span class="kmodal-swipe-hint">아래로 내려서 닫기</span>
+      <div class="kmodal-handle"></div>
       <div class="kmodal-title">광고 이미지 <em>등록</em></div>
       <div class="kform-group">
         <label class="kform-label">카테고리</label>
@@ -845,7 +785,7 @@ html, body { height: 100%; overflow: hidden; overflow-x: hidden; max-width: 100%
   <!-- Add Sub Modal -->
   <div class="kmodal-overlay" id="modalAddSub">
     <div class="kmodal-sheet" style="max-width:400px;">
-      <div class="kmodal-handle"></div><span class="kmodal-swipe-hint">아래로 내려서 닫기</span>
+      <div class="kmodal-handle"></div>
       <div class="kmodal-title">세부 카테고리 <em>추가</em></div>
       <div class="kform-group">
         <label class="kform-label">세부 카테고리명</label>
@@ -862,7 +802,7 @@ html, body { height: 100%; overflow: hidden; overflow-x: hidden; max-width: 100%
   <!-- Add Product Modal -->
   <div class="kmodal-overlay" id="modalAddProd">
     <div class="kmodal-sheet">
-      <div class="kmodal-handle"></div><span class="kmodal-swipe-hint">아래로 내려서 닫기</span>
+      <div class="kmodal-handle"></div>
       <div class="kmodal-title">상품 <em>추가</em></div>
       <div class="kform-group">
         <label class="kform-label">카테고리</label>
@@ -897,7 +837,7 @@ html, body { height: 100%; overflow: hidden; overflow-x: hidden; max-width: 100%
 <!-- EDIT CATEGORY MODAL -->
 <div class="kmodal-overlay center" id="modalEditCat">
   <div class="kmodal-sheet" style="max-width:440px;border-radius:12px;">
-    <div class="kmodal-handle"></div><span class="kmodal-swipe-hint">아래로 내려서 닫기</span>
+    <div class="kmodal-handle"></div>
     <div style="font-size:18px;font-weight:900;margin-bottom:4px;" id="editCatTitle">카테고리 편집</div>
     <div style="font-size:12px;color:#999;margin-bottom:20px;" id="editCatDesc"></div>
     <div id="editCatList" style="max-height:320px;overflow-y:auto;margin-bottom:16px;"></div>
@@ -912,11 +852,9 @@ html, body { height: 100%; overflow: hidden; overflow-x: hidden; max-width: 100%
 
 <!-- 통합 카테고리 관리 모달 -->
 <div class="kmodal-overlay center" id="modalCatMgr">
-  <div class="kmodal-sheet" style="max-width:520px;height:88vh;max-height:88vh;min-height:400px;overflow:hidden;padding:0;display:flex;flex-direction:column;">
-    <!-- 핸들 -->
-    <div style="flex-shrink:0;padding:0 28px;">
-      <div class="kmodal-handle"></div>
-      <span class="kmodal-swipe-hint">아래로 내려서 닫기</span>
+  <div class="kmodal-sheet" style="max-width:520px;border-radius:12px;height:88vh;max-height:88vh;min-height:400px;overflow:hidden;padding:0;display:flex;flex-direction:column;">
+    <!-- 헤더 -->
+    <div style="padding:20px 28px 0;flex-shrink:0;">
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;">
         <div style="font-size:22px;font-weight:900;letter-spacing:-0.04em;">카테고리 관리</div>
         <button onclick="modalClose('modalCatMgr')" style="background:none;border:none;cursor:pointer;color:#bbb;font-size:22px;line-height:1;padding:2px;">✕</button>
@@ -975,7 +913,7 @@ html, body { height: 100%; overflow: hidden; overflow-x: hidden; max-width: 100%
     </div>
     <!-- 스크롤 영역 -->
     <div id="rq-scroll-area" style="overflow-y:auto;padding:24px 24px 40px;flex:1;">
-      <div class="kmodal-handle"></div><span class="kmodal-swipe-hint">아래로 내려서 닫기</span>
+      <div class="kmodal-handle" style="margin-bottom:20px;"></div>
       <div style="display:flex;align-items:baseline;justify-content:space-between;gap:12px;margin-bottom:20px;flex-wrap:wrap;">
         <div style="font-size:20px;font-weight:900;">광고 신청서</div>
         <div style="font-size:11px;color:#999;white-space:nowrap;"><span style="color:#e03333;font-weight:700;">*</span> 필수 입력 항목</div>
@@ -1179,7 +1117,7 @@ html, body { height: 100%; overflow: hidden; overflow-x: hidden; max-width: 100%
 <!-- REQUEST STATUS MODAL -->
 <div class="kmodal-overlay center" id="modalReqStatus">
   <div class="kmodal-sheet" style="max-width:480px;border-radius:12px;">
-    <div class="kmodal-handle"></div><span class="kmodal-swipe-hint">아래로 내려서 닫기</span>
+    <div class="kmodal-handle"></div>
     <div style="font-size:20px;font-weight:900;margin-bottom:8px;letter-spacing:-0.03em;">신청 현황 조회</div>
     <div style="font-size:13px;color:#999;margin-bottom:20px;">신청 시 입력한 연락처로 조회합니다</div>
     <div class="kform-group">
@@ -1208,7 +1146,7 @@ html, body { height: 100%; overflow: hidden; overflow-x: hidden; max-width: 100%
     </div>
     <!-- 스크롤 영역 -->
     <div id="adreq-scroll-area" style="overflow-y:auto;padding:24px 24px 40px;flex:1;">
-    <div class="kmodal-handle"></div><span class="kmodal-swipe-hint">아래로 내려서 닫기</span>
+    <div class="kmodal-handle" style="margin-bottom:16px;"></div>
 
     <!-- 참고 광고 헤더 -->
     <div style="display:flex;align-items:center;gap:12px;background:#f2f2f2;border-radius:6px;padding:14px 16px;margin-bottom:20px;">
@@ -1759,33 +1697,20 @@ function homeCatSelect(cat) {
   hState = {cat, sub:'', prod:'__all__', search:''};
   savePageState();
 
-  // 탭바가 이미 DOM에 있으면 active만 교체 후 부드럽게 스크롤 (깜빡임 없음)
-  var tabBar = document.querySelector('#viewHome .ktab-bar');
-  if(tabBar) {
-    var btns = tabBar.querySelectorAll('.ktab-btn');
-    btns.forEach(function(btn, i) {
-      btn.classList.toggle('active', MAIN_CATS[i] === cat);
-    });
-    _scrollTabIntoCenter(cat);
-    // 콘텐츠 영역만 로딩 스피너로 교체
-    var content = document.getElementById('homeProdContent');
-    if(content) {
-      content.innerHTML = '<div style="padding:60px 0;display:flex;flex-direction:column;align-items:center;gap:12px;">'
-        + '<div style="width:28px;height:28px;border:3px solid #eee;border-top-color:#111;border-radius:50%;animation:spin .7s linear infinite;"></div>'
-        + '<div style="font-size:13px;color:#bbb;">불러오는 중...</div></div>';
-    }
-  } else {
-    // 탭바 없으면(홈A→B 첫 진입) 로딩 전체 표시
-    var el = document.getElementById('viewHome');
-    el.innerHTML = '<div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;">'
-      + '<div style="width:28px;height:28px;border:3px solid #eee;border-top-color:#111;border-radius:50%;animation:spin .7s linear infinite;"></div>'
-      + '<div style="font-size:13px;color:#bbb;">불러오는 중...</div></div>';
-  }
+  var el = document.getElementById('viewHome');
+
+  // 로딩 스피너 표시
+  el.innerHTML = `<div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;">
+    <div style="width:28px;height:28px;border:3px solid #eee;border-top-color:#111;border-radius:50%;animation:spin .7s linear infinite;"></div>
+    <div style="font-size:13px;color:#bbb;">불러오는 중...</div>
+  </div>`;
 
   sbLoadAll().then(function(ok) {
     if(homeScreen === 'B' && hState.cat === cat) {
       renderHomeB();
-      setTimeout(function() { _scrollTabIntoCenter(cat); }, 30);
+      setTimeout(function() {
+        _scrollTabIntoCenter(cat);
+      }, 50);
     }
   });
 }
@@ -2025,12 +1950,14 @@ function adminGoNormal() {
 
 // ── 탭을 가로 스크롤 중앙으로 부드럽게 이동 (깜빡임 없이) ──
 function _scrollTabIntoCenter(cat, barId) {
+  // barId 미지정 시 화면에 보이는 ktab-bar 탐색
   var tabBar = barId ? document.getElementById(barId) : document.querySelector('.ktab-bar');
   if(!tabBar) return;
   var btns = tabBar.querySelectorAll('.ktab-btn');
   var idx = MAIN_CATS.indexOf(cat);
   if(idx < 0 || !btns[idx]) return;
   var btn = btns[idx];
+  // 버튼 중심을 컨테이너 중심에 맞추는 scrollLeft 계산
   var target = btn.offsetLeft - (tabBar.offsetWidth / 2) + (btn.offsetWidth / 2);
   tabBar.scrollTo({left: Math.max(0, target), behavior: 'smooth'});
 }
@@ -2038,35 +1965,10 @@ function _scrollTabIntoCenter(cat, barId) {
 function adminCatSelect(cat) {
   aState = {cat, sub:'', prod:'__all__', search:''};
   savePageState();
-
-  // 탭바가 DOM에 이미 있으면 active만 교체 후 스크롤 (깜빡임 없음)
-  var catBar = document.getElementById('adminCatBar');
-  if(catBar) {
-    var btns = catBar.querySelectorAll('.ktab-btn');
-    btns.forEach(function(btn, i) {
-      btn.classList.toggle('active', MAIN_CATS[i] === cat);
-    });
+  renderAdmin();
+  setTimeout(function() {
     _scrollTabIntoCenter(cat, 'adminCatBar');
-    // 콘텐츠(서브바 + 상품바 + 그리드)만 갱신
-    renderAdminContent();
-    // 서브 바도 갱신
-    var subScroll = document.getElementById('adminSubScroll');
-    if(subScroll) {
-      var subs2 = getSubs(cat);
-      var html = '<button class="ksub-pill active" onclick="adminSubSelect(\'\')">전체보기</button>';
-      subs2.forEach(function(s) {
-        html += '<div style="display:flex;align-items:center;gap:2px;flex-shrink:0;">'
-          + '<button class="ksub-pill" data-id="'+s.id+'" onclick="adminSubSelect(\''+s.name+'\')">'+s.name+'</button>'
-          + '<button class="ksub-pill-del" title="'+s.name+' 삭제" onclick="adminDeleteSub('+s.id+',\''+s.name+'\')">×</button>'
-          + '</div>';
-      });
-      subScroll.innerHTML = html;
-    }
-  } else {
-    // 탭바 없으면 전체 렌더 후 스크롤
-    renderAdmin();
-    setTimeout(function(){ _scrollTabIntoCenter(cat, 'adminCatBar'); }, 60);
-  }
+  }, 50);
 }
 function adminSubSelect(sub) { aState.sub=sub; aState.prod='__all__'; aState.search=''; savePageState(); renderAdmin(); }
 function adminSearchChange(val) {
@@ -4998,7 +4900,7 @@ function openReqUserDetail(reqId) {
     overlay = document.createElement('div');
     overlay.id = 'modalReqUserDetail';
     overlay.className = 'kmodal-overlay center';
-    overlay.innerHTML = '<div class="kmodal-sheet" style="max-width:480px;border-radius:12px;max-height:90vh;overflow-y:auto;"><div class="kmodal-handle"></div><span class="kmodal-swipe-hint">아래로 내려서 닫기</span><div id="modalReqUserDetailContent"></div></div>';
+    overlay.innerHTML = '<div class="kmodal-sheet" style="max-width:480px;border-radius:12px;max-height:90vh;overflow-y:auto;"><div class="kmodal-handle"></div><div id="modalReqUserDetailContent"></div></div>';
     overlay.addEventListener('click', function(e){ if(e.target===overlay) overlay.classList.remove('open'); });
     document.body.appendChild(overlay);
   }
