@@ -8,6 +8,7 @@ function switchView(v) {
   document.getElementById('viewHome').classList.toggle('active', v==='home');
   document.getElementById('viewAdmin').classList.toggle('active', v==='admin');
   if(v==='home') {
+    homeScreen = 'A';
     renderHomeA();
   }
   if(v==='admin') {
@@ -30,12 +31,21 @@ function renderHome() {
   else renderHomeB();
 }
 
+function goHomeRoot() {
+  curView = 'home';
+  homeScreen = 'A';
+  document.getElementById('viewHome').classList.add('active');
+  document.getElementById('viewAdmin').classList.remove('active');
+  savePageState();
+  renderHomeA();
+}
+
 function renderHomeA() {
   const el = document.getElementById('viewHome');
   el.innerHTML = `
     <div class="khome-a">
       <header class="kheader">
-        <img src="${LOGO_CLUB}" class="kheader-logo" style="filter:invert(1);mix-blend-mode:multiply;" alt="KIM'S CLUB" onclick="renderHomeA()" />
+        <img src="${LOGO_CLUB}" class="kheader-logo" style="filter:invert(1);mix-blend-mode:multiply;" alt="KIM'S CLUB" onclick="goHomeRoot()" />
         <button class="kheader-btn" onclick="goAdmin()">관리자 모드</button>
       </header>
       <div style="flex:1;overflow-y:auto;">
@@ -269,7 +279,7 @@ function renderAdmin() {
     el.innerHTML = `
       <div style="flex:1;overflow:hidden;display:flex;flex-direction:column;background:#fff;">
         <header class="kheader">
-          <img src="${LOGO_CLUB}" class="kheader-logo" style="filter:invert(1);mix-blend-mode:multiply;" alt="KIM'S CLUB" onclick="switchView('home');renderHomeA();" />
+          <img src="${LOGO_CLUB}" class="kheader-logo" style="filter:invert(1);mix-blend-mode:multiply;" alt="KIM'S CLUB" onclick="goHomeRoot()" />
           <button class="kheader-btn" onclick="pinOpen()">관리자 모드</button>
         </header>
         <div class="klocked">
@@ -290,7 +300,7 @@ function renderAdmin() {
       <div style="flex-shrink:0;background:#fff;">
         <!-- Row 1: Logo + Button (same as normal mode) -->
         <header class="kheader">
-          <img src="${LOGO_CLUB}" class="kheader-logo" style="filter:invert(1);mix-blend-mode:multiply;" alt="KIM'S CLUB" onclick="switchView('home');renderHomeA();" />
+          <img src="${LOGO_CLUB}" class="kheader-logo" style="filter:invert(1);mix-blend-mode:multiply;" alt="KIM'S CLUB" onclick="goHomeRoot()" />
           <button class="kheader-btn" onclick="adminGoNormal()">일반 모드</button>
         </header>
         <!-- Row 2: Tabs centered -->
@@ -346,8 +356,11 @@ function renderAdmin() {
 
 function adminGoNormal() {
   hState = {cat:aState.cat, sub:aState.sub, prod:'__all__', search:''};
+  curView = 'home';
   homeScreen = 'B';
-  switchView('home');
+  document.getElementById('viewHome').classList.add('active');
+  document.getElementById('viewAdmin').classList.remove('active');
+  savePageState();
   renderHomeB();
 }
 
