@@ -280,7 +280,7 @@ html, body { height: 100%; overflow: hidden; overflow-x: hidden; max-width: 100%
   overflow: hidden; position: relative;
 }
 .kad-thumb img { width: 100%; height: 100%; object-fit: cover; }
-.kad-thumb-empty { display: flex; flex-direction: column; align-items: center; gap: 6px; color: #bbb; font-size: 12px; }
+.kad-thumb-empty { display: flex; flex-direction: column; align-items: center; gap: 6px; color: #bbb; font-size: 11px; }
 .kad-overlay {
   position: absolute; inset: 0; background: rgba(0,0,0,.6); border-radius: 6px;
   display: flex; align-items: center; justify-content: center; gap: 10px;
@@ -376,19 +376,27 @@ html, body { height: 100%; overflow: hidden; overflow-x: hidden; max-width: 100%
   display: block;
 }
 .kmodal-swipe-hint {
-  display: block;
-  text-align: center;
-  font-size: 10px;
-  color: #ccc;
-  font-weight: 500;
-  margin-top: -14px;
-  margin-bottom: 20px;
-  letter-spacing: 0.02em;
-  pointer-events: none;
+  display: flex !important;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  color: rgba(0,0,0,0.35);
+  margin-top: -10px;
+  margin-bottom: 16px;
 }
+
 /* 데스크탑에서는 힌트 숨김, 모달 스타일 변경 */
 @media(min-width: 601px) {
-  .kmodal-swipe-hint { display: none; }
+  .kmodal-swipe-hint {
+  display: flex !important;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  color: rgba(0,0,0,0.35);
+  margin-top: -10px;
+  margin-bottom: 16px;
+}
+
   .kmodal-overlay:not(.center) {
     align-items: center;
     padding: 20px;
@@ -448,21 +456,19 @@ html, body { height: 100%; overflow: hidden; overflow-x: hidden; max-width: 100%
     padding: 12px 20px 16px !important;
   }
   /* 기존 스와이프 힌트 숨김 (모달 안쪽) */
-  .kmodal-swipe-hint { display: none; }
+  .kmodal-swipe-hint {
+  display: flex !important;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  color: rgba(0,0,0,0.35);
+  margin-top: -10px;
+  margin-bottom: 16px;
+}
+
   /* 핸들 마진 */
   .kmodal-handle { margin: 14px auto 20px; }
-  /* 모달 바깥 아래쪽 스와이프 힌트 */
-  .kmodal-overlay.open::after {
-    content: '﹀ 아래로 스와이프해서 닫기'px;
-    font-weight: 500;
-    color: rgba(255,255,255,0.72);
-    letter-spacing: 0.02em;
-    pointer-events: none;
-    white-space: nowrap;
-    font-family: 'Pretendard', sans-serif;
-    z-index: 201;
   }
-}
 .kmodal-title { font-size: 18px; font-weight: 800; margin-bottom: 20px; color: var(--ktext); }
 .kmodal-title em { color: #111; font-style: normal; }
 
