@@ -1959,6 +1959,9 @@ function emptyAdMsg() {
 //  NAVIGATION HELPERS
 // ══════════════════════════════════════════════════════
 function goAdmin() {
+  // 관리자모드 진입 시 항상 첫 화면(농산>전체보기)으로 초기화
+  aState = {cat:MAIN_CATS[0], sub:'', prod:'__all__', search:''};
+  adminTab = 'archive';
   switchView('admin');
   if(!adminLoggedIn) setTimeout(()=>pinOpen(), 80);
 }
@@ -2133,8 +2136,11 @@ function aiAddType() {
   block.className='ktype-block'; block.id=`aiTypeBlock_${idx}`;
   block.innerHTML=typeBlockInnerHTML(idx,'ai');
   container.appendChild(block);
-  // 첫 번째 옵션(행잉형)은 고정 사이즈 아님 → 초기화
-  typeNameChange('ai', idx, PRESET_TYPES[0]);
+  // DOM 반영 후 select 현재값으로 사이즈 초기화
+  setTimeout(function(){
+    var sel = document.getElementById('aiTypeBlock_'+idx)?.querySelector('select');
+    if(sel) typeNameChange('ai', idx, sel.value);
+  }, 10);
 }
 
 function typeBlockInnerHTML(idx,prefix) {
@@ -2547,7 +2553,10 @@ function editAddType() {
   block.className='ktype-block'; block.id=`editTypeBlock_${idx}`;
   block.innerHTML=typeBlockInnerHTML(idx,'edit');
   container.appendChild(block);
-  typeNameChange('edit', idx, PRESET_TYPES[0]);
+  setTimeout(function(){
+    var sel = document.getElementById('editTypeBlock_'+idx)?.querySelector('select');
+    if(sel) typeNameChange('edit', idx, sel.value);
+  }, 10);
 }
 
 // 셋팅 사진 관련
