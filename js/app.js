@@ -1025,7 +1025,9 @@ function renderDetail() {
   const ad=detailAd;
   const types=ad.types||[];
   const container=document.getElementById('detailContent');
+  const footer=document.getElementById('detailFooter');
   if(!container)return;
+  if(footer) footer.innerHTML='';
 
   let html=`
     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;gap:8px;">
@@ -1089,7 +1091,7 @@ function renderDetail() {
             </div>
           </div>`;
         }
-        html+=`<div style="display:flex;gap:10px;margin-top:20px;">
+        if(footer) footer.innerHTML=`<div style="display:flex;gap:10px;">
           <button onclick="modalClose('modalDetail')" style="flex:1;padding:13px;background:#f2f2f2;color:#666;border:1px solid #d8dce3;border-radius:50px;font-size:14px;font-weight:700;cursor:pointer;font-family:'Pretendard',sans-serif;">닫기</button>
           <button onclick="detailTab='edit';renderDetail();" style="flex:2;padding:13px;background:#4a7cf4;color:#fff;border:none;border-radius:50px;font-size:14px;font-weight:700;cursor:pointer;font-family:'Pretendard',sans-serif;">✎ 수정하기</button>
         </div>`;
@@ -1108,7 +1110,7 @@ function renderDetail() {
             </div>
           </div>`;
         }
-        html+=`<button onclick="openAdRequest(${ad.id})" style="width:100%;margin-top:20px;padding:14px;background:#4a7cf4;color:#fff;border:none;border-radius:50px;font-size:15px;font-weight:700;cursor:pointer;font-family:'Pretendard',sans-serif;letter-spacing:-0.02em;">이 광고로 신청하기</button>`;
+        if(footer) footer.innerHTML=`<button onclick="openAdRequest(${ad.id})" style="width:100%;padding:14px;background:#4a7cf4;color:#fff;border:none;border-radius:50px;font-size:15px;font-weight:700;cursor:pointer;font-family:'Pretendard',sans-serif;letter-spacing:-0.02em;">이 광고로 신청하기</button>`;
       }
     }
   } else {
@@ -1179,7 +1181,8 @@ function renderDetail() {
         <span style="font-size:13px;color:#999;">셋팅 사진 추가</span>
       </label>
     </div>
-    <div class="kmodal-actions">
+    `;
+  if(footer) footer.innerHTML=`<div class="kmodal-actions" style="margin:0;">
       <button class="kbtn-cancel" onclick="detailTab='view';renderDetail()">취소</button>
       <button class="kbtn-confirm" onclick="editSave()">저장</button>
     </div>`;
