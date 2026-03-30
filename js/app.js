@@ -41,6 +41,9 @@ function goHomeRoot() {
 }
 
 function renderHomeA() {
+  curView = 'home';
+  homeScreen = 'A';
+  savePageState();
   const el = document.getElementById('viewHome');
   el.innerHTML = `
     <div class="khome-a">
@@ -118,6 +121,9 @@ function homeCatSelect(cat) {
 }
 
 function renderHomeB() {
+  curView = 'home';
+  homeScreen = 'B';
+  savePageState();
   const el = document.getElementById('viewHome');
   const subs = getSubs(hState.cat);
 
