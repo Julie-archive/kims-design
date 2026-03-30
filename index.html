@@ -2075,7 +2075,7 @@ function modalClose(id) {
   if(!el) return;
   el.classList.remove('open');
   // 다음에 열릴 때 최상단 보이도록 스크롤 리셋
-  const sheet = el.querySelector('.kmodal-sheet');
+  const sheet = el.querySelector('.kmodal-sheet, .kdetail-modal');
   if(sheet) sheet.scrollTop = 0;
   const scrollAreas = el.querySelectorAll('[style*="overflow-y:auto"],[style*="overflow-y: auto"]');
   scrollAreas.forEach(function(a){ a.scrollTop = 0; });
@@ -2083,7 +2083,7 @@ function modalClose(id) {
 function modalOpen(id) {
   const el = document.getElementById(id);
   if(!el) return;
-  const sheet = el.querySelector('.kmodal-sheet');
+  const sheet = el.querySelector('.kmodal-sheet, .kdetail-modal');
   if(sheet) sheet.scrollTop = 0;
   const scrollAreas = el.querySelectorAll('[style*="overflow-y:auto"],[style*="overflow-y: auto"]');
   scrollAreas.forEach(function(a){ a.scrollTop = 0; });
@@ -2107,12 +2107,22 @@ let aiInlineSubMode=false, aiInlineProdMode=false;
 let aiSelSub='', aiSelProd='';
 
 function openAddImg(prodName) {
-  // populate cat
+  // 현재 탭의 cat 기준으로 정확히 세팅 (히스토리 방지)
+  const cat = aState.cat;
   const catEl=document.getElementById('aiCat');
-  catEl.innerHTML = MAIN_CATS.map(c=>`<option value="${c}" ${c===aState.cat?'selected':''}>${c}</option>`).join('');
+  catEl.innerHTML = MAIN_CATS.map(c=>`<option value="${c}" ${c===cat?'selected':''}>${c}</option>`).join('');
   aiInlineSubMode=false; aiInlineProdMode=false;
-  aiSelSub = aState.sub || getSubs(aState.cat)[0]?.name || '';
-  aiSelProd=prodName||( aState.prod==='__all__'?'':aState.prod);
+
+  if(prodName) {
+    // 클릭한 상품의 sub를 DB에서 정확히 찾아 세팅
+    const matchProd = DB.products.find(p => p.mainCat===cat && p.name===prodName);
+    aiSelSub = matchProd ? matchProd.subCat : (getSubs(cat)[0]?.name || '');
+    aiSelProd = prodName;
+  } else {
+    aiSelSub = aState.sub || getSubs(cat)[0]?.name || '';
+    aiSelProd = '';
+  }
+
   document.getElementById('aiTitle').value='';
   var memoEl=document.getElementById('aiMemo'); if(memoEl) memoEl.value='';
   aiTypeCount=0; aiTypeSrcs={};
@@ -2447,10 +2457,12 @@ var detailMode = 'admin';
 function openDetail(id, mode) {
   detailAd=DB.ads.find(a=>String(a.id)===String(id));
   if(!detailAd)return;
-  // mode가 'home'이면 항상 home 뷰 (관리자 로그인 여부 무관)
   detailMode = (mode === 'home') ? 'home' : (adminLoggedIn ? 'admin' : 'home');
   detailTab='view';
   renderDetail();
+  // kdetail-modal 스크롤 명시적 리셋 후 열기
+  const dm = document.querySelector('.kdetail-modal');
+  if(dm) dm.scrollTop = 0;
   modalOpen('modalDetail');
 }
 
