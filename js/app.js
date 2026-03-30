@@ -3275,7 +3275,7 @@ function openReqUserDetail(reqId) {
     overlay = document.createElement('div');
     overlay.id = 'modalReqUserDetail';
     overlay.className = 'kmodal-overlay center';
-    overlay.innerHTML = '<div class="kmodal-sheet" style="max-width:480px;border-radius:12px;max-height:90vh;overflow-y:auto;"><div class="kmodal-handle"></div><span class="kmodal-swipe-hint"></span><div id="modalReqUserDetailContent"></div></div>';
+    overlay.innerHTML = '<div class="kmodal-sheet" style="max-width:480px;border-radius:12px;max-height:90vh;overflow-y:auto;"><div class="kmodal-handle"></div><span class="kmodal-swipe-hint">아래로 내려서 닫기</span><div id="modalReqUserDetailContent"></div></div>';
     overlay.addEventListener('click', function(e){ if(e.target===overlay) overlay.classList.remove('open'); });
     document.body.appendChild(overlay);
   }
