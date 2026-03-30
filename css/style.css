@@ -338,6 +338,7 @@ html, body { height: 100%; overflow: hidden; overflow-x: hidden; max-width: 100%
   background: rgba(0,0,0,.45);
   align-items: flex-end; justify-content: center;
   padding: 0;
+  -webkit-tap-highlight-color: transparent;
 }
 .kmodal-overlay.open { display: flex; }
 .kmodal-overlay.center {
@@ -367,21 +368,23 @@ html, body { height: 100%; overflow: hidden; overflow-x: hidden; max-width: 100%
 
 /* 핸들 + 스와이프 힌트 */
 .kmodal-handle {
-  width: 40px;
-  height: 4px;
-  border-radius: 999px;
+  width: 40px; height: 4px;
   background: rgba(0,0,0,0.14);
+  border-radius: 999px;
   margin: 22px auto 14px;
+  cursor: grab;
+  touch-action: none;
+  display: block;
 }
 .kmodal-swipe-hint {
   display: block;
   text-align: center;
-  font-size: 10px;
-  color: #ccc;
+  font-size: 11px;
+  color: #bbb;
   font-weight: 500;
-  margin-top: -14px;
-  margin-bottom: 20px;
-  letter-spacing: 0.02em;
+  margin-top: -4px;
+  margin-bottom: 18px;
+  letter-spacing: -0.01em;
   pointer-events: none;
 }
 /* 데스크탑에서는 힌트 숨김, 모달 스타일 변경 */
@@ -396,13 +399,7 @@ html, body { height: 100%; overflow: hidden; overflow-x: hidden; max-width: 100%
     max-width: 540px;
     animation: sheetFade .22s ease;
   }
-  .kmodal-handle {
-  width: 40px;
-  height: 4px;
-  border-radius: 999px;
-  background: rgba(0,0,0,0.14);
-  margin: 22px auto 14px;
-}
+  .kmodal-handle { margin: 0 auto 24px; }
 }
 /* 모바일: 모든 모달 고정 높이 + 화면 중앙 정렬 */
 @media(max-width: 600px) {
@@ -454,13 +451,7 @@ html, body { height: 100%; overflow: hidden; overflow-x: hidden; max-width: 100%
   /* 기존 스와이프 힌트 숨김 (모달 안쪽) */
   .kmodal-swipe-hint { display: none; }
   /* 핸들 마진 */
-  .kmodal-handle {
-  width: 40px;
-  height: 4px;
-  border-radius: 999px;
-  background: rgba(0,0,0,0.14);
-  margin: 22px auto 14px;
-}
+  .kmodal-handle { margin: 14px auto 20px; }
   /* 모달 바깥 아래쪽 스와이프 힌트 */
   .kmodal-overlay.open::after {
     content: '아래로 스와이프 해서 닫기';

@@ -575,7 +575,8 @@ document.querySelectorAll('.kmodal-overlay').forEach(el=>{
 // ── 모든 모달 스와이프-다운 닫기 (모바일) ──
 (function() {
   // 닫으면 안 되는 모달 제외 없이 전체 적용 (편집 탭은 _blockClose로 방지)
-  var SWIPE_THRESHOLD = 80; // px — 이 이상 내리면 닫힘
+  var SWIPE_THRESHOLD = 140; // px — 이 이상 내리면 닫힘
+  var DRAG_RESISTANCE = 0.82; // 낮을수록 더 묵직하게
 
   function addSwipeClose(overlay) {
     var sheet = overlay.querySelector('.kmodal-sheet, .kdetail-modal');
@@ -604,21 +605,38 @@ document.querySelectorAll('.kmodal-overlay').forEach(el=>{
       currentY = e.touches[0].clientY;
       var dy = currentY - startY;
       if(dy > 0) {
-        sheet.style.transform = 'translateY(' + dy + 'px)';
+        var easedDy = Math.round(dy * DRAG_RESISTANCE);
+        sheet.style.transform = 'translateY(' + easedDy + 'px)';
       }
     }, {passive: true});
 
-    sheet.addEventListener('touchend', function(e) {
+    function finishSwipe() {
       if(!isDragging) return;
       isDragging = false;
       var dy = currentY - startY;
-      sheet.style.transition = '';
-      sheet.style.transform = '';
       if(dy > SWIPE_THRESHOLD && !overlay._blockClose) {
-        _resetModalScroll(overlay);
-        overlay.classList.remove('open');
+        sheet.style.transition = 'transform .18s ease-out, opacity .18s ease-out';
+        sheet.style.transform = 'translateY(100px)';
+        sheet.style.opacity = '0.85';
+        setTimeout(function() {
+          sheet.style.transition = '';
+          sheet.style.transform = '';
+          sheet.style.opacity = '';
+          _resetModalScroll(overlay);
+          overlay.classList.remove('open');
+        }, 160);
+      } else {
+        sheet.style.transition = 'transform .22s cubic-bezier(.22,.9,.24,1)';
+        sheet.style.transform = 'translateY(0)';
+        setTimeout(function() {
+          sheet.style.transition = '';
+          sheet.style.transform = '';
+        }, 220);
       }
-    }, {passive: true});
+    }
+
+    sheet.addEventListener('touchend', finishSwipe, {passive: true});
+    sheet.addEventListener('touchcancel', finishSwipe, {passive: true});
   }
 
   // DOM 로드 후 모든 overlay에 적용
