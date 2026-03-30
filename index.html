@@ -790,7 +790,7 @@ html, body { height: 100%; overflow: hidden; overflow-x: hidden; max-width: 100%
   <!-- Pin Modal -->
   <div class="kmodal-overlay center" id="modalPin">
     <div class="kmodal-sheet" style="max-width:360px;border-radius:12px;">
-      <div class="kmodal-handle"></div><span class="kmodal-swipe-hint">아래로 내려서 닫기</span>
+      <div class="kmodal-handle"></div><span class="kmodal-swipe-hint">﹀ 아래로 스와이프해서 닫기</span>
       <div class="kmodal-title" style="text-align:center">관리자 <em>로그인</em></div>
       <div class="kform-group">
         <label class="kform-label">비밀번호</label>
@@ -815,7 +815,7 @@ html, body { height: 100%; overflow: hidden; overflow-x: hidden; max-width: 100%
   <!-- Add Image Modal -->
   <div class="kmodal-overlay" id="modalAddImg">
     <div class="kmodal-sheet" style="max-height:90vh;overflow-y:auto;">
-      <div class="kmodal-handle"></div><span class="kmodal-swipe-hint">아래로 내려서 닫기</span>
+      <div class="kmodal-handle"></div><span class="kmodal-swipe-hint">﹀ 아래로 스와이프해서 닫기</span>
       <div class="kmodal-title">광고 이미지 <em>등록</em></div>
       <div class="kform-group">
         <label class="kform-label">카테고리</label>
@@ -845,7 +845,7 @@ html, body { height: 100%; overflow: hidden; overflow-x: hidden; max-width: 100%
   <!-- Add Sub Modal -->
   <div class="kmodal-overlay" id="modalAddSub">
     <div class="kmodal-sheet" style="max-width:400px;">
-      <div class="kmodal-handle"></div><span class="kmodal-swipe-hint">아래로 내려서 닫기</span>
+      <div class="kmodal-handle"></div><span class="kmodal-swipe-hint">﹀ 아래로 스와이프해서 닫기</span>
       <div class="kmodal-title">세부 카테고리 <em>추가</em></div>
       <div class="kform-group">
         <label class="kform-label">세부 카테고리명</label>
@@ -862,7 +862,7 @@ html, body { height: 100%; overflow: hidden; overflow-x: hidden; max-width: 100%
   <!-- Add Product Modal -->
   <div class="kmodal-overlay" id="modalAddProd">
     <div class="kmodal-sheet">
-      <div class="kmodal-handle"></div><span class="kmodal-swipe-hint">아래로 내려서 닫기</span>
+      <div class="kmodal-handle"></div><span class="kmodal-swipe-hint">﹀ 아래로 스와이프해서 닫기</span>
       <div class="kmodal-title">상품 <em>추가</em></div>
       <div class="kform-group">
         <label class="kform-label">카테고리</label>
@@ -887,7 +887,10 @@ html, body { height: 100%; overflow: hidden; overflow-x: hidden; max-width: 100%
   <!-- Ad Detail Modal -->
   <div class="kmodal-overlay center" id="modalDetail">
     <div class="kdetail-modal">
+      <div class="kmodal-handle"></div>
+      <span class="kmodal-swipe-hint">﹀ 아래로 스와이프해서 닫기</span>
       <div id="detailContent"></div>
+      <div id="detailFooter"></div>
     </div>
   </div>
 
@@ -897,7 +900,7 @@ html, body { height: 100%; overflow: hidden; overflow-x: hidden; max-width: 100%
 <!-- EDIT CATEGORY MODAL -->
 <div class="kmodal-overlay center" id="modalEditCat">
   <div class="kmodal-sheet" style="max-width:440px;border-radius:12px;">
-    <div class="kmodal-handle"></div><span class="kmodal-swipe-hint">아래로 내려서 닫기</span>
+    <div class="kmodal-handle"></div><span class="kmodal-swipe-hint">﹀ 아래로 스와이프해서 닫기</span>
     <div style="font-size:18px;font-weight:900;margin-bottom:4px;" id="editCatTitle">카테고리 편집</div>
     <div style="font-size:12px;color:#999;margin-bottom:20px;" id="editCatDesc"></div>
     <div id="editCatList" style="max-height:320px;overflow-y:auto;margin-bottom:16px;"></div>
@@ -916,7 +919,7 @@ html, body { height: 100%; overflow: hidden; overflow-x: hidden; max-width: 100%
     <!-- 핸들 -->
     <div style="flex-shrink:0;padding:0 28px;">
       <div class="kmodal-handle"></div>
-      <span class="kmodal-swipe-hint">아래로 내려서 닫기</span>
+      <span class="kmodal-swipe-hint">﹀ 아래로 스와이프해서 닫기</span>
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;">
         <div style="font-size:22px;font-weight:900;letter-spacing:-0.04em;">카테고리 관리</div>
         <button onclick="modalClose('modalCatMgr')" style="background:none;border:none;cursor:pointer;color:#bbb;font-size:22px;line-height:1;padding:2px;">✕</button>
@@ -975,7 +978,7 @@ html, body { height: 100%; overflow: hidden; overflow-x: hidden; max-width: 100%
     </div>
     <!-- 스크롤 영역 -->
     <div id="rq-scroll-area" style="overflow-y:auto;padding:24px 24px 40px;flex:1;">
-      <div class="kmodal-handle"></div><span class="kmodal-swipe-hint">아래로 내려서 닫기</span>
+      <div class="kmodal-handle"></div><span class="kmodal-swipe-hint">﹀ 아래로 스와이프해서 닫기</span>
       <div style="display:flex;align-items:baseline;justify-content:space-between;gap:12px;margin-bottom:20px;flex-wrap:wrap;">
         <div style="font-size:20px;font-weight:900;">광고 신청서</div>
         <div style="font-size:11px;color:#999;white-space:nowrap;"><span style="color:#e03333;font-weight:700;">*</span> 필수 입력 항목</div>
@@ -1179,7 +1182,7 @@ html, body { height: 100%; overflow: hidden; overflow-x: hidden; max-width: 100%
 <!-- REQUEST STATUS MODAL -->
 <div class="kmodal-overlay center" id="modalReqStatus">
   <div class="kmodal-sheet" style="max-width:480px;border-radius:12px;">
-    <div class="kmodal-handle"></div><span class="kmodal-swipe-hint">아래로 내려서 닫기</span>
+    <div class="kmodal-handle"></div><span class="kmodal-swipe-hint">﹀ 아래로 스와이프해서 닫기</span>
     <div style="font-size:20px;font-weight:900;margin-bottom:8px;letter-spacing:-0.03em;">신청 현황 조회</div>
     <div style="font-size:13px;color:#999;margin-bottom:20px;">신청 시 입력한 연락처로 조회합니다</div>
     <div class="kform-group">
@@ -1208,7 +1211,7 @@ html, body { height: 100%; overflow: hidden; overflow-x: hidden; max-width: 100%
     </div>
     <!-- 스크롤 영역 -->
     <div id="adreq-scroll-area" style="overflow-y:auto;padding:24px 24px 40px;flex:1;">
-    <div class="kmodal-handle"></div><span class="kmodal-swipe-hint">아래로 내려서 닫기</span>
+    <div class="kmodal-handle"></div><span class="kmodal-swipe-hint">﹀ 아래로 스와이프해서 닫기</span>
 
     <!-- 참고 광고 헤더 -->
     <div style="display:flex;align-items:center;gap:12px;background:#f2f2f2;border-radius:6px;padding:14px 16px;margin-bottom:20px;">
@@ -1755,19 +1758,38 @@ function renderHomeA() {
 }
 
 function homeCatSelect(cat) {
-  // 이미 같은 카테고리면 불필요한 재렌더 방지
-  if (homeScreen === 'B' && hState.cat === cat) return;
-
   homeScreen = 'B';
-  hState = { cat, sub: '', prod: '__all__', search: '' };
+  hState = {cat, sub:'', prod:'__all__', search:''};
   savePageState();
 
-  // 카테고리 전환은 이미 메모리에 올라온 DB 기준으로 즉시 렌더
-  // (탭 클릭마다 Supabase 전체 재조회하지 않음)
-  renderHomeB();
-
-  requestAnimationFrame(function () {
+  // 탭바가 이미 DOM에 있으면 active만 교체 후 부드럽게 스크롤 (깜빡임 없음)
+  var tabBar = document.querySelector('#viewHome .ktab-bar');
+  if(tabBar) {
+    var btns = tabBar.querySelectorAll('.ktab-btn');
+    btns.forEach(function(btn, i) {
+      btn.classList.toggle('active', MAIN_CATS[i] === cat);
+    });
     _scrollTabIntoCenter(cat);
+    // 콘텐츠 영역만 로딩 스피너로 교체
+    var content = document.getElementById('homeProdContent');
+    if(content) {
+      content.innerHTML = '<div style="padding:60px 0;display:flex;flex-direction:column;align-items:center;gap:12px;">'
+        + '<div style="width:28px;height:28px;border:3px solid #eee;border-top-color:#111;border-radius:50%;animation:spin .7s linear infinite;"></div>'
+        + '<div style="font-size:13px;color:#bbb;">불러오는 중...</div></div>';
+    }
+  } else {
+    // 탭바 없으면(홈A→B 첫 진입) 로딩 전체 표시
+    var el = document.getElementById('viewHome');
+    el.innerHTML = '<div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;">'
+      + '<div style="width:28px;height:28px;border:3px solid #eee;border-top-color:#111;border-radius:50%;animation:spin .7s linear infinite;"></div>'
+      + '<div style="font-size:13px;color:#bbb;">불러오는 중...</div></div>';
+  }
+
+  sbLoadAll().then(function(ok) {
+    if(homeScreen === 'B' && hState.cat === cat) {
+      renderHomeB();
+      setTimeout(function() { _scrollTabIntoCenter(cat); }, 30);
+    }
   });
 }
 
@@ -2223,8 +2245,7 @@ document.querySelectorAll('.kmodal-overlay').forEach(el=>{
 // ── 모든 모달 스와이프-다운 닫기 (모바일) ──
 (function() {
   // 닫으면 안 되는 모달 제외 없이 전체 적용 (편집 탭은 _blockClose로 방지)
-  var SWIPE_THRESHOLD = 140; // px — 이 이상 내리면 닫힘
-  var DRAG_RESISTANCE = 0.82; // 낮을수록 더 묵직하게
+  var SWIPE_THRESHOLD = 80; // px — 이 이상 내리면 닫힘
 
   function addSwipeClose(overlay) {
     var sheet = overlay.querySelector('.kmodal-sheet, .kdetail-modal');
@@ -2253,38 +2274,21 @@ document.querySelectorAll('.kmodal-overlay').forEach(el=>{
       currentY = e.touches[0].clientY;
       var dy = currentY - startY;
       if(dy > 0) {
-        var easedDy = Math.round(dy * DRAG_RESISTANCE);
-        sheet.style.transform = 'translateY(' + easedDy + 'px)';
+        sheet.style.transform = 'translateY(' + dy + 'px)';
       }
     }, {passive: true});
 
-    function finishSwipe() {
+    sheet.addEventListener('touchend', function(e) {
       if(!isDragging) return;
       isDragging = false;
       var dy = currentY - startY;
+      sheet.style.transition = '';
+      sheet.style.transform = '';
       if(dy > SWIPE_THRESHOLD && !overlay._blockClose) {
-        sheet.style.transition = 'transform .18s ease-out, opacity .18s ease-out';
-        sheet.style.transform = 'translateY(100px)';
-        sheet.style.opacity = '0.85';
-        setTimeout(function() {
-          sheet.style.transition = '';
-          sheet.style.transform = '';
-          sheet.style.opacity = '';
-          _resetModalScroll(overlay);
-          overlay.classList.remove('open');
-        }, 160);
-      } else {
-        sheet.style.transition = 'transform .22s cubic-bezier(.22,.9,.24,1)';
-        sheet.style.transform = 'translateY(0)';
-        setTimeout(function() {
-          sheet.style.transition = '';
-          sheet.style.transform = '';
-        }, 220);
+        _resetModalScroll(overlay);
+        overlay.classList.remove('open');
       }
-    }
-
-    sheet.addEventListener('touchend', finishSwipe, {passive: true});
-    sheet.addEventListener('touchcancel', finishSwipe, {passive: true});
+    }, {passive: true});
   }
 
   // DOM 로드 후 모든 overlay에 적용
@@ -4997,7 +5001,7 @@ function openReqUserDetail(reqId) {
     overlay = document.createElement('div');
     overlay.id = 'modalReqUserDetail';
     overlay.className = 'kmodal-overlay center';
-    overlay.innerHTML = '<div class="kmodal-sheet" style="max-width:480px;border-radius:12px;max-height:90vh;overflow-y:auto;"><div class="kmodal-handle"></div><span class="kmodal-swipe-hint">아래로 내려서 닫기</span><div id="modalReqUserDetailContent"></div></div>';
+    overlay.innerHTML = '<div class="kmodal-sheet" style="max-width:480px;border-radius:12px;max-height:90vh;overflow-y:auto;"><div class="kmodal-handle"></div><span class="kmodal-swipe-hint">﹀ 아래로 스와이프해서 닫기</span><div id="modalReqUserDetailContent"></div></div>';
     overlay.addEventListener('click', function(e){ if(e.target===overlay) overlay.classList.remove('open'); });
     document.body.appendChild(overlay);
   }
@@ -5115,16 +5119,18 @@ function formatTelInput(el) {
 // ══════════════════════════════════════════════════════
 //  INIT
 // ══════════════════════════════════════════════════════
-(function() {
+(async function() {
   // 새로고침 시 이전 페이지 상태 복원
-  loadPageState();
+  var hadState = loadPageState();
 
   if(adminLoggedIn && curView === 'admin') {
+    // 관리자 화면 복원
     document.getElementById('viewHome').classList.remove('active');
     document.getElementById('viewAdmin').classList.add('active');
     renderAdmin();
     setTimeout(function(){ _scrollTabIntoCenter(aState.cat, 'adminCatBar'); }, 100);
   } else if(homeScreen === 'B' && hState.cat) {
+    // 홈 B화면(카테고리 선택 상태) 복원
     document.getElementById('viewHome').classList.add('active');
     document.getElementById('viewAdmin').classList.remove('active');
     renderHomeB();
@@ -5133,30 +5139,19 @@ function formatTelInput(el) {
     renderHomeA();
   }
 
-  function refreshAfterLoad(ok) {
-    if(!ok) return;
+  var ok = await sbLoadAll();
+  if(ok) {
     console.log('Supabase 데이터 로드 성공');
-
+    // 데이터 로드 후 현재 화면 다시 렌더링
     if(adminLoggedIn && curView === 'admin') {
       renderAdmin();
       setTimeout(function(){ _scrollTabIntoCenter(aState.cat, 'adminCatBar'); }, 100);
     } else if(homeScreen === 'B' && hState.cat) {
       renderHomeB();
       setTimeout(function(){ _scrollTabIntoCenter(hState.cat); }, 100);
+    } else {
+      renderHomeA();
     }
-    // 홈 A는 첫 화면 체감 속도를 위해 재렌더 생략
-  }
-
-  function startBackgroundSync() {
-    sbLoadAll().then(refreshAfterLoad).catch(function(err){
-      console.warn('초기 데이터 동기화 실패:', err);
-    });
-  }
-
-  if('requestIdleCallback' in window) {
-    requestIdleCallback(startBackgroundSync, { timeout: 1200 });
-  } else {
-    setTimeout(startBackgroundSync, 120);
   }
 })();
 </script>

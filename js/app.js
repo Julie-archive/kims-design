@@ -87,19 +87,38 @@ function renderHomeA() {
 }
 
 function homeCatSelect(cat) {
-  // 이미 같은 카테고리면 불필요한 재렌더 방지
-  if (homeScreen === 'B' && hState.cat === cat) return;
-
   homeScreen = 'B';
-  hState = { cat, sub: '', prod: '__all__', search: '' };
+  hState = {cat, sub:'', prod:'__all__', search:''};
   savePageState();
 
-  // 카테고리 전환은 이미 메모리에 올라온 DB 기준으로 즉시 렌더
-  // (탭 클릭마다 Supabase 전체 재조회하지 않음)
-  renderHomeB();
-
-  requestAnimationFrame(function () {
+  // 탭바가 이미 DOM에 있으면 active만 교체 후 부드럽게 스크롤 (깜빡임 없음)
+  var tabBar = document.querySelector('#viewHome .ktab-bar');
+  if(tabBar) {
+    var btns = tabBar.querySelectorAll('.ktab-btn');
+    btns.forEach(function(btn, i) {
+      btn.classList.toggle('active', MAIN_CATS[i] === cat);
+    });
     _scrollTabIntoCenter(cat);
+    // 콘텐츠 영역만 로딩 스피너로 교체
+    var content = document.getElementById('homeProdContent');
+    if(content) {
+      content.innerHTML = '<div style="padding:60px 0;display:flex;flex-direction:column;align-items:center;gap:12px;">'
+        + '<div style="width:28px;height:28px;border:3px solid #eee;border-top-color:#111;border-radius:50%;animation:spin .7s linear infinite;"></div>'
+        + '<div style="font-size:13px;color:#bbb;">불러오는 중...</div></div>';
+    }
+  } else {
+    // 탭바 없으면(홈A→B 첫 진입) 로딩 전체 표시
+    var el = document.getElementById('viewHome');
+    el.innerHTML = '<div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;">'
+      + '<div style="width:28px;height:28px;border:3px solid #eee;border-top-color:#111;border-radius:50%;animation:spin .7s linear infinite;"></div>'
+      + '<div style="font-size:13px;color:#bbb;">불러오는 중...</div></div>';
+  }
+
+  sbLoadAll().then(function(ok) {
+    if(homeScreen === 'B' && hState.cat === cat) {
+      renderHomeB();
+      setTimeout(function() { _scrollTabIntoCenter(cat); }, 30);
+    }
   });
 }
 
@@ -575,8 +594,7 @@ document.querySelectorAll('.kmodal-overlay').forEach(el=>{
 // ── 모든 모달 스와이프-다운 닫기 (모바일) ──
 (function() {
   // 닫으면 안 되는 모달 제외 없이 전체 적용 (편집 탭은 _blockClose로 방지)
-  var SWIPE_THRESHOLD = 140; // px — 이 이상 내리면 닫힘
-  var DRAG_RESISTANCE = 0.82; // 낮을수록 더 묵직하게
+  var SWIPE_THRESHOLD = 80; // px — 이 이상 내리면 닫힘
 
   function addSwipeClose(overlay) {
     var sheet = overlay.querySelector('.kmodal-sheet, .kdetail-modal');
@@ -605,38 +623,21 @@ document.querySelectorAll('.kmodal-overlay').forEach(el=>{
       currentY = e.touches[0].clientY;
       var dy = currentY - startY;
       if(dy > 0) {
-        var easedDy = Math.round(dy * DRAG_RESISTANCE);
-        sheet.style.transform = 'translateY(' + easedDy + 'px)';
+        sheet.style.transform = 'translateY(' + dy + 'px)';
       }
     }, {passive: true});
 
-    function finishSwipe() {
+    sheet.addEventListener('touchend', function(e) {
       if(!isDragging) return;
       isDragging = false;
       var dy = currentY - startY;
+      sheet.style.transition = '';
+      sheet.style.transform = '';
       if(dy > SWIPE_THRESHOLD && !overlay._blockClose) {
-        sheet.style.transition = 'transform .18s ease-out, opacity .18s ease-out';
-        sheet.style.transform = 'translateY(100px)';
-        sheet.style.opacity = '0.85';
-        setTimeout(function() {
-          sheet.style.transition = '';
-          sheet.style.transform = '';
-          sheet.style.opacity = '';
-          _resetModalScroll(overlay);
-          overlay.classList.remove('open');
-        }, 160);
-      } else {
-        sheet.style.transition = 'transform .22s cubic-bezier(.22,.9,.24,1)';
-        sheet.style.transform = 'translateY(0)';
-        setTimeout(function() {
-          sheet.style.transition = '';
-          sheet.style.transform = '';
-        }, 220);
+        _resetModalScroll(overlay);
+        overlay.classList.remove('open');
       }
-    }
-
-    sheet.addEventListener('touchend', finishSwipe, {passive: true});
-    sheet.addEventListener('touchcancel', finishSwipe, {passive: true});
+    }, {passive: true});
   }
 
   // DOM 로드 후 모든 overlay에 적용
@@ -3274,7 +3275,7 @@ function openReqUserDetail(reqId) {
     overlay = document.createElement('div');
     overlay.id = 'modalReqUserDetail';
     overlay.className = 'kmodal-overlay center';
-    overlay.innerHTML = '<div class="kmodal-sheet" style="max-width:480px;border-radius:12px;max-height:90vh;overflow-y:auto;"><div class="kmodal-handle"></div><span class="kmodal-swipe-hint">아래로 내려서 닫기</span><div id="modalReqUserDetailContent"></div></div>';
+    overlay.innerHTML = '<div class="kmodal-sheet" style="max-width:480px;border-radius:12px;max-height:90vh;overflow-y:auto;"><div class="kmodal-handle"></div><span class="kmodal-swipe-hint">﹀ 아래로 스와이프해서 닫기</span><div id="modalReqUserDetailContent"></div></div>';
     overlay.addEventListener('click', function(e){ if(e.target===overlay) overlay.classList.remove('open'); });
     document.body.appendChild(overlay);
   }
