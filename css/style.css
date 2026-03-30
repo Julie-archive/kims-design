@@ -400,18 +400,47 @@ html, body { height: 100%; overflow: hidden; overflow-x: hidden; max-width: 100%
   }
   .kmodal-handle { margin: 0 auto 24px; }
 }
-/* 모바일: center 모달도 바텀시트 */
+/* 모바일: 모든 모달 고정 높이 + 화면 중앙 정렬 */
 @media(max-width: 600px) {
-  .kmodal-overlay.center {
-    align-items: flex-end;
-    padding: 0;
+  /* 모든 overlay 중앙 정렬 */
+  .kmodal-overlay,
+  .kmodal-overlay.center,
+  .kmodal-overlay:not(.center) {
+    align-items: center !important;
+    padding: 16px !important;
   }
-  .kmodal-overlay.center .kmodal-sheet {
-    border-radius: 20px 20px 0 0;
-    max-width: 100%;
-    padding: 0 20px 36px;
-    animation: sheetUp .28s cubic-bezier(.32,1,.23,1);
+  /* 모든 kmodal-sheet 고정 높이 */
+  .kmodal-sheet {
+    border-radius: 20px !important;
+    max-width: 100% !important;
+    width: 100% !important;
+    height: 78vh !important;
+    max-height: 78vh !important;
+    min-height: unset !important;
+    padding: 0 20px 36px !important;
+    animation: sheetFade .22s ease !important;
   }
+  /* flex-column 구조 모달: overflow:hidden 유지, padding 제거 */
+  .kmodal-sheet[style*="flex-direction"] {
+    overflow: hidden !important;
+    padding: 0 !important;
+  }
+  /* 일반 스크롤 모달: overflow-y auto */
+  .kmodal-sheet:not([style*="flex-direction"]) {
+    overflow-y: auto !important;
+    overflow-x: hidden !important;
+  }
+  /* kdetail-modal */
+  .kdetail-modal {
+    height: 78vh !important;
+    max-height: 78vh !important;
+    border-radius: 20px !important;
+    padding: 20px 20px 36px !important;
+  }
+  /* 스와이프 힌트 숨김 */
+  .kmodal-swipe-hint { display: none; }
+  /* 핸들 마진 */
+  .kmodal-handle { margin: 14px auto 20px; }
 }
 .kmodal-title { font-size: 18px; font-weight: 800; margin-bottom: 20px; color: var(--ktext); }
 .kmodal-title em { color: #111; font-style: normal; }
