@@ -157,10 +157,21 @@ function renderHomeB() {
   renderHomeContent();
 }
 
-function homeGoBack() { homeScreen='A'; renderHomeA(); }
-function homeSubSelect(sub) { hState.sub=sub; hState.prod='__all__'; hState.search=''; renderHomeB(); }
+function homeGoBack() {
+  homeScreen='A';
+  savePageState();
+  renderHomeA();
+}
+function homeSubSelect(sub) {
+  hState.sub=sub;
+  hState.prod='__all__';
+  hState.search='';
+  savePageState();
+  renderHomeB();
+}
 function homeSearchChange(val) {
   hState.search = val;
+  savePageState();
   var clearBtn = document.getElementById('homeSearchClear');
   if(clearBtn) clearBtn.classList.toggle('visible', !!val);
   renderHomeContent();
