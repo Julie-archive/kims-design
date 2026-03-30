@@ -365,7 +365,7 @@ html, body { height: 100%; overflow: hidden; overflow-x: hidden; max-width: 100%
 .kmodal-overlay.center .kmodal-sheet { border-radius: 12px; max-width: 540px; }
 @keyframes sheetUp { from { transform: translateY(24px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
 @keyframes toastIn { from { opacity:0;transform:translateX(-50%) translateY(10px); } to { opacity:1;transform:translateX(-50%) translateY(0); } }
-.kmodal-handle { width: 36px; height: 4px; background: rgba(0,0,0,0.12); border-radius: 2px; margin: 0 auto 24px; }
+.kmodal-handle { width: 36px; height: 4px; background: rgba(0,0,0,0.12); border-radius: 2px; margin: 0 auto 24px; cursor: grab; touch-action: none; }
 .kmodal-title { font-size: 18px; font-weight: 800; margin-bottom: 20px; color: var(--ktext); }
 .kmodal-title em { color: #111; font-style: normal; }
 
@@ -852,10 +852,9 @@ html, body { height: 100%; overflow: hidden; overflow-x: hidden; max-width: 100%
 
 <!-- 통합 카테고리 관리 모달 -->
 <div class="kmodal-overlay center" id="modalCatMgr">
-  <div class="kmodal-sheet" style="max-width:520px;border-radius:12px;max-height:88vh;overflow:hidden;padding:0;display:flex;flex-direction:column;">
+  <div class="kmodal-sheet" style="max-width:520px;border-radius:12px;height:88vh;max-height:88vh;min-height:400px;overflow:hidden;padding:0;display:flex;flex-direction:column;">
     <!-- 헤더 -->
-    <div style="padding:28px 28px 0;flex-shrink:0;">
-      <div class="kmodal-handle"></div>
+    <div style="padding:20px 28px 0;flex-shrink:0;">
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;">
         <div style="font-size:22px;font-weight:900;letter-spacing:-0.04em;">카테고리 관리</div>
         <button onclick="modalClose('modalCatMgr')" style="background:none;border:none;cursor:pointer;color:#bbb;font-size:22px;line-height:1;padding:2px;">✕</button>
@@ -864,7 +863,7 @@ html, body { height: 100%; overflow: hidden; overflow-x: hidden; max-width: 100%
       <div style="border-bottom:1.5px solid var(--kborder);" id="catmgr-cattabs"></div>
     </div>
     <!-- 스크롤 영역 -->
-    <div style="flex:1;overflow-y:auto;padding:24px 28px 36px;">
+    <div style="flex:1;overflow-y:auto;padding:24px 28px 36px;" id="catmgr-scroll-area">
 
       <!-- 세부 카테고리 섹션 -->
       <div style="margin-bottom:32px;">
@@ -1585,6 +1584,32 @@ let curView = 'home';
 let homeScreen = 'A';
 // 새로고침해도 관리자 로그인 유지 (탭/브라우저 닫으면 자동 초기화)
 let adminLoggedIn = sessionStorage.getItem('adminLoggedIn') === 'true';
+
+// ── 페이지 상태 저장/복원 (새로고침 대응) ──
+function savePageState() {
+  try {
+    sessionStorage.setItem('pageState', JSON.stringify({
+      curView, homeScreen,
+      hState: hState,
+      aState: aState,
+      adminTab
+    }));
+  } catch(e) {}
+}
+function loadPageState() {
+  try {
+    var raw = sessionStorage.getItem('pageState');
+    if(!raw) return false;
+    var s = JSON.parse(raw);
+    curView    = s.curView    || 'home';
+    homeScreen = s.homeScreen || 'A';
+    if(s.hState) hState = s.hState;
+    if(s.aState) aState = s.aState;
+    if(s.adminTab) adminTab = s.adminTab;
+    return true;
+  } catch(e) { return false; }
+}
+
 let hState = {cat:'',sub:'',prod:'__all__'};
 let aState = {cat:'농산', sub:'', prod:'__all__', search:''};
 let adminTab = 'archive'; // 'archive' | 'requests'
@@ -1612,6 +1637,7 @@ function switchView(v) {
     adminTab = 'archive';
     renderAdmin();
   }
+  savePageState();
 }
 
 // ══════════════════════════════════════════════════════
@@ -1669,6 +1695,7 @@ function renderHomeA() {
 function homeCatSelect(cat) {
   homeScreen = 'B';
   hState = {cat, sub:'', prod:'__all__', search:''};
+  savePageState();
 
   var el = document.getElementById('viewHome');
 
@@ -1682,11 +1709,7 @@ function homeCatSelect(cat) {
     if(homeScreen === 'B' && hState.cat === cat) {
       renderHomeB();
       setTimeout(function() {
-        var tabBar = document.querySelector('.ktab-bar');
-        if(!tabBar) return;
-        var btns = tabBar.querySelectorAll('.ktab-btn');
-        var idx = MAIN_CATS.indexOf(cat);
-        if(idx >= 0 && btns[idx]) btns[idx].scrollIntoView({block:'nearest', inline:'center', behavior:'smooth'});
+        _scrollTabIntoCenter(cat);
       }, 50);
     }
   });
@@ -1925,22 +1948,29 @@ function adminGoNormal() {
   renderHomeB();
 }
 
+// ── 탭을 가로 스크롤 중앙으로 부드럽게 이동 (깜빡임 없이) ──
+function _scrollTabIntoCenter(cat, barId) {
+  // barId 미지정 시 화면에 보이는 ktab-bar 탐색
+  var tabBar = barId ? document.getElementById(barId) : document.querySelector('.ktab-bar');
+  if(!tabBar) return;
+  var btns = tabBar.querySelectorAll('.ktab-btn');
+  var idx = MAIN_CATS.indexOf(cat);
+  if(idx < 0 || !btns[idx]) return;
+  var btn = btns[idx];
+  // 버튼 중심을 컨테이너 중심에 맞추는 scrollLeft 계산
+  var target = btn.offsetLeft - (tabBar.offsetWidth / 2) + (btn.offsetWidth / 2);
+  tabBar.scrollTo({left: Math.max(0, target), behavior: 'smooth'});
+}
+
 function adminCatSelect(cat) {
-  const firstSub = getSubs(cat)[0]?.name || '';
   aState = {cat, sub:'', prod:'__all__', search:''};
+  savePageState();
   renderAdmin();
   setTimeout(function() {
-    var tabBar = document.getElementById('adminCatBar');
-    if(!tabBar) return;
-    var btns = tabBar.querySelectorAll('.ktab-btn');
-    var CATS = ['농산','축산','수산','공산','S.I','지점 운영 광고'];
-    var idx2 = CATS.indexOf(cat);
-    if(idx2 >= 0 && btns[idx2]) {
-      btns[idx2].scrollIntoView({block:'nearest', inline:'center', behavior:'smooth'});
-    }
+    _scrollTabIntoCenter(cat, 'adminCatBar');
   }, 50);
 }
-function adminSubSelect(sub) { aState.sub=sub; aState.prod='__all__'; aState.search=''; renderAdmin(); }
+function adminSubSelect(sub) { aState.sub=sub; aState.prod='__all__'; aState.search=''; savePageState(); renderAdmin(); }
 function adminSearchChange(val) {
   aState.search = val;
   var clearBtn = document.getElementById('adminSearchClear');
@@ -2110,6 +2140,73 @@ document.querySelectorAll('.kmodal-overlay').forEach(el=>{
     }
   });
 });
+
+// ── 모든 모달 스와이프-다운 닫기 (모바일) ──
+(function() {
+  // 닫으면 안 되는 모달 제외 없이 전체 적용 (편집 탭은 _blockClose로 방지)
+  var SWIPE_THRESHOLD = 80; // px — 이 이상 내리면 닫힘
+
+  function addSwipeClose(overlay) {
+    var sheet = overlay.querySelector('.kmodal-sheet, .kdetail-modal');
+    if(!sheet) return;
+
+    var startY = 0, currentY = 0, isDragging = false;
+
+    function getScrollTop() {
+      // 내부 스크롤 가능한 영역의 scrollTop
+      var scrollable = sheet.querySelector('#rq-scroll-area, #adreq-scroll-area, #catmgr-scroll-area') || sheet;
+      return scrollable.scrollTop;
+    }
+
+    sheet.addEventListener('touchstart', function(e) {
+      // 내부가 최상단일 때만 스와이프 감지
+      if(getScrollTop() > 4) return;
+      if(overlay._blockClose) return;
+      startY = e.touches[0].clientY;
+      currentY = startY;
+      isDragging = true;
+      sheet.style.transition = 'none';
+    }, {passive: true});
+
+    sheet.addEventListener('touchmove', function(e) {
+      if(!isDragging) return;
+      currentY = e.touches[0].clientY;
+      var dy = currentY - startY;
+      if(dy > 0) {
+        sheet.style.transform = 'translateY(' + dy + 'px)';
+      }
+    }, {passive: true});
+
+    sheet.addEventListener('touchend', function(e) {
+      if(!isDragging) return;
+      isDragging = false;
+      var dy = currentY - startY;
+      sheet.style.transition = '';
+      sheet.style.transform = '';
+      if(dy > SWIPE_THRESHOLD && !overlay._blockClose) {
+        _resetModalScroll(overlay);
+        overlay.classList.remove('open');
+      }
+    }, {passive: true});
+  }
+
+  // DOM 로드 후 모든 overlay에 적용
+  document.querySelectorAll('.kmodal-overlay').forEach(function(overlay) {
+    addSwipeClose(overlay);
+  });
+
+  // 동적으로 생성되는 모달(modalReqUserDetail 등)도 감지
+  var observer = new MutationObserver(function(mutations) {
+    mutations.forEach(function(m) {
+      m.addedNodes.forEach(function(node) {
+        if(node.classList && node.classList.contains('kmodal-overlay')) {
+          addSwipeClose(node);
+        }
+      });
+    });
+  });
+  observer.observe(document.body, {childList: true});
+})();
 
 // ══════════════════════════════════════════════════════
 //  ADD IMAGE
@@ -4922,11 +5019,21 @@ function formatTelInput(el) {
 //  INIT
 // ══════════════════════════════════════════════════════
 (async function() {
-  // 새로고침 후 관리자 로그인 상태 복원
-  if(adminLoggedIn) {
-    curView = 'admin';
-    switchView('admin');
+  // 새로고침 시 이전 페이지 상태 복원
+  var hadState = loadPageState();
+
+  if(adminLoggedIn && curView === 'admin') {
+    // 관리자 화면 복원
+    document.getElementById('viewHome').classList.remove('active');
+    document.getElementById('viewAdmin').classList.add('active');
     renderAdmin();
+    setTimeout(function(){ _scrollTabIntoCenter(aState.cat, 'adminCatBar'); }, 100);
+  } else if(homeScreen === 'B' && hState.cat) {
+    // 홈 B화면(카테고리 선택 상태) 복원
+    document.getElementById('viewHome').classList.add('active');
+    document.getElementById('viewAdmin').classList.remove('active');
+    renderHomeB();
+    setTimeout(function(){ _scrollTabIntoCenter(hState.cat); }, 100);
   } else {
     renderHomeA();
   }
@@ -4934,10 +5041,13 @@ function formatTelInput(el) {
   var ok = await sbLoadAll();
   if(ok) {
     console.log('Supabase 데이터 로드 성공');
-    if(adminLoggedIn) {
+    // 데이터 로드 후 현재 화면 다시 렌더링
+    if(adminLoggedIn && curView === 'admin') {
       renderAdmin();
-    } else if(homeScreen === 'B') {
+      setTimeout(function(){ _scrollTabIntoCenter(aState.cat, 'adminCatBar'); }, 100);
+    } else if(homeScreen === 'B' && hState.cat) {
       renderHomeB();
+      setTimeout(function(){ _scrollTabIntoCenter(hState.cat); }, 100);
     } else {
       renderHomeA();
     }
