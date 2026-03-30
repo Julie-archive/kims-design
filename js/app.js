@@ -87,19 +87,38 @@ function renderHomeA() {
 }
 
 function homeCatSelect(cat) {
-  // 이미 같은 카테고리면 불필요한 재렌더 방지
-  if (homeScreen === 'B' && hState.cat === cat) return;
-
   homeScreen = 'B';
-  hState = { cat, sub: '', prod: '__all__', search: '' };
+  hState = {cat, sub:'', prod:'__all__', search:''};
   savePageState();
 
-  // 카테고리 전환은 이미 메모리에 올라온 DB 기준으로 즉시 렌더
-  // (탭 클릭마다 Supabase 전체 재조회하지 않음)
-  renderHomeB();
-
-  requestAnimationFrame(function () {
+  // 탭바가 이미 DOM에 있으면 active만 교체 후 부드럽게 스크롤 (깜빡임 없음)
+  var tabBar = document.querySelector('#viewHome .ktab-bar');
+  if(tabBar) {
+    var btns = tabBar.querySelectorAll('.ktab-btn');
+    btns.forEach(function(btn, i) {
+      btn.classList.toggle('active', MAIN_CATS[i] === cat);
+    });
     _scrollTabIntoCenter(cat);
+    // 콘텐츠 영역만 로딩 스피너로 교체
+    var content = document.getElementById('homeProdContent');
+    if(content) {
+      content.innerHTML = '<div style="padding:60px 0;display:flex;flex-direction:column;align-items:center;gap:12px;">'
+        + '<div style="width:28px;height:28px;border:3px solid #eee;border-top-color:#111;border-radius:50%;animation:spin .7s linear infinite;"></div>'
+        + '<div style="font-size:13px;color:#bbb;">불러오는 중...</div></div>';
+    }
+  } else {
+    // 탭바 없으면(홈A→B 첫 진입) 로딩 전체 표시
+    var el = document.getElementById('viewHome');
+    el.innerHTML = '<div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;">'
+      + '<div style="width:28px;height:28px;border:3px solid #eee;border-top-color:#111;border-radius:50%;animation:spin .7s linear infinite;"></div>'
+      + '<div style="font-size:13px;color:#bbb;">불러오는 중...</div></div>';
+  }
+
+  sbLoadAll().then(function(ok) {
+    if(homeScreen === 'B' && hState.cat === cat) {
+      renderHomeB();
+      setTimeout(function() { _scrollTabIntoCenter(cat, null, 'instant'); }, 0);
+    }
   });
 }
 
@@ -357,7 +376,7 @@ function adminGoNormal() {
 }
 
 // ── 탭을 가로 스크롤 중앙으로 부드럽게 이동 (깜빡임 없이) ──
-function _scrollTabIntoCenter(cat, barId) {
+function _scrollTabIntoCenter(cat, barId, behavior) {
   var tabBar = barId ? document.getElementById(barId) : document.querySelector('.ktab-bar');
   if(!tabBar) return;
   var btns = tabBar.querySelectorAll('.ktab-btn');
@@ -365,7 +384,7 @@ function _scrollTabIntoCenter(cat, barId) {
   if(idx < 0 || !btns[idx]) return;
   var btn = btns[idx];
   var target = btn.offsetLeft - (tabBar.offsetWidth / 2) + (btn.offsetWidth / 2);
-  tabBar.scrollTo({left: Math.max(0, target), behavior: 'smooth'});
+  tabBar.scrollTo({left: Math.max(0, target), behavior: behavior || 'smooth'});
 }
 
 function adminCatSelect(cat) {
@@ -514,6 +533,8 @@ function pinConfirm() {
     adminLoggedIn=true;
     sessionStorage.setItem('adminLoggedIn', 'true'); // 새로고침 후에도 로그인 유지
     aState={cat:MAIN_CATS[0], sub:'', prod:'__all__', search:''};
+    adminTab='archive';
+    savePageState();
     pinClose();
     renderAdmin();
   } else {
@@ -3382,7 +3403,7 @@ function copyReqCode() {
     document.getElementById('viewHome').classList.add('active');
     document.getElementById('viewAdmin').classList.remove('active');
     renderHomeB();
-    setTimeout(function(){ _scrollTabIntoCenter(hState.cat); }, 100);
+    setTimeout(function(){ _scrollTabIntoCenter(hState.cat, null, 'instant'); }, 0);
   } else {
     renderHomeA();
   }
@@ -3396,7 +3417,7 @@ function copyReqCode() {
       setTimeout(function(){ _scrollTabIntoCenter(aState.cat, 'adminCatBar'); }, 100);
     } else if(homeScreen === 'B' && hState.cat) {
       renderHomeB();
-      setTimeout(function(){ _scrollTabIntoCenter(hState.cat); }, 100);
+      setTimeout(function(){ _scrollTabIntoCenter(hState.cat, null, 'instant'); }, 0);
     } else {
       renderHomeA();
     }

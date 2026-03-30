@@ -333,145 +333,89 @@ html, body { height: 100%; overflow: hidden; overflow-x: hidden; max-width: 100%
 }
 
 /* ── Modal overlay ── */
+/* ── Modal Base ── */
 .kmodal-overlay {
   display: none; position: fixed; inset: 0; z-index: 200;
-  background: rgba(0,0,0,.45);
-  align-items: flex-end; justify-content: center;
-  padding: 0;
+  background: rgba(0,0,0,.48);
+  align-items: center; justify-content: center;
+  padding: 16px;
 }
 .kmodal-overlay.open { display: flex; }
-.kmodal-overlay.center {
-  align-items: center;
-  padding: 20px;
-}
 
 .kmodal-sheet {
   background: #fff;
-  border-radius: 20px 20px 0 0;
+  border-radius: 20px;
   padding: 0 24px 40px;
-  width: 100%; max-width: 600px;
-  max-height: 92vh; overflow-y: auto; overflow-x: hidden;
+  width: 100%; max-width: 560px;
+  max-height: 88vh; overflow-y: auto; overflow-x: hidden;
   font-family: 'Pretendard', sans-serif;
-  box-shadow: 0 -8px 40px rgba(0,0,0,0.15);
-  animation: sheetUp .28s cubic-bezier(.32,1,.23,1);
+  box-shadow: 0 8px 48px rgba(0,0,0,0.18);
+  animation: sheetFade .24s cubic-bezier(.32,1,.23,1);
 }
-.kmodal-overlay.center .kmodal-sheet {
-  border-radius: 16px;
-  max-width: 540px;
-  padding: 0 24px 32px;
-  animation: sheetFade .22s ease;
-}
-@keyframes sheetUp { from { transform: translateY(60px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
-@keyframes sheetFade { from { transform: translateY(16px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
-@keyframes toastIn { from { opacity:0;transform:translateX(-50%) translateY(10px); } to { opacity:1;transform:translateX(-50%) translateY(0); } }
+@keyframes sheetFade { from { transform: scale(0.97) translateY(12px); opacity: 0; } to { transform: scale(1) translateY(0); opacity: 1; } }
+@keyframes sheetUp   { from { transform: translateY(60px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+@keyframes toastIn   { from { opacity:0;transform:translateX(-50%) translateY(10px); } to { opacity:1;transform:translateX(-50%) translateY(0); } }
 
-/* 핸들 + 스와이프 힌트 */
+/* 핸들 (모바일에서만 표시) */
 .kmodal-handle {
-  width: 40px;
-  height: 4px;
+  width: 40px; height: 4px;
   border-radius: 999px;
   background: rgba(0,0,0,0.14);
-  margin: 22px auto 14px;
+  margin: 16px auto 12px;
+  display: none;
 }
-.kmodal-swipe-hint {
-  display: block;
-  text-align: center;
-  font-size: 10px;
-  color: #ccc;
-  font-weight: 500;
-  margin-top: -14px;
-  margin-bottom: 20px;
-  letter-spacing: 0.02em;
-  pointer-events: none;
-}
-/* 데스크탑에서는 힌트 숨김, 모달 스타일 변경 */
+/* 시트 내부 힌트 - 숨김 (아래 pseudo로 대체) */
+.kmodal-swipe-hint { display: none !important; }
+
+/* 데스크탑: 핸들 숨김, 패딩 넉넉하게 */
 @media(min-width: 601px) {
-  .kmodal-swipe-hint { display: none; }
-  .kmodal-overlay:not(.center) {
-    align-items: center;
-    padding: 20px;
-  }
-  .kmodal-overlay:not(.center) .kmodal-sheet {
-    border-radius: 16px;
-    max-width: 540px;
-    animation: sheetFade .22s ease;
-  }
-  .kmodal-handle {
-  width: 40px;
-  height: 4px;
-  border-radius: 999px;
-  background: rgba(0,0,0,0.14);
-  margin: 22px auto 14px;
+  .kmodal-overlay { padding: 24px; }
+  .kmodal-sheet { border-radius: 16px; padding: 0 28px 36px; }
+  .kmodal-handle { display: none; }
 }
-}
-/* 모바일: 모든 모달 고정 높이 + 화면 중앙 정렬 */
+
+/* 모바일: 바텀시트 스타일 + 중앙 정렬 */
 @media(max-width: 600px) {
-  /* 모든 overlay 중앙 정렬 */
-  .kmodal-overlay,
-  .kmodal-overlay.center,
-  .kmodal-overlay:not(.center) {
-    align-items: center !important;
-    padding: 16px !important;
+  .kmodal-overlay {
+    align-items: flex-end;
+    padding: 0;
   }
-  /* 모든 kmodal-sheet 고정 높이 */
   .kmodal-sheet {
-    border-radius: 20px !important;
-    max-width: 100% !important;
-    width: 100% !important;
-    height: 78vh !important;
-    max-height: 78vh !important;
-    min-height: unset !important;
-    padding: 0 20px 36px !important;
-    animation: sheetFade .22s ease !important;
+    border-radius: 22px 22px 0 0;
+    max-width: 100%;
+    width: 100%;
+    max-height: 88vh;
+    padding: 0 20px 40px;
+    animation: sheetUp .28s cubic-bezier(.32,1,.23,1);
   }
-  /* flex-column 구조 모달: overflow:hidden 유지, padding 제거 */
+  /* flex-column 구조 모달 (카테고리 관리, 신청서 등) */
   .kmodal-sheet[style*="flex-direction"] {
     overflow: hidden !important;
     padding: 0 !important;
   }
-  /* 일반 스크롤 모달: overflow-y auto */
-  .kmodal-sheet:not([style*="flex-direction"]) {
-    overflow-y: auto !important;
-    overflow-x: hidden !important;
-  }
+  .kmodal-handle { display: block; }
   /* kdetail-modal */
   .kdetail-modal {
-    height: 78vh !important;
-    max-height: 78vh !important;
-    border-radius: 20px !important;
+    height: 88vh !important;
+    max-height: 88vh !important;
+    border-radius: 22px 22px 0 0 !important;
     display: flex !important;
     flex-direction: column !important;
     overflow: hidden !important;
   }
-  /* 모바일 detail 내부 패딩 조정 */
-  #detailContent {
-    padding: 16px 20px 8px !important;
-  }
-  #detailFooter {
-    border-radius: 0 0 20px 20px !important;
-    padding: 12px 20px 16px !important;
-  }
-  /* 기존 스와이프 힌트 숨김 (모달 안쪽) */
-  .kmodal-swipe-hint { display: none; }
-  /* 핸들 마진 */
-  .kmodal-handle {
-  width: 40px;
-  height: 4px;
-  border-radius: 999px;
-  background: rgba(0,0,0,0.14);
-  margin: 22px auto 14px;
-}
-  /* 모달 바깥 아래쪽 스와이프 힌트 */
+  #detailContent { padding: 16px 20px 8px !important; }
+  #detailFooter  { border-radius: 0 0 22px 22px !important; padding: 12px 20px 16px !important; }
+  /* 스와이프 힌트 - 모달 아래 고정 텍스트 */
   .kmodal-overlay.open::after {
-    content: '아래로 스와이프 해서 닫기';
+    content: '↓  아래로 스와이프해서 닫기';
     position: fixed;
-    bottom: 12px;
+    bottom: 10px;
     left: 50%;
     transform: translateX(-50%);
     font-size: 11px;
     font-weight: 500;
-    color: rgba(255,255,255,0.55);
-    letter-spacing: 0.02em;
+    color: rgba(255,255,255,0.5);
+    letter-spacing: 0.04em;
     pointer-events: none;
     white-space: nowrap;
     font-family: 'Pretendard', sans-serif;
