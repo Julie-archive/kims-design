@@ -34,8 +34,10 @@ function renderHome() {
 function goHomeRoot() {
   curView = 'home';
   homeScreen = 'A';
+  hState = {cat:'', sub:'', prod:'__all__', search:''};
   document.getElementById('viewHome').classList.add('active');
   document.getElementById('viewAdmin').classList.remove('active');
+  try { sessionStorage.removeItem('pageState'); } catch(e) {}
   savePageState();
   renderHomeA();
 }
@@ -174,7 +176,10 @@ function renderHomeB() {
 }
 
 function homeGoBack() {
+  curView = 'home';
   homeScreen='A';
+  hState = {cat:'', sub:'', prod:'__all__', search:''};
+  try { sessionStorage.removeItem('pageState'); } catch(e) {}
   savePageState();
   renderHomeA();
 }
