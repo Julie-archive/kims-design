@@ -376,27 +376,22 @@ html, body { height: 100%; overflow: hidden; overflow-x: hidden; max-width: 100%
   display: block;
 }
 .kmodal-swipe-hint {
-  display: flex !important;
+  display: flex;
   align-items: center;
   justify-content: center;
+  gap: 4px;
+  text-align: center;
   font-size: 11px;
-  color: rgba(0,0,0,0.35);
+  color: rgba(0,0,0,0.38);
+  font-weight: 500;
   margin-top: -10px;
   margin-bottom: 16px;
+  letter-spacing: -0.01em;
+  pointer-events: none;
 }
-
 /* 데스크탑에서는 힌트 숨김, 모달 스타일 변경 */
 @media(min-width: 601px) {
-  .kmodal-swipe-hint {
-  display: flex !important;
-  align-items: center;
-  justify-content: center;
-  font-size: 11px;
-  color: rgba(0,0,0,0.35);
-  margin-top: -10px;
-  margin-bottom: 16px;
-}
-
+  .kmodal-swipe-hint { display: flex !important; }
   .kmodal-overlay:not(.center) {
     align-items: center;
     padding: 20px;
@@ -456,19 +451,10 @@ html, body { height: 100%; overflow: hidden; overflow-x: hidden; max-width: 100%
     padding: 12px 20px 16px !important;
   }
   /* 기존 스와이프 힌트 숨김 (모달 안쪽) */
-  .kmodal-swipe-hint {
-  display: flex !important;
-  align-items: center;
-  justify-content: center;
-  font-size: 11px;
-  color: rgba(0,0,0,0.35);
-  margin-top: -10px;
-  margin-bottom: 16px;
-}
-
+  .kmodal-swipe-hint { display: flex !important; }
   /* 핸들 마진 */
   .kmodal-handle { margin: 14px auto 20px; }
-  }
+}
 .kmodal-title { font-size: 18px; font-weight: 800; margin-bottom: 20px; color: var(--ktext); }
 .kmodal-title em { color: #111; font-style: normal; }
 
