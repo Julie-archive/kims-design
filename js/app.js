@@ -878,7 +878,7 @@ function collectTypes(prefix) {
     const height=document.getElementById(`${prefix}TypeH_${idx}`)?.value.trim()||'';
     const memo=document.getElementById(`${prefix}TypeMemo_${idx}`)?.value.trim()||'';
     const unitPrice=document.getElementById(`${prefix}TypePrice_${idx}`)?.value.trim()||'';
-    const src=prefix==='ai'?(aiTypeSrcs[idx]||''):(editTypeSrcs[idx]!==undefined&&editTypeSrcs[idx]!==null?editTypeSrcs[idx]:(detailAd?.types?.find(t=>t.name===name)?.src||''));
+    const src=prefix==='ai'?(aiTypeSrcs[idx]||''):(editTypeSrcs[idx]!==undefined&&editTypeSrcs[idx]!==null?editTypeSrcs[idx]:((detailAd?.types||[])[idx]?.src||''));
     return {name,width,height,src,memo,unitPrice};
   });
 }
