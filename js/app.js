@@ -13,7 +13,6 @@ function escapeHTML(str) {
     .replace(/"/g, '&quot;')
     .replace(/'/g, '&#039;');
 }
-}
 function switchView(v) {
   curView = v;
   document.getElementById('viewHome').classList.toggle('active', v==='home');
@@ -41,6 +40,10 @@ function renderHome() {
   if(homeScreen==='A') renderHomeA();
   else renderHomeB();
 }
+function renderHome() {
+  if(homeScreen==='A') renderHomeA();
+  else renderHomeB();
+
 
 function goHomeRoot() {
   curView = 'home';
