@@ -1036,15 +1036,8 @@ function openDetail(id, mode) {
 }
 
 function renderDetail() {
-  // 100% 에러 방지용 내부 안전 함수 (외부 파일 에러 원천 차단)
-  const safeHTML = function(str) {
-    if (!str) return '';
-    return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#039;');
-  };
-
-  const ad = typeof detailAd !== 'undefined' ? detailAd : (typeof curDetailAd !== 'undefined' ? curDetailAd : null);
+  const ad = detailAd;
   if (!ad) return;
-
   const types = ad.types || [];
   const container = document.getElementById('detailContent');
   const footer = document.getElementById('detailFooter');
@@ -1053,147 +1046,148 @@ function renderDetail() {
 
   let html = `
     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;gap:8px;">
-      <span class="kdetail-tag">${safeHTML(ad.mainCat)} &gt; ${safeHTML(ad.subCat)}</span>
+      <span class="kdetail-tag">${window.escapeHTML(ad.mainCat)} &gt; ${window.escapeHTML(ad.subCat)}</span>
       <div style="display:flex;align-items:center;gap:10px;flex-shrink:0;">
-        <span style="font-size:12px;color:var(--ktext3);">등록일: ${safeHTML(ad.adDate)}</span>
+        <span style="font-size:12px;color:var(--ktext3);">등록일: ${window.escapeHTML(ad.adDate)}</span>
         <button onclick="modalClose('modalDetail')" style="background:none;border:none;cursor:pointer;color:var(--ktext3);font-size:20px;line-height:1;padding:2px 4px;flex-shrink:0;">✕</button>
       </div>
     </div>
-    <h2 style="font-size:22px;font-weight:800;letter-spacing:-0.5px;margin-bottom:${(typeof detailMode !== 'undefined' && detailMode === 'admin' && typeof adminLoggedIn !== 'undefined' && adminLoggedIn) ? 16 : 20}px;">${safeHTML(ad.title)}</h2>
+    <h2 style="font-size:22px;font-weight:800;letter-spacing:-0.5px;margin-bottom:${(detailMode==='admin'&&adminLoggedIn)?16:20}px;">${window.escapeHTML(ad.title)}</h2>
   `;
 
-  if (typeof detailMode !== 'undefined' && detailMode === 'admin' && typeof adminLoggedIn !== 'undefined' && adminLoggedIn) {
+  if(detailMode === 'admin' && adminLoggedIn) {
     const overlay = document.getElementById('modalDetail');
-    if (overlay) {
-      overlay._blockClose = (typeof detailTab !== 'undefined' && detailTab === 'edit');
+    if(overlay) {
+      overlay._blockClose = (detailTab === 'edit');
     }
   }
 
-  if (typeof detailTab !== 'undefined' && detailTab === 'view') {
-    if (types.length === 0) {
-      html += `<div style="text-align:center;padding:40px 0;color:var(--ktext3);">
+  if(detailTab==='view') {
+    if(types.length===0) {
+      html+=`<div style="text-align:center;padding:40px 0;color:var(--ktext3);">
         <svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.5" width="40" height="40" style="opacity:.25;margin:0 auto 12px;display:block;"><rect x="6" y="14" width="36" height="26" rx="4"/><circle cx="18" cy="26" r="4"/><path d="m6 36 10-8 8 8 6-6 12 10"/></svg>
         <div style="font-size:14px;font-weight:600;color:var(--ktext2);margin-bottom:6px;">등록된 이미지가 없습니다</div>
-        ${typeof detailMode !== 'undefined' && detailMode === 'admin' && typeof adminLoggedIn !== 'undefined' && adminLoggedIn ? `<button onclick="detailTab='edit';renderDetail();" style="margin-top:10px;padding:8px 20px;background:#111;color:#fff;border:none;border-radius:50px;font-family:'Pretendard',sans-serif;font-size:13px;font-weight:700;cursor:pointer;">+ 이미지 추가</button>` : '<div style="font-size:12px;">관리자 모드에서 이미지를 등록해주세요</div>'}
+        ${detailMode==='admin'&&adminLoggedIn?`<button onclick="detailTab='edit';renderDetail();" style="margin-top:10px;padding:8px 20px;background:#111;color:#fff;border:none;border-radius:50px;font-family:'Pretendard',sans-serif;font-size:13px;font-weight:700;cursor:pointer;">+ 이미지 추가</button>`:'<div style="font-size:12px;">관리자 모드에서 이미지를 등록해주세요</div>'}
       </div>`;
     } else {
-      html += types.map((t, i) => `
-        <div style="margin-bottom:${i < types.length - 1 ? 28 : 0}px;padding-bottom:${i < types.length - 1 ? 28 : 0}px;border-bottom:${i < types.length - 1 ? '1px solid var(--kborder)' : 'none'};">
+      html+=types.map((t,i)=>`
+        <div style="margin-bottom:${i<types.length-1?28:0}px;padding-bottom:${i<types.length-1?28:0}px;border-bottom:${i<types.length-1?'1px solid var(--kborder)':'none'};">
           <div style="margin-bottom:10px;">
-            <span style="font-size:14px;font-weight:700;letter-spacing:-0.02em;">${safeHTML(t.name)}</span>
+            <span style="font-size:14px;font-weight:700;letter-spacing:-0.02em;">${window.escapeHTML(t.name)}</span>
           </div>
-          <div onclick="${t.src ? `openLightbox('${t.src}')` : ''}" style="width:100%;background:${t.src ? 'transparent' : '#f2f2f2'};border-radius:6px;overflow:hidden;min-height:140px;display:flex;align-items:center;justify-content:center;cursor:${t.src ? 'zoom-in' : 'default'};">
-            ${t.src ? `<img src="${t.src}" style="width:100%;display:block;border-radius:6px;" />` : `<span style="color:#999;font-size:13px;">이미지 없음</span>`}
+          <div onclick="${t.src?`openLightbox('${t.src}')`:''}" style="width:100%;background:${t.src?'transparent':'#f2f2f2'};border-radius:6px;overflow:hidden;min-height:140px;display:flex;align-items:center;justify-content:center;cursor:${t.src?'zoom-in':'default'};">
+            ${t.src?`<img src="${t.src}" style="width:100%;display:block;border-radius:6px;" />`:`<span style="color:#999;font-size:13px;">이미지 없음</span>`}
           </div>
-          ${(t.width && t.height) || t.unitPrice ? `
+          ${(t.width&&t.height)||t.unitPrice?`
           <div style="position:relative;">
-            ${t.unitPrice ? `<div style="text-align:right;font-size:11px;color:#bbb;font-weight:400;margin-bottom:5px;">단가는 사이즈에 따라 변동될 수 있습니다.</div>` : ``}
+            ${t.unitPrice?`<div style="text-align:right;font-size:11px;color:#bbb;font-weight:400;margin-bottom:5px;">단가는 사이즈에 따라 변동될 수 있습니다.</div>`:``}
             <div style="background:#f2f2f2;border-radius:6px;overflow:hidden;display:flex;align-items:stretch;">
-              ${t.width && t.height ? `<div style="flex:1;padding:13px 16px;display:flex;align-items:center;gap:8px;"><span style="font-size:12px;font-weight:700;color:#111;white-space:nowrap;flex-shrink:0;">사이즈</span><span style="font-size:13px;color:#333;font-weight:500;">${safeHTML(t.width)}×${safeHTML(t.height)}mm</span></div>` : ``}
-              ${(t.width && t.height) && t.unitPrice ? `<div style="width:1px;background:rgba(0,0,0,0.1);flex-shrink:0;margin:12px 0;"></div>` : ``}
-              ${t.unitPrice ? `<div style="flex:2;padding:13px 16px;display:flex;align-items:center;gap:8px;"><span style="font-size:12px;font-weight:700;color:#111;white-space:nowrap;flex-shrink:0;">단가</span><span style="font-size:13px;color:#333;font-weight:600;">${Number(t.unitPrice).toLocaleString()}원/개</span></div>` : ``}
+              ${t.width&&t.height?`<div style="flex:1;padding:13px 16px;display:flex;align-items:center;gap:8px;"><span style="font-size:12px;font-weight:700;color:#111;white-space:nowrap;flex-shrink:0;">사이즈</span><span style="font-size:13px;color:#333;font-weight:500;">${window.escapeHTML(t.width)}×${window.escapeHTML(t.height)}mm</span></div>`:``}
+              ${(t.width&&t.height)&&t.unitPrice?`<div style="width:1px;background:rgba(0,0,0,0.1);flex-shrink:0;margin:12px 0;"></div>`:``}
+              ${t.unitPrice?`<div style="flex:2;padding:13px 16px;display:flex;align-items:center;gap:8px;"><span style="font-size:12px;font-weight:700;color:#111;white-space:nowrap;flex-shrink:0;">단가</span><span style="font-size:13px;color:#333;font-weight:600;">${Number(t.unitPrice).toLocaleString()}원/개</span></div>`:``}
             </div>
-          </div>` : ``}
-          ${t.memo ? `<div style="margin-top:10px;background:#f2f2f2;border-radius:6px;padding:14px 16px;"><div style="font-size:11px;font-weight:700;color:#aaa;margin-bottom:5px;letter-spacing:0.02em;">메모</div><div style="font-size:13px;color:#555;line-height:1.6;white-space:pre-wrap;">${safeHTML(t.memo)}</div></div>` : ``}
+          </div>`:``}
+          ${t.memo?`<div style="margin-top:10px;background:#f2f2f2;border-radius:6px;padding:14px 16px;"><div style="font-size:11px;font-weight:700;color:#aaa;margin-bottom:5px;letter-spacing:0.02em;">메모</div><div style="font-size:13px;color:#555;line-height:1.6;white-space:pre-wrap;">${window.escapeHTML(t.memo)}</div></div>`:``}
         </div>
       `).join('');
-      if (typeof detailMode !== 'undefined' && detailMode === 'admin' && typeof adminLoggedIn !== 'undefined' && adminLoggedIn) {
-        if (ad.memo) {
-          html += `<div style="margin-top:20px;padding:14px 16px;background:#f2f2f2;border-radius:6px;">
+      if(detailMode==='admin' && adminLoggedIn) {
+        if(ad.memo) {
+          html+=`<div style="margin-top:20px;padding:14px 16px;background:#f2f2f2;border-radius:6px;">
             <div style="font-size:11px;font-weight:700;color:#aaa;margin-bottom:6px;letter-spacing:0.02em;">메모</div>
-            <div style="font-size:13px;color:#555;line-height:1.6;white-space:pre-wrap;">${safeHTML(ad.memo)}</div>
+            <div style="font-size:13px;color:#555;line-height:1.6;white-space:pre-wrap;">${window.escapeHTML(ad.memo)}</div>
           </div>`;
         }
-        if ((ad.settingPhotos || []).length > 0) {
-          html += `<div style="margin-top:16px;">
+        if((ad.settingPhotos||[]).length > 0) {
+          html+=`<div style="margin-top:16px;">
             <div style="font-size:12px;font-weight:700;color:#555;margin-bottom:8px;">셋팅 사진</div>
             <div style="display:flex;flex-direction:column;gap:10px;">
-              ${(ad.settingPhotos || []).map(p => { const src = typeof p === 'object' ? (p.src || '') : p; const store = typeof p === 'object' ? (p.storeName || '') : ''; return `<div style="border-radius:6px;overflow:hidden;border:1px solid rgba(0,0,0,0.08);">${store ? `<div style="padding:8px 12px;background:#f2f2f2;font-size:12px;font-weight:600;color:#555;border-bottom:1px solid rgba(0,0,0,0.07);">📍 ${safeHTML(store)}</div>` : ''}<img src="${src}" onclick="openLightbox('${src}')" style="width:100%;display:block;cursor:zoom-in;" /></div>`; }).join('')}
+              ${(ad.settingPhotos||[]).map(p=>{const src=typeof p==='object'?(p.src||''):p;const store=typeof p==='object'?(p.storeName||''):'';return `<div style="border-radius:6px;overflow:hidden;border:1px solid rgba(0,0,0,0.08);">${store?`<div style="padding:8px 12px;background:#f2f2f2;font-size:12px;font-weight:600;color:#555;border-bottom:1px solid rgba(0,0,0,0.07);">📍 ${window.escapeHTML(store)}</div>`:''}<img src="${src}" onclick="openLightbox('${src}')" style="width:100%;display:block;cursor:zoom-in;" /></div>`;}).join('')}
             </div>
           </div>`;
         }
-        if (footer) footer.innerHTML = `<div style="display:flex;gap:10px;">
+        if(footer) footer.innerHTML=`<div style="display:flex;gap:10px;">
           <button onclick="modalClose('modalDetail')" style="flex:1;padding:13px;background:#f2f2f2;color:#666;border:1px solid #d8dce3;border-radius:50px;font-size:14px;font-weight:700;cursor:pointer;font-family:'Pretendard',sans-serif;">닫기</button>
           <button onclick="detailTab='edit';renderDetail();" style="flex:2;padding:13px;background:#4a7cf4;color:#fff;border:none;border-radius:50px;font-size:14px;font-weight:700;cursor:pointer;font-family:'Pretendard',sans-serif;">✎ 수정하기</button>
         </div>`;
       } else {
-        if (ad.memo) {
-          html += `<div style="margin-top:20px;padding:14px 16px;background:#f2f2f2;border-radius:6px;">
+        if(ad.memo) {
+          html+=`<div style="margin-top:20px;padding:14px 16px;background:#f2f2f2;border-radius:6px;">
             <div style="font-size:11px;font-weight:700;color:#aaa;margin-bottom:6px;letter-spacing:0.02em;">메모</div>
-            <div style="font-size:13px;color:#555;line-height:1.6;white-space:pre-wrap;">${safeHTML(ad.memo)}</div>
+            <div style="font-size:13px;color:#555;line-height:1.6;white-space:pre-wrap;">${window.escapeHTML(ad.memo)}</div>
           </div>`;
         }
-        if ((ad.settingPhotos || []).length > 0) {
-          html += `<div style="margin-top:16px;">
+        if((ad.settingPhotos||[]).length > 0) {
+          html+=`<div style="margin-top:16px;">
             <div style="font-size:12px;font-weight:700;color:#555;margin-bottom:8px;">셋팅 사진</div>
             <div style="display:flex;flex-direction:column;gap:10px;">
-              ${(ad.settingPhotos || []).map(p => { const src = typeof p === 'object' ? (p.src || '') : p; const store = typeof p === 'object' ? (p.storeName || '') : ''; return `<div style="border-radius:6px;overflow:hidden;border:1px solid rgba(0,0,0,0.08);">${store ? `<div style="padding:8px 12px;background:#f2f2f2;font-size:12px;font-weight:600;color:#555;border-bottom:1px solid rgba(0,0,0,0.07);">📍 ${safeHTML(store)}</div>` : ''}<img src="${src}" onclick="openLightbox('${src}')" style="width:100%;display:block;cursor:zoom-in;" /></div>`; }).join('')}
+              ${(ad.settingPhotos||[]).map(p=>{const src=typeof p==='object'?(p.src||''):p;const store=typeof p==='object'?(p.storeName||''):'';return `<div style="border-radius:6px;overflow:hidden;border:1px solid rgba(0,0,0,0.08);">${store?`<div style="padding:8px 12px;background:#f2f2f2;font-size:12px;font-weight:600;color:#555;border-bottom:1px solid rgba(0,0,0,0.07);">📍 ${window.escapeHTML(store)}</div>`:''}<img src="${src}" onclick="openLightbox('${src}')" style="width:100%;display:block;cursor:zoom-in;" /></div>`;}).join('')}
             </div>
           </div>`;
         }
-        if (footer) footer.innerHTML = `<button onclick="openAdRequest(${ad.id})" style="width:100%;padding:14px;background:#4a7cf4;color:#fff;border:none;border-radius:50px;font-size:15px;font-weight:700;cursor:pointer;font-family:'Pretendard',sans-serif;letter-spacing:-0.02em;">이 광고로 신청하기</button>`;
+        if(footer) footer.innerHTML=`<button onclick="openAdRequest(${ad.id})" style="width:100%;padding:14px;background:#4a7cf4;color:#fff;border:none;border-radius:50px;font-size:15px;font-weight:700;cursor:pointer;font-family:'Pretendard',sans-serif;letter-spacing:-0.02em;">이 광고로 신청하기</button>`;
       }
     }
   } else {
-    if (typeof editSettingPhotos !== 'undefined') editSettingPhotos = null;
-    html += `<div class="kform-group">
+    // Edit tab
+    editSettingPhotos = null;
+    html+=`<div class="kform-group">
       <label class="kform-label">광고 이름</label>
-      <input class="kinput" type="text" id="editTitle" value="${safeHTML(ad.title)}" placeholder="광고 이름" />
+      <input class="kinput" type="text" id="editTitle" value="${window.escapeHTML(ad.title)}" placeholder="광고 이름" />
     </div>
     <div id="editTypeBlocks">`;
-    const existingTypes = ad.types || [];
-    if (typeof editTypeCount !== 'undefined') editTypeCount = existingTypes.length;
-    if (typeof editTypeSrcs !== 'undefined') editTypeSrcs = {};
-    existingTypes.forEach((t, i) => {
-      if (typeof editTypeSrcs !== 'undefined') editTypeSrcs[i] = null;
-      const isCustom = typeof PRESET_TYPES !== 'undefined' ? !PRESET_TYPES.includes(t.name) : false;
-      html += `<div class="ktype-block" id="editTypeBlock_${i}">
+    const existingTypes=ad.types||[];
+    editTypeCount=existingTypes.length;
+    editTypeSrcs={};
+    existingTypes.forEach((t,i)=>{
+      editTypeSrcs[i]=null;
+      const isCustom=!PRESET_TYPES.includes(t.name);
+      html+=`<div class="ktype-block" id="editTypeBlock_${i}">
         <div class="ktype-block-header">
           <select onchange="typeNameChange('edit','${i}',this.value)">
-            ${typeof PRESET_TYPES !== 'undefined' ? PRESET_TYPES.map(n => `<option value="${n}" ${n === t.name && !isCustom ? 'selected' : ''}>${n}</option>`).join('') : ''}
-            <option value="__custom__" ${isCustom ? 'selected' : ''}>직접 입력...</option>
+            ${PRESET_TYPES.map(n=>`<option value="${n}" ${n===t.name&&!isCustom?'selected':''}>${n}</option>`).join('')}
+            <option value="__custom__" ${isCustom?'selected':''}>직접 입력...</option>
           </select>
           <button class="ktype-remove" onclick="removeTypeBlock('edit','${i}')">×</button>
         </div>
-        <div id="editTypeCustom_${i}" style="display:${isCustom ? 'block' : 'none'};margin-bottom:10px;">
-          <input class="kinput" placeholder="타입명 입력" id="editTypeCustomName_${i}" value="${isCustom ? safeHTML(t.name) : ''}" />
+        <div id="editTypeCustom_${i}" style="display:${isCustom?'block':'none'};margin-bottom:10px;">
+          <input class="kinput" placeholder="타입명 입력" id="editTypeCustomName_${i}" value="${isCustom?window.escapeHTML(t.name):''}" />
         </div>
         <div class="ktype-size-row">
-          <input class="kinput-sm" type="number" placeholder="가로(px)" id="editTypeW_${i}" value="${safeHTML(t.width || '')}" />
+          <input class="kinput-sm" type="number" placeholder="가로(px)" id="editTypeW_${i}" value="${window.escapeHTML(t.width||'')}" />
           <span>×</span>
-          <input class="kinput-sm" type="number" placeholder="세로(px)" id="editTypeH_${i}" value="${safeHTML(t.height || '')}" />
+          <input class="kinput-sm" type="number" placeholder="세로(px)" id="editTypeH_${i}" value="${window.escapeHTML(t.height||'')}" />
         </div>
         <label class="kupload-label">
           <input type="file" accept="image/*" onchange="typeFileChange('edit','${i}',this)" />
-          ${t.src ? `<img id="editTypePrev_${i}" src="${t.src}" style="width:100%;max-height:120px;object-fit:contain;border-radius:6px;" /><div id="editTypeIcon_${i}" style="display:none;"></div>` : `
+          ${t.src?`<img id="editTypePrev_${i}" src="${t.src}" style="width:100%;max-height:120px;object-fit:contain;border-radius:6px;" /><div id="editTypeIcon_${i}" style="display:none;"></div>`:`
           <img id="editTypePrev_${i}" style="width:100%;max-height:120px;object-fit:contain;border-radius:6px;display:none;" />
           <div id="editTypeIcon_${i}"><svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.5" width="28" height="28" style="opacity:.3;margin:0 auto;display:block;"><rect x="6" y="14" width="36" height="26" rx="4"/><path d="M24 8v16m-6-6 6-6 6 6"/></svg><p style="font-size:11px;color:var(--ktext3);margin-top:4px;">클릭해서 변경</p></div>`}
         </label>
         <div style="margin-top:8px;display:flex;gap:6px;align-items:center;">
-          <input class="kinput" type="number" id="editTypePrice_${i}" value="${safeHTML(t.unitPrice || '')}" placeholder="연출물 단가" style="flex:1;font-size:13px;" />
+          <input class="kinput" type="number" id="editTypePrice_${i}" value="${(t.unitPrice||'').replace(/"/g,'&quot;')}" placeholder="연출물 단가" style="flex:1;font-size:13px;" />
           <span style="font-size:12px;color:#999;flex-shrink:0;">원 / 개</span>
         </div>
         <div style="margin-top:8px;">
-          <input class="kinput" type="text" id="editTypeMemo_${i}" value="${safeHTML(t.memo || '')}" placeholder="메모 (선택 · 특이사항, 적용 매장 등)" style="font-size:13px;" />
+          <input class="kinput" type="text" id="editTypeMemo_${i}" value="${(t.memo||'').replace(/"/g,'&quot;')}" placeholder="메모 (선택 · 특이사항, 적용 매장 등)" style="font-size:13px;" />
         </div>
       </div>`;
     });
-    html += `</div>
+    html+=`</div>
     <button class="kadd-type-btn" onclick="editAddType()">+ 타입 추가</button>
     <div class="kform-group" style="margin-top:16px;">
       <label class="kform-label">셋팅 사진 <span style="font-size:11px;color:#aaa;font-weight:400;">(선택 · 복수 가능)</span></label>
       <div id="editSettingPreview" style="display:flex;flex-direction:column;gap:10px;margin-bottom:8px;">
-        ${(ad.settingPhotos || []).map((p, i) => {
-      const src = typeof p === 'object' ? (p.src || '') : p;
-      const storeName = typeof p === 'object' ? (p.storeName || '') : '';
-      return `<div style="border:1.5px solid rgba(0,0,0,0.1);border-radius:6px;overflow:hidden;">
+        ${(ad.settingPhotos||[]).map((p,i)=>{
+          const src = typeof p === 'object' ? (p.src||'') : p;
+          const storeName = typeof p === 'object' ? (p.storeName||'') : '';
+          return `<div style="border:1.5px solid rgba(0,0,0,0.1);border-radius:6px;overflow:hidden;">
             <img src="${src}" style="width:100%;max-height:200px;object-fit:cover;display:block;" />
             <div style="display:flex;align-items:center;gap:8px;padding:8px 10px;background:#f2f2f2;">
-              <input class="kinput" type="text" id="editSettingStore_${i}" value="${safeHTML(storeName)}" placeholder="매장명 (예: 강서점)" style="flex:1;font-size:13px;" />
+              <input class="kinput" type="text" id="editSettingStore_${i}" value="${window.escapeHTML(storeName)}" placeholder="매장명 (예: 강서점)" style="flex:1;font-size:13px;" />
               <button onclick="editRemoveSettingPhoto(${i})" style="padding:5px 12px;background:#ffe0e0;border:none;border-radius:6px;color:#e03333;font-size:12px;font-weight:700;cursor:pointer;white-space:nowrap;">삭제</button>
             </div>
           </div>`;
-    }).join('')}
+        }).join('')}
       </div>
       <label style="display:flex;align-items:center;justify-content:center;gap:8px;padding:12px;background:#f4f6ff;border-radius:6px;border:1.5px dashed #c0d0ff;cursor:pointer;">
         <input type="file" accept="image/*" multiple onchange="editAddSettingPhotos(this)" style="display:none;" />
@@ -1202,13 +1196,13 @@ function renderDetail() {
       </label>
     </div>
     `;
-    if (footer) footer.innerHTML = `<div class="kmodal-actions" style="margin:0;">
+    if(footer) footer.innerHTML=`<div class="kmodal-actions" style="margin:0;">
       <button class="kbtn-cancel" onclick="detailTab='view';renderDetail()">취소</button>
       <button class="kbtn-confirm" onclick="editSave()">저장</button>
     </div>`;
   }
   
-  if (container) container.innerHTML = html;
+  if(container) container.innerHTML = html;
 }
 
   container.innerHTML=html;
