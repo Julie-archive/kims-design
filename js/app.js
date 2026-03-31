@@ -3,18 +3,6 @@
 // ══════════════════════════════════════════════════════
 //  VIEW SWITCHING
 // ══════════════════════════════════════════════════════
-
-// 입력값의 HTML 태그를 무력화하여 XSS 공격을 방어하는 유틸리티 함수
-window.escapeHTML = function(str) {
-  if (!str) return '';
-  return String(str)
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;')
-    .replace(/'/g, '&#039;');
-};
-
 function switchView(v) {
   curView = v;
   document.getElementById('viewHome').classList.toggle('active', v==='home');
@@ -277,7 +265,7 @@ function adCardHTML(ad, mode) {
     <div class="kad-card" onclick="openDetail(${ad.id}, '${mode}')">
       <div class="kad-thumb-wrap">
         <div class="kad-thumb">
-          ${thumb ? `<img src="${thumb}" alt="${escapeHTML(ad.title)}" />` : `<div class="kad-thumb-empty">
+          ${thumb ? `<img src="${thumb}" alt="${ad.title}" />` : `<div class="kad-thumb-empty">
             <svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.5" width="32" height="32" style="opacity:.3"><rect x="6" y="14" width="36" height="26" rx="4"/><circle cx="18" cy="26" r="4"/><path d="m6 36 10-8 8 8 6-6 12 10"/></svg>
             <span>이미지 없음</span>
           </div>`}
@@ -285,9 +273,9 @@ function adCardHTML(ad, mode) {
         </div>
       </div>
       <div class="kad-meta">
-        <div class="kad-tag">${escapeHTML(ad.subCat)}</div>
-        <div class="kad-title">${escapeHTML(ad.title)}</div>
-        <div class="kad-date">등록일: ${escapeHTML(ad.adDate)}</div>
+        <div class="kad-tag">${ad.subCat}</div>
+        <div class="kad-title">${ad.title}</div>
+        <div class="kad-date">등록일: ${ad.adDate}</div>
       </div>
     </div>
   `;
@@ -1036,26 +1024,26 @@ function openDetail(id, mode) {
 }
 
 function renderDetail() {
-  const ad = detailAd;
-  if (!ad) return;
-  const types = ad.types || [];
-  const container = document.getElementById('detailContent');
-  const footer = document.getElementById('detailFooter');
-  if (!container) return;
-  if (footer) footer.innerHTML = '';
+  const ad=detailAd;
+  const types=ad.types||[];
+  const container=document.getElementById('detailContent');
+  const footer=document.getElementById('detailFooter');
+  if(!container)return;
+  if(footer) footer.innerHTML='';
 
-  let html = `
+  let html=`
     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;gap:8px;">
-      <span class="kdetail-tag">${window.escapeHTML(ad.mainCat)} &gt; ${window.escapeHTML(ad.subCat)}</span>
+      <span class="kdetail-tag">${ad.mainCat} &gt; ${ad.subCat}</span>
       <div style="display:flex;align-items:center;gap:10px;flex-shrink:0;">
-        <span style="font-size:12px;color:var(--ktext3);">등록일: ${window.escapeHTML(ad.adDate)}</span>
+        <span style="font-size:12px;color:var(--ktext3);">등록일: ${ad.adDate}</span>
         <button onclick="modalClose('modalDetail')" style="background:none;border:none;cursor:pointer;color:var(--ktext3);font-size:20px;line-height:1;padding:2px 4px;flex-shrink:0;">✕</button>
       </div>
     </div>
-    <h2 style="font-size:22px;font-weight:800;letter-spacing:-0.5px;margin-bottom:${(detailMode==='admin'&&adminLoggedIn)?16:20}px;">${window.escapeHTML(ad.title)}</h2>
+    <h2 style="font-size:22px;font-weight:800;letter-spacing:-0.5px;margin-bottom:${(detailMode==='admin'&&adminLoggedIn)?16:20}px;">${ad.title}</h2>
   `;
 
   if(detailMode === 'admin' && adminLoggedIn) {
+    // 수정 탭일 때 백그라운드 클릭 닫힘 방지
     const overlay = document.getElementById('modalDetail');
     if(overlay) {
       overlay._blockClose = (detailTab === 'edit');
@@ -1073,7 +1061,7 @@ function renderDetail() {
       html+=types.map((t,i)=>`
         <div style="margin-bottom:${i<types.length-1?28:0}px;padding-bottom:${i<types.length-1?28:0}px;border-bottom:${i<types.length-1?'1px solid var(--kborder)':'none'};">
           <div style="margin-bottom:10px;">
-            <span style="font-size:14px;font-weight:700;letter-spacing:-0.02em;">${window.escapeHTML(t.name)}</span>
+            <span style="font-size:14px;font-weight:700;letter-spacing:-0.02em;">${t.name}</span>
           </div>
           <div onclick="${t.src?`openLightbox('${t.src}')`:''}" style="width:100%;background:${t.src?'transparent':'#f2f2f2'};border-radius:6px;overflow:hidden;min-height:140px;display:flex;align-items:center;justify-content:center;cursor:${t.src?'zoom-in':'default'};">
             ${t.src?`<img src="${t.src}" style="width:100%;display:block;border-radius:6px;" />`:`<span style="color:#999;font-size:13px;">이미지 없음</span>`}
@@ -1082,26 +1070,26 @@ function renderDetail() {
           <div style="position:relative;">
             ${t.unitPrice?`<div style="text-align:right;font-size:11px;color:#bbb;font-weight:400;margin-bottom:5px;">단가는 사이즈에 따라 변동될 수 있습니다.</div>`:``}
             <div style="background:#f2f2f2;border-radius:6px;overflow:hidden;display:flex;align-items:stretch;">
-              ${t.width&&t.height?`<div style="flex:1;padding:13px 16px;display:flex;align-items:center;gap:8px;"><span style="font-size:12px;font-weight:700;color:#111;white-space:nowrap;flex-shrink:0;">사이즈</span><span style="font-size:13px;color:#333;font-weight:500;">${window.escapeHTML(t.width)}×${window.escapeHTML(t.height)}mm</span></div>`:``}
+              ${t.width&&t.height?`<div style="flex:1;padding:13px 16px;display:flex;align-items:center;gap:8px;"><span style="font-size:12px;font-weight:700;color:#111;white-space:nowrap;flex-shrink:0;">사이즈</span><span style="font-size:13px;color:#333;font-weight:500;">${t.width}×${t.height}mm</span></div>`:``}
               ${(t.width&&t.height)&&t.unitPrice?`<div style="width:1px;background:rgba(0,0,0,0.1);flex-shrink:0;margin:12px 0;"></div>`:``}
               ${t.unitPrice?`<div style="flex:2;padding:13px 16px;display:flex;align-items:center;gap:8px;"><span style="font-size:12px;font-weight:700;color:#111;white-space:nowrap;flex-shrink:0;">단가</span><span style="font-size:13px;color:#333;font-weight:600;">${Number(t.unitPrice).toLocaleString()}원/개</span></div>`:``}
             </div>
           </div>`:``}
-          ${t.memo?`<div style="margin-top:10px;background:#f2f2f2;border-radius:6px;padding:14px 16px;"><div style="font-size:11px;font-weight:700;color:#aaa;margin-bottom:5px;letter-spacing:0.02em;">메모</div><div style="font-size:13px;color:#555;line-height:1.6;white-space:pre-wrap;">${window.escapeHTML(t.memo)}</div></div>`:``}
+          ${t.memo?`<div style="margin-top:10px;background:#f2f2f2;border-radius:6px;padding:14px 16px;"><div style="font-size:11px;font-weight:700;color:#aaa;margin-bottom:5px;letter-spacing:0.02em;">메모</div><div style="font-size:13px;color:#555;line-height:1.6;white-space:pre-wrap;">${t.memo}</div></div>`:``}
         </div>
       `).join('');
       if(detailMode==='admin' && adminLoggedIn) {
         if(ad.memo) {
           html+=`<div style="margin-top:20px;padding:14px 16px;background:#f2f2f2;border-radius:6px;">
             <div style="font-size:11px;font-weight:700;color:#aaa;margin-bottom:6px;letter-spacing:0.02em;">메모</div>
-            <div style="font-size:13px;color:#555;line-height:1.6;white-space:pre-wrap;">${window.escapeHTML(ad.memo)}</div>
+            <div style="font-size:13px;color:#555;line-height:1.6;white-space:pre-wrap;">${ad.memo}</div>
           </div>`;
         }
         if((ad.settingPhotos||[]).length > 0) {
           html+=`<div style="margin-top:16px;">
             <div style="font-size:12px;font-weight:700;color:#555;margin-bottom:8px;">셋팅 사진</div>
             <div style="display:flex;flex-direction:column;gap:10px;">
-              ${(ad.settingPhotos||[]).map(p=>{const src=typeof p==='object'?(p.src||''):p;const store=typeof p==='object'?(p.storeName||''):'';return `<div style="border-radius:6px;overflow:hidden;border:1px solid rgba(0,0,0,0.08);">${store?`<div style="padding:8px 12px;background:#f2f2f2;font-size:12px;font-weight:600;color:#555;border-bottom:1px solid rgba(0,0,0,0.07);">📍 ${window.escapeHTML(store)}</div>`:''}<img src="${src}" onclick="openLightbox('${src}')" style="width:100%;display:block;cursor:zoom-in;" /></div>`;}).join('')}
+              ${(ad.settingPhotos||[]).map(p=>{const src=typeof p==='object'?(p.src||''):p;const store=typeof p==='object'?(p.storeName||''):'';return `<div style="border-radius:6px;overflow:hidden;border:1px solid rgba(0,0,0,0.08);">${store?`<div style="padding:8px 12px;background:#f2f2f2;font-size:12px;font-weight:600;color:#555;border-bottom:1px solid rgba(0,0,0,0.07);">📍 ${store}</div>`:''}<img src="${src}" onclick="openLightbox('${src}')" style="width:100%;display:block;cursor:zoom-in;" /></div>`;}).join('')}
             </div>
           </div>`;
         }
@@ -1113,14 +1101,14 @@ function renderDetail() {
         if(ad.memo) {
           html+=`<div style="margin-top:20px;padding:14px 16px;background:#f2f2f2;border-radius:6px;">
             <div style="font-size:11px;font-weight:700;color:#aaa;margin-bottom:6px;letter-spacing:0.02em;">메모</div>
-            <div style="font-size:13px;color:#555;line-height:1.6;white-space:pre-wrap;">${window.escapeHTML(ad.memo)}</div>
+            <div style="font-size:13px;color:#555;line-height:1.6;white-space:pre-wrap;">${ad.memo}</div>
           </div>`;
         }
         if((ad.settingPhotos||[]).length > 0) {
           html+=`<div style="margin-top:16px;">
             <div style="font-size:12px;font-weight:700;color:#555;margin-bottom:8px;">셋팅 사진</div>
             <div style="display:flex;flex-direction:column;gap:10px;">
-              ${(ad.settingPhotos||[]).map(p=>{const src=typeof p==='object'?(p.src||''):p;const store=typeof p==='object'?(p.storeName||''):'';return `<div style="border-radius:6px;overflow:hidden;border:1px solid rgba(0,0,0,0.08);">${store?`<div style="padding:8px 12px;background:#f2f2f2;font-size:12px;font-weight:600;color:#555;border-bottom:1px solid rgba(0,0,0,0.07);">📍 ${window.escapeHTML(store)}</div>`:''}<img src="${src}" onclick="openLightbox('${src}')" style="width:100%;display:block;cursor:zoom-in;" /></div>`;}).join('')}
+              ${(ad.settingPhotos||[]).map(p=>{const src=typeof p==='object'?(p.src||''):p;const store=typeof p==='object'?(p.storeName||''):'';return `<div style="border-radius:6px;overflow:hidden;border:1px solid rgba(0,0,0,0.08);">${store?`<div style="padding:8px 12px;background:#f2f2f2;font-size:12px;font-weight:600;color:#555;border-bottom:1px solid rgba(0,0,0,0.07);">📍 ${store}</div>`:''}<img src="${src}" onclick="openLightbox('${src}')" style="width:100%;display:block;cursor:zoom-in;" /></div>`;}).join('')}
             </div>
           </div>`;
         }
@@ -1132,14 +1120,14 @@ function renderDetail() {
     editSettingPhotos = null;
     html+=`<div class="kform-group">
       <label class="kform-label">광고 이름</label>
-      <input class="kinput" type="text" id="editTitle" value="${window.escapeHTML(ad.title)}" placeholder="광고 이름" />
+      <input class="kinput" type="text" id="editTitle" value="${ad.title}" placeholder="광고 이름" />
     </div>
     <div id="editTypeBlocks">`;
     const existingTypes=ad.types||[];
     editTypeCount=existingTypes.length;
     editTypeSrcs={};
     existingTypes.forEach((t,i)=>{
-      editTypeSrcs[i]=null;
+      editTypeSrcs[i]=null; // null = keep existing
       const isCustom=!PRESET_TYPES.includes(t.name);
       html+=`<div class="ktype-block" id="editTypeBlock_${i}">
         <div class="ktype-block-header">
@@ -1150,12 +1138,12 @@ function renderDetail() {
           <button class="ktype-remove" onclick="removeTypeBlock('edit','${i}')">×</button>
         </div>
         <div id="editTypeCustom_${i}" style="display:${isCustom?'block':'none'};margin-bottom:10px;">
-          <input class="kinput" placeholder="타입명 입력" id="editTypeCustomName_${i}" value="${isCustom?window.escapeHTML(t.name):''}" />
+          <input class="kinput" placeholder="타입명 입력" id="editTypeCustomName_${i}" value="${isCustom?t.name:''}" />
         </div>
         <div class="ktype-size-row">
-          <input class="kinput-sm" type="number" placeholder="가로(px)" id="editTypeW_${i}" value="${window.escapeHTML(t.width||'')}" />
+          <input class="kinput-sm" type="number" placeholder="가로(px)" id="editTypeW_${i}" value="${t.width||''}" />
           <span>×</span>
-          <input class="kinput-sm" type="number" placeholder="세로(px)" id="editTypeH_${i}" value="${window.escapeHTML(t.height||'')}" />
+          <input class="kinput-sm" type="number" placeholder="세로(px)" id="editTypeH_${i}" value="${t.height||''}" />
         </div>
         <label class="kupload-label">
           <input type="file" accept="image/*" onchange="typeFileChange('edit','${i}',this)" />
@@ -1183,7 +1171,7 @@ function renderDetail() {
           return `<div style="border:1.5px solid rgba(0,0,0,0.1);border-radius:6px;overflow:hidden;">
             <img src="${src}" style="width:100%;max-height:200px;object-fit:cover;display:block;" />
             <div style="display:flex;align-items:center;gap:8px;padding:8px 10px;background:#f2f2f2;">
-              <input class="kinput" type="text" id="editSettingStore_${i}" value="${window.escapeHTML(storeName)}" placeholder="매장명 (예: 강서점)" style="flex:1;font-size:13px;" />
+              <input class="kinput" type="text" id="editSettingStore_${i}" value="${storeName.replace(/"/g,'&quot;')}" placeholder="매장명 (예: 강서점)" style="flex:1;font-size:13px;" />
               <button onclick="editRemoveSettingPhoto(${i})" style="padding:5px 12px;background:#ffe0e0;border:none;border-radius:6px;color:#e03333;font-size:12px;font-weight:700;cursor:pointer;white-space:nowrap;">삭제</button>
             </div>
           </div>`;
@@ -1196,14 +1184,11 @@ function renderDetail() {
       </label>
     </div>
     `;
-    if(footer) footer.innerHTML=`<div class="kmodal-actions" style="margin:0;">
+  if(footer) footer.innerHTML=`<div class="kmodal-actions" style="margin:0;">
       <button class="kbtn-cancel" onclick="detailTab='view';renderDetail()">취소</button>
       <button class="kbtn-confirm" onclick="editSave()">저장</button>
     </div>`;
   }
-  
-  if(container) container.innerHTML = html;
-}
 
   container.innerHTML=html;
   // 기존 타입에서 고정 사이즈 타입 readOnly 처리
@@ -1217,6 +1202,7 @@ function renderDetail() {
       }
     });
   }, 50);
+}
 
 function editAddType() {
   const idx=editTypeCount++;
