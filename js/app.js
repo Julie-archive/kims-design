@@ -101,35 +101,35 @@ function homeCatSelect(cat) {
   hState = {cat, sub:'', prod:'__all__', search:''};
   savePageState();
 
-  // 탭바가 이미 DOM에 있으면 active만 교체 후 부드럽게 스크롤 (깜빡임 없음)
   var tabBar = document.querySelector('#viewHome .ktab-bar');
   if(tabBar) {
+    // 탭바가 이미 있으면 DOM 교체 없이 active만 바꾸고 즉시 스크롤 + 콘텐츠만 갱신
     var btns = tabBar.querySelectorAll('.ktab-btn');
     btns.forEach(function(btn, i) {
       btn.classList.toggle('active', MAIN_CATS[i] === cat);
     });
-    _scrollTabIntoCenter(cat);
-    // 콘텐츠 영역만 로딩 스피너로 교체
-    var content = document.getElementById('homeProdContent');
-    if(content) {
-      content.innerHTML = '<div style="padding:60px 0;display:flex;flex-direction:column;align-items:center;gap:12px;">'
-        + '<div style="width:28px;height:28px;border:3px solid #eee;border-top-color:#111;border-radius:50%;animation:spin .7s linear infinite;"></div>'
-        + '<div style="font-size:13px;color:#bbb;">불러오는 중...</div></div>';
+    _scrollTabIntoCenter(cat, null, 'instant');
+    // 서브 pills 갱신
+    var subScroll = document.querySelector('#viewHome .ksub-scroll');
+    if(subScroll) {
+      var subs = getSubs(cat);
+      subScroll.innerHTML = '<button class="ksub-pill active" onclick="homeSubSelect(\'\')">전체보기</button>'
+        + subs.map(function(s){
+            return '<button class="ksub-pill" onclick="homeSubSelect(\''+s.name+'\')">'+s.name+'</button>';
+          }).join('');
     }
+    // 검색창 초기화
+    var si = document.getElementById('homeSearchInput');
+    if(si) si.value = '';
+    var sc = document.getElementById('homeSearchClear');
+    if(sc) sc.classList.remove('visible');
+    // 콘텐츠만 갱신 (관리자모드와 동일하게 네트워크 요청 없이 즉시)
+    renderHomeContent();
   } else {
-    // 탭바 없으면(홈A→B 첫 진입) 로딩 전체 표시
-    var el = document.getElementById('viewHome');
-    el.innerHTML = '<div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;">'
-      + '<div style="width:28px;height:28px;border:3px solid #eee;border-top-color:#111;border-radius:50%;animation:spin .7s linear infinite;"></div>'
-      + '<div style="font-size:13px;color:#bbb;">불러오는 중...</div></div>';
+    // 탭바 없으면(홈A→B 첫 진입) 전체 렌더
+    renderHomeB();
+    setTimeout(function() { _scrollTabIntoCenter(cat, null, 'instant'); }, 0);
   }
-
-  sbLoadAll().then(function(ok) {
-    if(homeScreen === 'B' && hState.cat === cat) {
-      renderHomeB();
-      setTimeout(function() { _scrollTabIntoCenter(cat, null, 'instant'); }, 0);
-    }
-  });
 }
 
 function renderHomeB() {
@@ -259,9 +259,7 @@ function renderHomeContent() {
 }
 
 function adCardHTML(ad, mode) {
-  const srcs = (ad.types||[]).map(t=>t.src).filter(Boolean);
-  const thumb = srcs[0] || '';
-  const total = srcs.length;
+  const thumb = (ad.types||[]).find(t=>t.src)?.src || '';
   const overlayBtns = mode==='admin' ? `
     <button class="kad-ov-btn" onclick="event.stopPropagation();openLightbox('${thumb}')">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/></svg>
@@ -273,74 +271,24 @@ function adCardHTML(ad, mode) {
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><polyline points="3,6 5,6 21,6"/><path d="M19 6l-1 14H6L5 6"/></svg>
     </button>
   ` : '';
-
-  // 이미지 슬라이더 (여러 타입 이미지가 있을 때)
-  var thumbInner = '';
-  if(!thumb) {
-    thumbInner = `<div class="kad-thumb-empty">
-      <svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.5" width="32" height="32" style="opacity:.3"><rect x="6" y="14" width="36" height="26" rx="4"/><circle cx="18" cy="26" r="4"/><path d="m6 36 10-8 8 8 6-6 12 10"/></svg>
-      <span>이미지 없음</span>
-    </div>`;
-  } else if(total <= 1) {
-    thumbInner = `<img src="${thumb}" alt="${escapeHTML(ad.title)}" />`;
-  } else {
-    // 슬라이더
-    var uid = 'cs_' + ad.id;
-    var slides = srcs.map(function(src, i) {
-      return `<div class="kcard-slide" style="flex:0 0 100%;width:100%;"><img src="${src}" style="width:100%;height:100%;object-fit:cover;" /></div>`;
-    }).join('');
-    var dots = srcs.map(function(_, i) {
-      return `<span class="kcard-dot ${i===0?'active':''}" onclick="event.stopPropagation();cardSlide('${uid}',${i})"></span>`;
-    }).join('');
-    thumbInner = `
-      <div class="kcard-slider" id="${uid}" data-idx="0">
-        <div class="kcard-slides" style="display:flex;width:100%;height:100%;transition:transform .25s ease;">
-          ${slides}
-        </div>
-        <button class="kcard-arrow kcard-arrow-l" onclick="event.stopPropagation();cardSlide('${uid}',-1,true)">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="14" height="14"><polyline points="15 18 9 12 15 6"/></svg>
-        </button>
-        <button class="kcard-arrow kcard-arrow-r" onclick="event.stopPropagation();cardSlide('${uid}',1,true)">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="14" height="14"><polyline points="9 6 15 12 9 18"/></svg>
-        </button>
-        <div class="kcard-dots" id="${uid}_dots">${dots}</div>
-      </div>`;
-  }
-
   return `
     <div class="kad-card" onclick="openDetail(${ad.id}, '${mode}')">
       <div class="kad-thumb-wrap">
         <div class="kad-thumb">
-          ${thumbInner}
+          ${thumb ? `<img src="${thumb}" alt="${ad.title}" />` : `<div class="kad-thumb-empty">
+            <svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.5" width="32" height="32" style="opacity:.3"><rect x="6" y="14" width="36" height="26" rx="4"/><circle cx="18" cy="26" r="4"/><path d="m6 36 10-8 8 8 6-6 12 10"/></svg>
+            <span>이미지 없음</span>
+          </div>`}
           <div class="kad-overlay">${overlayBtns}</div>
         </div>
       </div>
       <div class="kad-meta">
-        <div class="kad-tag">${escapeHTML(ad.subCat)}</div>
+        <div class="kad-tag">${ad.subCat}</div>
         <div class="kad-title">${escapeHTML(ad.title)}</div>
         <div class="kad-date">등록일: ${escapeHTML(ad.adDate)}</div>
       </div>
     </div>
   `;
-}
-
-function cardSlide(uid, val, isRelative) {
-  var el = document.getElementById(uid);
-  if(!el) return;
-  var total = el.querySelectorAll('.kcard-slide').length;
-  var cur = parseInt(el.dataset.idx) || 0;
-  var next = isRelative ? cur + val : val;
-  if(next < 0) next = total - 1;
-  if(next >= total) next = 0;
-  el.dataset.idx = next;
-  var slides = el.querySelector('.kcard-slides');
-  if(slides) slides.style.transform = 'translateX(-' + (next * 100) + '%)';
-  var dotsEl = document.getElementById(uid + '_dots');
-  if(dotsEl) {
-    dotsEl.querySelectorAll('.kcard-dot').forEach(function(d, i) {
-      d.classList.toggle('active', i === next);
-    });
-  }
 }
 
 // ══════════════════════════════════════════════════════
@@ -1180,30 +1128,7 @@ function renderDetail() {
   } else {
     // Edit tab
     editSettingPhotos = null;
-    var editCatInit = ad.mainCat || MAIN_CATS[0];
-    var editSubInit = ad.subCat || '';
-    var editProdInit = ad.product || '';
-    var editSubsInit = getSubs(editCatInit);
-    var editProdsInit = getProds(editCatInit, editSubInit);
     html+=`<div class="kform-group">
-      <label class="kform-label">카테고리</label>
-      <select class="kinput" id="editCat" onchange="editCatChange()">
-        ${MAIN_CATS.map(c=>`<option value="${c}" ${c===editCatInit?'selected':''}>${c}</option>`).join('')}
-      </select>
-    </div>
-    <div class="kform-group">
-      <label class="kform-label">세부 카테고리</label>
-      <select class="kinput" id="editSubSel" onchange="editSubChange()">
-        ${editSubsInit.map(s=>`<option value="${s.name}" ${s.name===editSubInit?'selected':''}>${s.name}</option>`).join('')}
-      </select>
-    </div>
-    <div class="kform-group">
-      <label class="kform-label">상품</label>
-      <select class="kinput" id="editProdSel">
-        ${editProdsInit.length ? editProdsInit.map(p=>`<option value="${p.name}" ${p.name===editProdInit?'selected':''}>${p.name}</option>`).join('') : '<option value="">상품 없음</option>'}
-      </select>
-    </div>
-    <div class="kform-group">
       <label class="kform-label">광고 이름</label>
       <input class="kinput" type="text" id="editTitle" value="${ad.title}" placeholder="광고 이름" />
     </div>
@@ -1291,23 +1216,6 @@ function renderDetail() {
   }
 }
 
-function editCatChange() {
-  var cat = document.getElementById('editCat')?.value;
-  if(!cat) return;
-  var subs = getSubs(cat);
-  var subSel = document.getElementById('editSubSel');
-  if(subSel) subSel.innerHTML = subs.map(function(s){ return '<option value="'+s.name+'">'+s.name+'</option>'; }).join('') || '<option value="">세부 카테고리 없음</option>';
-  editSubChange();
-}
-function editSubChange() {
-  var cat = document.getElementById('editCat')?.value;
-  var sub = document.getElementById('editSubSel')?.value || '';
-  if(!cat) return;
-  var prods = getProds(cat, sub);
-  var prodSel = document.getElementById('editProdSel');
-  if(prodSel) prodSel.innerHTML = prods.length ? prods.map(function(p){ return '<option value="'+p.name+'">'+p.name+'</option>'; }).join('') : '<option value="">상품 없음</option>';
-}
-
 function editAddType() {
   const idx=editTypeCount++;
   editTypeSrcs[idx]=null;
@@ -1375,9 +1283,6 @@ function editRemoveSettingPhoto(idx) {
 function editSave() {
   const title=document.getElementById('editTitle')?.value.trim();
   if(!title){alert('광고 이름을 입력하세요');return;}
-  const newCat  = document.getElementById('editCat')?.value || detailAd.mainCat;
-  const newSub  = document.getElementById('editSubSel')?.value || detailAd.subCat;
-  const newProd = document.getElementById('editProdSel')?.value || detailAd.product;
 
   const blocks=document.querySelectorAll('[id^="editTypeBlock_"]');
   const rawTypes=Array.from(blocks).map(b=>{
@@ -1421,7 +1326,7 @@ function editSave() {
         finalSettingPhotos.push({src: spSrc, storeName: spStore});
       }
     }
-    DB.ads[idx]={...DB.ads[idx],mainCat:newCat,subCat:newSub,product:newProd,title,types:finalTypes,adDate:new Date().toLocaleDateString('ko-KR'),settingPhotos:finalSettingPhotos};
+    DB.ads[idx]={...DB.ads[idx],title,types:finalTypes,adDate:new Date().toLocaleDateString('ko-KR'),settingPhotos:finalSettingPhotos};
     detailAd=DB.ads[idx];
     saveData();
     sbUpdateAd(DB.ads[idx]);
