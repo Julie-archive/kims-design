@@ -212,6 +212,34 @@ html, body { height: 100%; overflow: hidden; overflow-x: hidden; max-width: 100%
 }
 .kad-thumb img { width: 100%; height: 100%; object-fit: cover; }
 .kad-thumb-empty { display: flex; flex-direction: column; align-items: center; gap: 6px; color: #bbb; font-size: 11px; }
+/* ── Card Slider ── */
+.kcard-slider { position: relative; width: 100%; height: 100%; overflow: hidden; }
+.kcard-slides { display: flex; width: 100%; height: 100%; will-change: transform; }
+.kcard-slide  { flex: 0 0 100%; min-width: 100%; height: 100%; }
+.kcard-slide img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.kcard-arrow {
+  position: absolute; top: 50%; transform: translateY(-50%);
+  width: 26px; height: 26px; border-radius: 50%;
+  background: rgba(0,0,0,0.45); border: none; cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  color: #fff; z-index: 2; padding: 0;
+  opacity: 0; transition: opacity .15s;
+  touch-action: manipulation;
+}
+.kad-card:hover .kcard-arrow { opacity: 1; }
+.kcard-arrow-l { left: 6px; }
+.kcard-arrow-r { right: 6px; }
+.kcard-dots {
+  position: absolute; bottom: 6px; left: 50%; transform: translateX(-50%);
+  display: flex; gap: 5px; z-index: 2;
+}
+.kcard-dot {
+  width: 6px; height: 6px; border-radius: 50%;
+  background: rgba(255,255,255,0.5); cursor: pointer;
+  transition: background .15s, transform .15s;
+  touch-action: manipulation;
+}
+.kcard-dot.active { background: #fff; transform: scale(1.2); }
 .kad-overlay {
   position: absolute; inset: 0; background: rgba(0,0,0,.6); border-radius: 6px;
   display: flex; align-items: center; justify-content: center; gap: 10px;
