@@ -280,10 +280,16 @@ async function uploadImageToStorage(base64DataUrl, fileName) {
 async function processAdTypes(types) {
   var result = [];
   var failedUploads = [];
+  // 배치 타임스탬프 1회 생성 → 같은 등록 건 내 파일명 고유 보장
+  var batchTs = Date.now();
   for(var i=0; i<types.length; i++) {
     var t = types[i];
     if(t.src && t.src.startsWith('data:')) {
-      var url = await uploadImageToStorage(t.src, 'ad_' + (t.name||'type').replace(/[^a-zA-Z0-9]/g,'_'));
+      // 파일명: ad_{타입명}_{배치타임스탬프}_{인덱스}
+      // → 타입명이 같아도(예: 행잉형+행잉형) 인덱스로 구분되어 덮어쓰기 방지
+      var safeName = (t.name||'type').replace(/[^a-zA-Z0-9가-힣]/g,'_');
+      var fileName = 'ad_' + safeName + '_' + batchTs + '_' + i;
+      var url = await uploadImageToStorage(t.src, fileName);
       if(url) {
         // 업로드 성공 → Storage URL 사용
         result.push({name:t.name, width:t.width, height:t.height, memo:t.memo||'', unitPrice:t.unitPrice||'', src: url});

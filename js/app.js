@@ -1203,7 +1203,7 @@ function renderDetail() {
   container.innerHTML=html;
   // 기존 타입에서 고정 사이즈 타입 readOnly 처리
   setTimeout(function() {
-    (ad.types || []).forEach(function(t, i) { 
+    existingTypes.forEach(function(t, i) {
       if(FIXED_SIZE_TYPES && FIXED_SIZE_TYPES[t.name]) {
         var wEl = document.getElementById('editTypeW_'+i);
         var hEl = document.getElementById('editTypeH_'+i);
