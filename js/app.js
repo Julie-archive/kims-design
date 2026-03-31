@@ -78,7 +78,7 @@ function renderHomeA() {
             </button>
           `).join('')}
         </div>
-        <div class="kcat-grid" style="grid-template-columns:1fr;gap:10px;margin-top:16px;">
+        <div class="kcat-grid" style="grid-template-columns:1fr;gap:10px;margin-top:8px;">
           ${['S.I','지점 운영 광고'].map(cat=>`
             <button onclick="homeCatSelect('${cat}')" style="
               width:100%;padding:22px 28px;
