@@ -1133,10 +1133,10 @@ function renderDetail() {
       <input class="kinput" type="text" id="editTitle" value="${ad.title}" placeholder="광고 이름" />
     </div>
     <div id="editTypeBlocks">`;
-    const existingTypes=ad.types||[];
-    editTypeCount=existingTypes.length;
-    editTypeSrcs={};
-    existingTypes.forEach((t,i)=>{
+    const existingTypes = ad.types || [];
+    editTypeCount = existingTypes.length;
+    editTypeSrcs = {};
+    existingTypes.forEach((t, i) => {
       editTypeSrcs[i]=null; // null = keep existing
       const isCustom=!PRESET_TYPES.includes(t.name);
       html+=`<div class="ktype-block" id="editTypeBlock_${i}">
