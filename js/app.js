@@ -265,7 +265,7 @@ function adCardHTML(ad, mode) {
     <div class="kad-card" onclick="openDetail(${ad.id}, '${mode}')">
       <div class="kad-thumb-wrap">
         <div class="kad-thumb">
-          ${thumb ? `<img src="${thumb}" alt="${ad.title}" />` : `<div class="kad-thumb-empty">
+          ${thumb ? `<img src="${thumb}" alt="${escapeHTML(ad.title)}" />` : `<div class="kad-thumb-empty">
             <svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.5" width="32" height="32" style="opacity:.3"><rect x="6" y="14" width="36" height="26" rx="4"/><circle cx="18" cy="26" r="4"/><path d="m6 36 10-8 8 8 6-6 12 10"/></svg>
             <span>이미지 없음</span>
           </div>`}
@@ -273,9 +273,9 @@ function adCardHTML(ad, mode) {
         </div>
       </div>
       <div class="kad-meta">
-        <div class="kad-tag">${ad.subCat}</div>
-        <div class="kad-title">${ad.title}</div>
-        <div class="kad-date">등록일: ${ad.adDate}</div>
+        <div class="kad-tag">${escapeHTML(ad.subCat)}</div>
+        <div class="kad-title">${escapeHTML(ad.title)}</div>
+        <div class="kad-date">등록일: ${escapeHTML(ad.adDate)}</div>
       </div>
     </div>
   `;
