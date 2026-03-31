@@ -1201,18 +1201,19 @@ function renderDetail() {
   }
 
   container.innerHTML=html;
-  // 기존 타입에서 고정 사이즈 타입 readOnly 처리
-  setTimeout(function() {
-    existingTypes.forEach(function(t, i) {
-      if(FIXED_SIZE_TYPES && FIXED_SIZE_TYPES[t.name]) {
-        var wEl = document.getElementById('editTypeW_'+i);
-        var hEl = document.getElementById('editTypeH_'+i);
-        if(wEl) { wEl.readOnly = true; wEl.style.background = '#f2f2f2'; wEl.title='고정 사이즈'; }
-        if(hEl) { hEl.readOnly = true; hEl.style.background = '#f2f2f2'; hEl.title='고정 사이즈'; }
-      }
-    });
-  }, 50);
-}
+  // 기존 타입에서 고정 사이즈 타입 readOnly 처리 (edit 탭일 때만)
+  if(detailTab === 'edit' && typeof existingTypes !== 'undefined') {
+    setTimeout(function() {
+      existingTypes.forEach(function(t, i) {
+        if(FIXED_SIZE_TYPES && FIXED_SIZE_TYPES[t.name]) {
+          var wEl = document.getElementById('editTypeW_'+i);
+          var hEl = document.getElementById('editTypeH_'+i);
+          if(wEl) { wEl.readOnly = true; wEl.style.background = '#f2f2f2'; wEl.title='고정 사이즈'; }
+          if(hEl) { hEl.readOnly = true; hEl.style.background = '#f2f2f2'; hEl.title='고정 사이즈'; }
+        }
+      });
+    }, 50);
+  }
 
 function editAddType() {
   const idx=editTypeCount++;
