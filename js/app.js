@@ -1133,7 +1133,7 @@ function renderDetail() {
       <input class="kinput" type="text" id="editTitle" value="${ad.title}" placeholder="광고 이름" />
     </div>
     <div id="editTypeBlocks">`;
-    const existingTypes = ad.types || [];
+    var existingTypes = ad.types || [];
     editTypeCount = existingTypes.length;
     editTypeSrcs = {};
     existingTypes.forEach((t, i) => {
