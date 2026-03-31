@@ -1024,8 +1024,7 @@ function openDetail(id, mode) {
 }
 
 function renderDetail() {
-  const ad = curDetailAd; 
-  const detailAd = typeof curDetailAd !== 'undefined' ? curDetailAd : ad; 
+  const ad = detailAd; 
   const types = ad.types || [];
   const container = document.getElementById('detailContent');
   const footer = document.getElementById('detailFooter');
