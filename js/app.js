@@ -1082,7 +1082,7 @@ function renderDetail() {
         if(ad.memo) {
           html+=`<div style="margin-top:20px;padding:14px 16px;background:#f2f2f2;border-radius:6px;">
             <div style="font-size:11px;font-weight:700;color:#aaa;margin-bottom:6px;letter-spacing:0.02em;">메모</div>
-            <div style="font-size:13px;color:#555;line-height:1.6;white-space:pre-wrap;">${ad.memo}</div>
+            <div style="font-size:13px;color:#555;line-height:1.6;white-space:pre-wrap;">${escapeHTML(ad.memo)}</div>
           </div>`;
         }
         if((ad.settingPhotos||[]).length > 0) {
@@ -1101,7 +1101,7 @@ function renderDetail() {
         if(ad.memo) {
           html+=`<div style="margin-top:20px;padding:14px 16px;background:#f2f2f2;border-radius:6px;">
             <div style="font-size:11px;font-weight:700;color:#aaa;margin-bottom:6px;letter-spacing:0.02em;">메모</div>
-            <div style="font-size:13px;color:#555;line-height:1.6;white-space:pre-wrap;">${ad.memo}</div>
+            <div style="font-size:13px;color:#555;line-height:1.6;white-space:pre-wrap;">${escapeHTML(ad.memo)}</div>
           </div>`;
         }
         if((ad.settingPhotos||[]).length > 0) {
