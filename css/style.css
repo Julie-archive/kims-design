@@ -33,6 +33,7 @@
   --kr2: 6px;
 }
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+button, a { touch-action: manipulation; }
 html, body { height: 100%; overflow: hidden; overflow-x: hidden; max-width: 100%; background: var(--bg); color: var(--ktext); font-family: 'Pretendard', -apple-system, sans-serif; }
 *::-webkit-scrollbar { width: 3px; height: 3px; }
 *::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.15); border-radius: 2px; }
@@ -114,6 +115,7 @@ html, body { height: 100%; overflow: hidden; overflow-x: hidden; max-width: 100%
   display: flex; align-items: center; justify-content: center;
   font-size: clamp(14px,4vw,19px); font-family: 'Pretendard', sans-serif; letter-spacing: -0.03em;
   transition: color .15s, border-color .15s; color: #aaa; font-weight: 700;
+  touch-action: manipulation;
 }
 .ktab-btn.active {
   color: #111;
@@ -147,6 +149,7 @@ html, body { height: 100%; overflow: hidden; overflow-x: hidden; max-width: 100%
   background: transparent; border: 1.5px solid rgba(0,0,0,0.18);
   border-radius: 50px; font-size: 16px; font-weight: 600; color: #111;
   cursor: pointer; transition: background .18s, color .18s, border-color .18s; white-space: nowrap;
+  touch-action: manipulation;
 }
 .ksub-pill.active { background: #111; color: #fff; border-color: #111; }
 .ksub-pill-del { display: none !important; /* 편집 모달에서 관리 */
@@ -293,6 +296,7 @@ html, body { height: 100%; overflow: hidden; overflow-x: hidden; max-width: 100%
   display: flex; align-items: center; justify-content: center;
   color: #fff; z-index: 2; padding: 0;
   opacity: 0; transition: opacity .15s;
+  touch-action: manipulation;
 }
 .kad-card:hover .kcard-arrow { opacity: 1; }
 .kcard-arrow-l { left: 6px; }
@@ -305,9 +309,9 @@ html, body { height: 100%; overflow: hidden; overflow-x: hidden; max-width: 100%
   width: 6px; height: 6px; border-radius: 50%;
   background: rgba(255,255,255,0.5); cursor: pointer;
   transition: background .15s, transform .15s;
+  touch-action: manipulation;
 }
 .kcard-dot.active { background: #fff; transform: scale(1.2); }
-/* 모바일: 화살표 항상 표시 */
 @media(max-width: 600px) {
   .kcard-arrow { opacity: 1; width: 22px; height: 22px; }
 }
@@ -624,6 +628,7 @@ html, body { height: 100%; overflow: hidden; overflow-x: hidden; max-width: 100%
   aspect-ratio: 1; background: #f2f2f2; border: none; border-radius: 10px;
   display: flex; align-items: center; justify-content: center;
   cursor: pointer; transition: background .18s, color .18s, border-color .18s; padding: 0;
+  touch-action: manipulation;
 }
 .kcat-btn:hover { background: #111; }
 .kcat-btn:hover .kcat-label { color: #fff; }
