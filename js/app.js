@@ -254,7 +254,9 @@ function renderHomeContent() {
 }
 
 function adCardHTML(ad, mode) {
-  const thumb = (ad.types||[]).find(t=>t.src)?.src || '';
+  const srcs = (ad.types||[]).map(t=>t.src).filter(Boolean);
+  const thumb = srcs[0] || '';
+  const total = srcs.length;
   const overlayBtns = mode==='admin' ? `
     <button class="kad-ov-btn" onclick="event.stopPropagation();openLightbox('${thumb}')">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/></svg>
@@ -266,24 +268,70 @@ function adCardHTML(ad, mode) {
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><polyline points="3,6 5,6 21,6"/><path d="M19 6l-1 14H6L5 6"/></svg>
     </button>
   ` : '';
+
+  var thumbInner = '';
+  if(!thumb) {
+    thumbInner = `<div class="kad-thumb-empty">
+      <svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.5" width="32" height="32" style="opacity:.3"><rect x="6" y="14" width="36" height="26" rx="4"/><circle cx="18" cy="26" r="4"/><path d="m6 36 10-8 8 8 6-6 12 10"/></svg>
+      <span>이미지 없음</span>
+    </div>`;
+  } else if(total <= 1) {
+    thumbInner = `<img src="${thumb}" alt="${escapeHTML(ad.title)}" />`;
+  } else {
+    var uid = 'cs_' + ad.id;
+    var slides = srcs.map(function(src) {
+      return `<div class="kcard-slide" style="flex:0 0 100%;width:100%;"><img src="${src}" style="width:100%;height:100%;object-fit:cover;" /></div>`;
+    }).join('');
+    var dots = srcs.map(function(_, i) {
+      return `<span class="kcard-dot ${i===0?'active':''}" onclick="event.stopPropagation();cardSlide('${uid}',${i})"></span>`;
+    }).join('');
+    thumbInner = `
+      <div class="kcard-slider" id="${uid}" data-idx="0">
+        <div class="kcard-slides" style="display:flex;width:100%;height:100%;transition:transform .25s ease;">
+          ${slides}
+        </div>
+        <button class="kcard-arrow kcard-arrow-l" onclick="event.stopPropagation();cardSlide('${uid}',-1,true)">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="14" height="14"><polyline points="15 18 9 12 15 6"/></svg>
+        </button>
+        <button class="kcard-arrow kcard-arrow-r" onclick="event.stopPropagation();cardSlide('${uid}',1,true)">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="14" height="14"><polyline points="9 6 15 12 9 18"/></svg>
+        </button>
+        <div class="kcard-dots" id="${uid}_dots">${dots}</div>
+      </div>`;
+  }
+
   return `
     <div class="kad-card" onclick="openDetail(${ad.id}, '${mode}')">
       <div class="kad-thumb-wrap">
         <div class="kad-thumb">
-          ${thumb ? `<img src="${thumb}" alt="${ad.title}" />` : `<div class="kad-thumb-empty">
-            <svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.5" width="32" height="32" style="opacity:.3"><rect x="6" y="14" width="36" height="26" rx="4"/><circle cx="18" cy="26" r="4"/><path d="m6 36 10-8 8 8 6-6 12 10"/></svg>
-            <span>이미지 없음</span>
-          </div>`}
+          ${thumbInner}
           <div class="kad-overlay">${overlayBtns}</div>
         </div>
       </div>
       <div class="kad-meta">
-        <div class="kad-tag">${ad.subCat}</div>
+        <div class="kad-tag">${escapeHTML(ad.subCat)}</div>
         <div class="kad-title">${escapeHTML(ad.title)}</div>
         <div class="kad-date">등록일: ${escapeHTML(ad.adDate)}</div>
       </div>
     </div>
   `;
+}
+
+function cardSlide(uid, val, isRelative) {
+  var el = document.getElementById(uid);
+  if(!el) return;
+  var total = el.querySelectorAll('.kcard-slide').length;
+  var cur = parseInt(el.dataset.idx) || 0;
+  var next = isRelative ? cur + val : val;
+  if(next < 0) next = total - 1;
+  if(next >= total) next = 0;
+  el.dataset.idx = next;
+  var slides = el.querySelector('.kcard-slides');
+  if(slides) slides.style.transform = 'translateX(-' + (next * 100) + '%)';
+  var dotsEl = document.getElementById(uid + '_dots');
+  if(dotsEl) dotsEl.querySelectorAll('.kcard-dot').forEach(function(d, i) {
+    d.classList.toggle('active', i === next);
+  });
 }
 
 // ══════════════════════════════════════════════════════
