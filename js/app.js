@@ -1033,13 +1033,13 @@ function renderDetail() {
 
   let html=`
     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;gap:8px;">
-      <span class="kdetail-tag">${ad.mainCat} &gt; ${ad.subCat}</span>
+      <span class="kdetail-tag">${escapeHTML(ad.mainCat)} &gt; ${escapeHTML(ad.subCat)}</span>
       <div style="display:flex;align-items:center;gap:10px;flex-shrink:0;">
-        <span style="font-size:12px;color:var(--ktext3);">등록일: ${ad.adDate}</span>
+        <span style="font-size:12px;color:var(--ktext3);">등록일: ${escapeHTML(ad.adDate)}</span>
         <button onclick="modalClose('modalDetail')" style="background:none;border:none;cursor:pointer;color:var(--ktext3);font-size:20px;line-height:1;padding:2px 4px;flex-shrink:0;">✕</button>
       </div>
     </div>
-    <h2 style="font-size:22px;font-weight:800;letter-spacing:-0.5px;margin-bottom:${(detailMode==='admin'&&adminLoggedIn)?16:20}px;">${ad.title}</h2>
+    <h2 style="font-size:22px;font-weight:800;letter-spacing:-0.5px;margin-bottom:${(detailMode==='admin'&&adminLoggedIn)?16:20}px;">${escapeHTML(ad.title)}</h2>
   `;
 
   if(detailMode === 'admin' && adminLoggedIn) {
