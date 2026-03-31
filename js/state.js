@@ -31,14 +31,22 @@ function loadData() {
 function saveData() {
   try {
     // requests는 Supabase가 원본 - localStorage에 저장 안 함
-    // ads에서 base64 이미지 제거 (용량 초과 방지)
+    // ads에서 base64 이미지 제거 (브라우저 용량 5MB 초과 방지)
     var adsToSave = (DB.ads||[]).map(function(ad) {
       return Object.assign({}, ad, {
         types: (ad.types||[]).map(function(t) {
           return Object.assign({}, t, {
-
             src: (t.src && t.src.startsWith('data:')) ? '' : (t.src||'')
           });
+        }),
+        // 셋팅 사진에서도 base64 이미지 필터링 추가
+        settingPhotos: (ad.settingPhotos||[]).map(function(p) {
+          var src = typeof p === 'object' ? (p.src||'') : p;
+          var store = typeof p === 'object' ? (p.storeName||'') : '';
+          return {
+            src: src.startsWith('data:') ? '' : src, 
+            storeName: store 
+          };
         })
       });
     });
