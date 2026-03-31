@@ -274,8 +274,8 @@ function adCardHTML(ad, mode) {
       </div>
       <div class="kad-meta">
         <div class="kad-tag">${ad.subCat}</div>
-        <div class="kad-title">${ad.title}</div>
-        <div class="kad-date">등록일: ${ad.adDate}</div>
+        <div class="kad-title">${escapeHTML(ad.title)}</div>
+        <div class="kad-date">등록일: ${escapeHTML(ad.adDate)}</div>
       </div>
     </div>
   `;
