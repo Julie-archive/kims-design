@@ -5,7 +5,7 @@
 // ══════════════════════════════════════════════════════
 
 // 입력값의 HTML 태그를 무력화하여 XSS 공격을 방어하는 유틸리티 함수
-function escapeHTML(str) {
+window.escapeHTML = function(str) {
   if (!str) return '';
   return String(str)
     .replace(/&/g, '&amp;')
@@ -13,7 +13,7 @@ function escapeHTML(str) {
     .replace(/>/g, '&gt;')
     .replace(/"/g, '&quot;')
     .replace(/'/g, '&#039;');
-}
+};
 
 function switchView(v) {
   curView = v;
