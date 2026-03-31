@@ -658,7 +658,7 @@ html, body { height: 100%; overflow: hidden; overflow-x: hidden; max-width: 100%
   .ksub-row { padding: 6px 16px 10px; }
   .kprod-row { padding: 8px 16px 12px; }
   .kcontent { padding: 16px 16px 60px; }
-  .khero { padding: 40px 24px 40px; }
+  .khero { padding: 40px 24px 20px; }
   .kcat-grid { padding: 0 24px 40px; gap: 8px; }
   .ksect-title { font-size: 15px; padding-right: 44px; }
   .ksect-add-btn { width: 34px; height: 34px; }
