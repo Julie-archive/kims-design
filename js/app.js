@@ -40,10 +40,6 @@ function renderHome() {
   if(homeScreen==='A') renderHomeA();
   else renderHomeB();
 }
-function renderHome() {
-  if(homeScreen==='A') renderHomeA();
-  else renderHomeB();
-
 
 function goHomeRoot() {
   curView = 'home';
