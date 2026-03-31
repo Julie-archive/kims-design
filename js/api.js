@@ -164,6 +164,7 @@ async function sbUpdateAd(ad) {
   });
   try {
     var res = await sb.from('ads').update({
+      main_cat:ad.mainCat, sub_cat:ad.subCat, product:ad.product,
       title:ad.title, ad_date:ad.adDate, types:typesForDB, memo:ad.memo||'',
       setting_photos:(ad.settingPhotos||[]).map(function(p){
         return {src:(typeof p==='object'?p.src:p)||'', storeName:(typeof p==='object'?p.storeName:'')||''};
@@ -177,6 +178,7 @@ async function sbUpdateAd(ad) {
   // fallback
   try {
     await sb.from('ads').update({
+      main_cat:ad.mainCat, sub_cat:ad.subCat, product:ad.product,
       title:ad.title, ad_date:ad.adDate, types:typesForDB, memo:ad.memo||''
     }).eq('id', ad.id);
     console.log('[sbUpdateAd] fallback 성공');

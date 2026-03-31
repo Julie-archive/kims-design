@@ -795,9 +795,10 @@ function typeBlockInnerHTML(idx,prefix) {
     <input class="kinput" placeholder="타입명 입력" id="${prefix}TypeCustomName_${idx}" />
   </div>
   <div class="ktype-size-row">
-    <input class="kinput-sm" type="number" placeholder="가로(px)" id="${prefix}TypeW_${idx}" />
-    <span>×</span>
-    <input class="kinput-sm" type="number" placeholder="세로(px)" id="${prefix}TypeH_${idx}" />
+    <input class="kinput-sm" type="number" placeholder="가로" id="${prefix}TypeW_${idx}" />
+    <span style="font-size:13px;color:#aaa;flex-shrink:0;">×</span>
+    <input class="kinput-sm" type="number" placeholder="세로" id="${prefix}TypeH_${idx}" />
+    <span style="font-size:12px;color:#999;flex-shrink:0;">mm</span>
   </div>
   <label class="kupload-label">
     <input type="file" accept="image/*" onchange="typeFileChange('${prefix}','${idx}',this)" />
@@ -1128,7 +1129,35 @@ function renderDetail() {
   } else {
     // Edit tab
     editSettingPhotos = null;
+    // 카테고리 선택용 초기값
+    var editCatInit = ad.mainCat || MAIN_CATS[0];
+    var editSubInit = ad.subCat || '';
+    var editProdInit = ad.product || '';
+    var editSubsInit = getSubs(editCatInit);
+    var editProdsInit = getProds(editCatInit, editSubInit);
     html+=`<div class="kform-group">
+      <label class="kform-label">카테고리</label>
+      <select class="kinput" id="editCat" onchange="editCatChange()">
+        ${MAIN_CATS.map(c=>`<option value="${c}" ${c===editCatInit?'selected':''}>${c}</option>`).join('')}
+      </select>
+    </div>
+    <div class="kform-group">
+      <label class="kform-label">세부 카테고리</label>
+      <div id="editSubRow">
+        <select class="kinput" id="editSubSel" onchange="editSubChange()">
+          ${editSubsInit.map(s=>`<option value="${s.name}" ${s.name===editSubInit?'selected':''}>${s.name}</option>`).join('')}
+        </select>
+      </div>
+    </div>
+    <div class="kform-group">
+      <label class="kform-label">상품</label>
+      <div id="editProdRow">
+        <select class="kinput" id="editProdSel">
+          ${editProdsInit.length ? editProdsInit.map(p=>`<option value="${p.name}" ${p.name===editProdInit?'selected':''}>${p.name}</option>`).join('') : '<option value="">상품 없음</option>'}
+        </select>
+      </div>
+    </div>
+    <div class="kform-group">
       <label class="kform-label">광고 이름</label>
       <input class="kinput" type="text" id="editTitle" value="${ad.title}" placeholder="광고 이름" />
     </div>
@@ -1151,9 +1180,10 @@ function renderDetail() {
           <input class="kinput" placeholder="타입명 입력" id="editTypeCustomName_${i}" value="${isCustom?t.name:''}" />
         </div>
         <div class="ktype-size-row">
-          <input class="kinput-sm" type="number" placeholder="가로(px)" id="editTypeW_${i}" value="${t.width||''}" />
-          <span>×</span>
-          <input class="kinput-sm" type="number" placeholder="세로(px)" id="editTypeH_${i}" value="${t.height||''}" />
+          <input class="kinput-sm" type="number" placeholder="가로" id="editTypeW_${i}" value="${t.width||''}" />
+          <span style="font-size:13px;color:#aaa;flex-shrink:0;">×</span>
+          <input class="kinput-sm" type="number" placeholder="세로" id="editTypeH_${i}" value="${t.height||''}" />
+          <span style="font-size:12px;color:#999;flex-shrink:0;">mm</span>
         </div>
         <label class="kupload-label">
           <input type="file" accept="image/*" onchange="typeFileChange('edit','${i}',this)" />
@@ -1213,6 +1243,30 @@ function renderDetail() {
         }
       });
     }, 50);
+  }
+}
+
+// 편집 탭 카테고리 변경 핸들러
+function editCatChange() {
+  var cat = document.getElementById('editCat')?.value;
+  if(!cat) return;
+  var subs = getSubs(cat);
+  var subSel = document.getElementById('editSubSel');
+  if(subSel) {
+    subSel.innerHTML = subs.map(function(s){ return '<option value="'+s.name+'">'+s.name+'</option>'; }).join('') || '<option value="">세부 카테고리 없음</option>';
+  }
+  editSubChange();
+}
+function editSubChange() {
+  var cat = document.getElementById('editCat')?.value;
+  var sub = document.getElementById('editSubSel')?.value || '';
+  if(!cat) return;
+  var prods = getProds(cat, sub);
+  var prodSel = document.getElementById('editProdSel');
+  if(prodSel) {
+    prodSel.innerHTML = prods.length
+      ? prods.map(function(p){ return '<option value="'+p.name+'">'+p.name+'</option>'; }).join('')
+      : '<option value="">상품 없음</option>';
   }
 }
 
@@ -1283,6 +1337,10 @@ function editRemoveSettingPhoto(idx) {
 function editSave() {
   const title=document.getElementById('editTitle')?.value.trim();
   if(!title){alert('광고 이름을 입력하세요');return;}
+  // 카테고리 변경값 읽기
+  const newCat  = document.getElementById('editCat')?.value || detailAd.mainCat;
+  const newSub  = document.getElementById('editSubSel')?.value || detailAd.subCat;
+  const newProd = document.getElementById('editProdSel')?.value || detailAd.product;
 
   const blocks=document.querySelectorAll('[id^="editTypeBlock_"]');
   const rawTypes=Array.from(blocks).map(b=>{
@@ -1326,7 +1384,7 @@ function editSave() {
         finalSettingPhotos.push({src: spSrc, storeName: spStore});
       }
     }
-    DB.ads[idx]={...DB.ads[idx],title,types:finalTypes,adDate:new Date().toLocaleDateString('ko-KR'),settingPhotos:finalSettingPhotos};
+    DB.ads[idx]={...DB.ads[idx],mainCat:newCat,subCat:newSub,product:newProd,title,types:finalTypes,adDate:new Date().toLocaleDateString('ko-KR'),settingPhotos:finalSettingPhotos};
     detailAd=DB.ads[idx];
     saveData();
     sbUpdateAd(DB.ads[idx]);
