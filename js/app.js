@@ -1061,7 +1061,7 @@ function renderDetail() {
       html+=types.map((t,i)=>`
         <div style="margin-bottom:${i<types.length-1?28:0}px;padding-bottom:${i<types.length-1?28:0}px;border-bottom:${i<types.length-1?'1px solid var(--kborder)':'none'};">
           <div style="margin-bottom:10px;">
-            <span style="font-size:14px;font-weight:700;letter-spacing:-0.02em;">${t.name}</span>
+            <span style="font-size:14px;font-weight:700;letter-spacing:-0.02em;">${escapeHTML(t.name)}</span>
           </div>
           <div onclick="${t.src?`openLightbox('${t.src}')`:''}" style="width:100%;background:${t.src?'transparent':'#f2f2f2'};border-radius:6px;overflow:hidden;min-height:140px;display:flex;align-items:center;justify-content:center;cursor:${t.src?'zoom-in':'default'};">
             ${t.src?`<img src="${t.src}" style="width:100%;display:block;border-radius:6px;" />`:`<span style="color:#999;font-size:13px;">이미지 없음</span>`}
@@ -1070,12 +1070,12 @@ function renderDetail() {
           <div style="position:relative;">
             ${t.unitPrice?`<div style="text-align:right;font-size:11px;color:#bbb;font-weight:400;margin-bottom:5px;">단가는 사이즈에 따라 변동될 수 있습니다.</div>`:``}
             <div style="background:#f2f2f2;border-radius:6px;overflow:hidden;display:flex;align-items:stretch;">
-              ${t.width&&t.height?`<div style="flex:1;padding:13px 16px;display:flex;align-items:center;gap:8px;"><span style="font-size:12px;font-weight:700;color:#111;white-space:nowrap;flex-shrink:0;">사이즈</span><span style="font-size:13px;color:#333;font-weight:500;">${t.width}×${t.height}mm</span></div>`:``}
+              ${t.width&&t.height?`<div style="flex:1;padding:13px 16px;display:flex;align-items:center;gap:8px;"><span style="font-size:12px;font-weight:700;color:#111;white-space:nowrap;flex-shrink:0;">사이즈</span><span style="font-size:13px;color:#333;font-weight:500;">${escapeHTML(t.width)}×${escapeHTML(t.height)}mm</span></div>`:``}
               ${(t.width&&t.height)&&t.unitPrice?`<div style="width:1px;background:rgba(0,0,0,0.1);flex-shrink:0;margin:12px 0;"></div>`:``}
               ${t.unitPrice?`<div style="flex:2;padding:13px 16px;display:flex;align-items:center;gap:8px;"><span style="font-size:12px;font-weight:700;color:#111;white-space:nowrap;flex-shrink:0;">단가</span><span style="font-size:13px;color:#333;font-weight:600;">${Number(t.unitPrice).toLocaleString()}원/개</span></div>`:``}
             </div>
           </div>`:``}
-          ${t.memo?`<div style="margin-top:10px;background:#f2f2f2;border-radius:6px;padding:14px 16px;"><div style="font-size:11px;font-weight:700;color:#aaa;margin-bottom:5px;letter-spacing:0.02em;">메모</div><div style="font-size:13px;color:#555;line-height:1.6;white-space:pre-wrap;">${t.memo}</div></div>`:``}
+          ${t.memo?`<div style="margin-top:10px;background:#f2f2f2;border-radius:6px;padding:14px 16px;"><div style="font-size:11px;font-weight:700;color:#aaa;margin-bottom:5px;letter-spacing:0.02em;">메모</div><div style="font-size:13px;color:#555;line-height:1.6;white-space:pre-wrap;">${escapeHTML(t.memo)}</div></div>`:``}
         </div>
       `).join('');
       if(detailMode==='admin' && adminLoggedIn) {
