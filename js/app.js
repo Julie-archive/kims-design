@@ -609,7 +609,7 @@ document.addEventListener('keydown',e=>{
 // ══════════════════════════════════════════════════════
 function _resetModalScroll(el) {
   // display:flex/.open 상태에서만 scrollTop 리셋 가능하므로 직접 지정
-  ['.kmodal-sheet', '.kdetail-modal', '#rq-scroll-area', '#adreq-scroll-area'].forEach(function(sel) {
+  ['.kmodal-sheet', '.kdetail-modal', '#detailContent', '#rq-scroll-area', '#adreq-scroll-area'].forEach(function(sel) {
     el.querySelectorAll(sel).forEach(function(node) { node.scrollTop = 0; });
   });
   el.scrollTop = 0;
