@@ -33,7 +33,6 @@
   --kr2: 6px;
 }
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-button, a { touch-action: manipulation; }
 html, body { height: 100%; overflow: hidden; overflow-x: hidden; max-width: 100%; background: var(--bg); color: var(--ktext); font-family: 'Pretendard', -apple-system, sans-serif; }
 *::-webkit-scrollbar { width: 3px; height: 3px; }
 *::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.15); border-radius: 2px; }
@@ -66,47 +65,6 @@ html, body { height: 100%; overflow: hidden; overflow-x: hidden; max-width: 100%
   padding: 0 40px; flex-shrink: 0;
   background: #fff;
 }
-@media(max-width: 600px) {
-  .ktab-bar {
-    display: flex; overflow-x: auto; scrollbar-width: none;
-    padding: 0; gap: 0;
-    border-bottom: 1px solid var(--kborder);
-  }
-  .kadmin-top-tabs {
-    display: grid !important; grid-template-columns: 1fr 1fr;
-    overflow: visible; border-bottom: 1px solid var(--kborder);
-    padding: 0 16px;
-  }
-  .ktab-bar::-webkit-scrollbar { display: none; }
-  .ktab-btn {
-    flex-shrink: 0; padding: 14px 0;
-    font-size: clamp(12px, 3.5vw, 15px); white-space: nowrap;
-    border-bottom: none !important;
-    box-shadow: none !important;
-  }
-  .ktab-btn.active {
-    border-bottom: none !important;
-    box-shadow: inset 0 -2px 0 #111 !important;
-  }
-  /* 6개 탭 모두 동일한 너비 - 4개가 화면에 꽉 차도록 */
-  .ktab-bar:not(.kadmin-top-tabs) .ktab-btn {
-    width: 25vw;
-    flex-shrink: 0;
-    text-align: center;
-    font-size: clamp(14px, 3.8vw, 17px);
-    padding: 14px 0;
-    white-space: nowrap;
-  }
-  /* 지점 운영 광고: 텍스트 길어서 조금 더 넓게 */
-  .ktab-bar:not(.kadmin-top-tabs) .ktab-btn:nth-child(6) {
-    width: 32vw;
-  }
-  /* kadmin-top-tabs 안 버튼은 고정 비율 유지 */
-  .kadmin-top-tabs .ktab-btn {
-    width: 100%; text-align: center; white-space: nowrap;
-    font-size: clamp(14px, 4vw, 18px); padding: 16px 8px;
-  }
-}
 .ktab-btn {
   background: none; border: none;
   border-bottom: 1px solid var(--kborder);
@@ -115,7 +73,6 @@ html, body { height: 100%; overflow: hidden; overflow-x: hidden; max-width: 100%
   display: flex; align-items: center; justify-content: center;
   font-size: clamp(14px,4vw,19px); font-family: 'Pretendard', sans-serif; letter-spacing: -0.03em;
   transition: color .15s, border-color .15s; color: #aaa; font-weight: 700;
-  touch-action: manipulation;
 }
 .ktab-btn.active {
   color: #111;
@@ -149,7 +106,6 @@ html, body { height: 100%; overflow: hidden; overflow-x: hidden; max-width: 100%
   background: transparent; border: 1.5px solid rgba(0,0,0,0.18);
   border-radius: 50px; font-size: 16px; font-weight: 600; color: #111;
   cursor: pointer; transition: background .18s, color .18s, border-color .18s; white-space: nowrap;
-  touch-action: manipulation;
 }
 .ksub-pill.active { background: #111; color: #fff; border-color: #111; }
 .ksub-pill-del { display: none !important; /* 편집 모달에서 관리 */
@@ -181,27 +137,6 @@ html, body { height: 100%; overflow: hidden; overflow-x: hidden; max-width: 100%
 .ksearch-row {
   padding: 10px 40px; flex-shrink: 0;
   background: #fff;
-}
-@media(max-width:600px) {
-  .ksearch-row { padding: 8px 16px 6px; }
-  .admin-search-row {
-    flex-direction: row;
-    align-items: center;
-    gap: 8px;
-  }
-  .admin-search-row .ksearch-wrap {
-    flex: 1;
-    min-width: 0;
-  }
-  .admin-catmgr-btn {
-    width: auto;
-    min-height: 40px;
-    border-radius: 6px;
-    font-size: 12px;
-    flex-shrink: 0;
-    padding: 10px 12px;
-    white-space: nowrap;
-  }
 }
 .ksearch-wrap {
   position: relative; display: flex; align-items: center;
@@ -261,13 +196,6 @@ html, body { height: 100%; overflow: hidden; overflow-x: hidden; max-width: 100%
 .kad-grid { display: grid; grid-template-columns: repeat(5,1fr); gap: 10px; }
 @media(max-width: 1100px) { .kad-grid { grid-template-columns: repeat(4,1fr); } }
 @media(max-width: 800px) { .kad-grid { grid-template-columns: repeat(3,1fr); } }
-@media(max-width: 600px) {
-  .kad-grid { grid-template-columns: 1fr !important; gap: 10px; }
-  .kad-thumb { aspect-ratio: 16/6 !important; }
-  .kad-meta { padding: 8px 12px 12px; }
-  .kad-title { font-size: 15px; margin-bottom: 6px; }
-  .kad-overlay { display: none !important; }
-}
 
 /* ── Ad Card ── */
 .kad-card {
@@ -284,37 +212,6 @@ html, body { height: 100%; overflow: hidden; overflow-x: hidden; max-width: 100%
 }
 .kad-thumb img { width: 100%; height: 100%; object-fit: cover; }
 .kad-thumb-empty { display: flex; flex-direction: column; align-items: center; gap: 6px; color: #bbb; font-size: 11px; }
-
-/* ── Card Slider ── */
-.kcard-slider { position: relative; width: 100%; height: 100%; overflow: hidden; }
-.kcard-slides { height: 100%; will-change: transform; }
-.kcard-slide { height: 100%; }
-.kcard-arrow {
-  position: absolute; top: 50%; transform: translateY(-50%);
-  width: 26px; height: 26px; border-radius: 50%;
-  background: rgba(0,0,0,0.45); border: none; cursor: pointer;
-  display: flex; align-items: center; justify-content: center;
-  color: #fff; z-index: 2; padding: 0;
-  opacity: 0; transition: opacity .15s;
-  touch-action: manipulation;
-}
-.kad-card:hover .kcard-arrow { opacity: 1; }
-.kcard-arrow-l { left: 6px; }
-.kcard-arrow-r { right: 6px; }
-.kcard-dots {
-  position: absolute; bottom: 6px; left: 50%; transform: translateX(-50%);
-  display: flex; gap: 5px; z-index: 2;
-}
-.kcard-dot {
-  width: 6px; height: 6px; border-radius: 50%;
-  background: rgba(255,255,255,0.5); cursor: pointer;
-  transition: background .15s, transform .15s;
-  touch-action: manipulation;
-}
-.kcard-dot.active { background: #fff; transform: scale(1.2); }
-@media(max-width: 600px) {
-  .kcard-arrow { opacity: 1; width: 22px; height: 22px; }
-}
 .kad-overlay {
   position: absolute; inset: 0; background: rgba(0,0,0,.6); border-radius: 6px;
   display: flex; align-items: center; justify-content: center; gap: 10px;
@@ -439,79 +336,6 @@ html, body { height: 100%; overflow: hidden; overflow-x: hidden; max-width: 100%
 }
 }
 /* 모바일: 모든 모달 고정 높이 + 화면 중앙 정렬 */
-@media(max-width: 600px) {
-  /* 모든 overlay 중앙 정렬 */
-  .kmodal-overlay,
-  .kmodal-overlay.center,
-  .kmodal-overlay:not(.center) {
-    align-items: center !important;
-    padding: 16px !important;
-  }
-  /* 모든 kmodal-sheet 고정 높이 */
-  .kmodal-sheet {
-    border-radius: 20px !important;
-    max-width: 100% !important;
-    width: 100% !important;
-    height: 78vh !important;
-    max-height: 78vh !important;
-    min-height: unset !important;
-    padding: 0 20px 36px !important;
-    animation: sheetFade .22s ease !important;
-  }
-  /* flex-column 구조 모달: overflow:hidden 유지, padding 제거 */
-  .kmodal-sheet[style*="flex-direction"] {
-    overflow: hidden !important;
-    padding: 0 !important;
-  }
-  /* 일반 스크롤 모달: overflow-y auto */
-  .kmodal-sheet:not([style*="flex-direction"]) {
-    overflow-y: auto !important;
-    overflow-x: hidden !important;
-  }
-  /* kdetail-modal */
-  .kdetail-modal {
-    height: 78vh !important;
-    max-height: 78vh !important;
-    border-radius: 20px !important;
-    display: flex !important;
-    flex-direction: column !important;
-    overflow: hidden !important;
-  }
-  /* 모바일 detail 내부 패딩 조정 */
-  #detailContent {
-    padding: 16px 20px 8px !important;
-  }
-  #detailFooter {
-    border-radius: 0 0 20px 20px !important;
-    padding: 12px 20px 16px !important;
-  }
-  /* 기존 스와이프 힌트 숨김 (모달 안쪽) */
-  .kmodal-swipe-hint { display: none; }
-  /* 핸들 마진 */
-  .kmodal-handle {
-  width: 40px;
-  height: 4px;
-  border-radius: 999px;
-  background: rgba(0,0,0,0.14);
-  margin: 22px auto 14px;
-}
-  /* 모달 바깥 아래쪽 스와이프 힌트 */
-  .kmodal-overlay.open::after {
-    content: '아래로 스와이프 해서 닫기';
-    position: fixed;
-    bottom: 12px;
-    left: 50%;
-    transform: translateX(-50%);
-    font-size: 11px;
-    font-weight: 500;
-    color: rgba(255,255,255,0.55);
-    letter-spacing: 0.02em;
-    pointer-events: none;
-    white-space: nowrap;
-    font-family: 'Pretendard', sans-serif;
-    z-index: 201;
-  }
-}
 .kmodal-title { font-size: 18px; font-weight: 800; margin-bottom: 20px; color: var(--ktext); }
 .kmodal-title em { color: #111; font-style: normal; }
 
@@ -628,7 +452,6 @@ html, body { height: 100%; overflow: hidden; overflow-x: hidden; max-width: 100%
   aspect-ratio: 1; background: #f2f2f2; border: none; border-radius: 10px;
   display: flex; align-items: center; justify-content: center;
   cursor: pointer; transition: background .18s, color .18s, border-color .18s; padding: 0;
-  touch-action: manipulation;
 }
 .kcat-btn:hover { background: #111; }
 .kcat-btn:hover .kcat-label { color: #fff; }
@@ -652,25 +475,6 @@ html, body { height: 100%; overflow: hidden; overflow-x: hidden; max-width: 100%
 }
 
 /* ── Responsive ── */
-@media(max-width:600px) {
-  .kheader { padding: 12px 16px; }
-  .ktab-bar { padding: 0; gap: 0; }
-  .ksub-row { padding: 6px 16px 10px; }
-  .kprod-row { padding: 8px 16px 12px; }
-  .kcontent { padding: 16px 16px 60px; }
-  .khero { padding: 40px 24px 40px; }
-  .kcat-grid { padding: 0 24px 40px; gap: 8px; }
-  .ksect-title { font-size: 15px; padding-right: 44px; }
-  .ksect-add-btn { width: 34px; height: 34px; }
-  /* 세부/상품 스크롤 - 사이즈 고정 */
-  .ksub-pill { flex-shrink: 0 !important; white-space: nowrap; font-size: 13px; padding: 5px 14px; }
-  .kprod-btn { flex-shrink: 0 !important; white-space: nowrap; }
-  .ksub-scroll { -webkit-overflow-scrolling: touch; padding-bottom: 0; align-items: center; }
-  .kprod-scroll { -webkit-overflow-scrolling: touch; gap: 20px; }
-  /* 관리자 헤더 광고아카이브 탭 모바일 */
-  .kheader-logo { width: 150px; }
-  .kheader-btn { padding: 8px 14px; font-size: 12px; min-width: 80px; }
-}
 
 
 /* ── Custom Status Dropdown ── */
@@ -864,4 +668,123 @@ html, body { height: 100%; overflow: hidden; overflow-x: hidden; max-width: 100%
   flex-shrink: 0; height: 36px; padding: 0 10px; background: none;
   border: 1.5px solid #d8dce3; color: #888; border-radius: var(--kr2);
   font-family:'Pretendard',sans-serif; font-size:12px; cursor:pointer;
+}
+
+
+/* ════════════════════════════════════════════════════
+   RESPONSIVE — max-width: 600px
+════════════════════════════════════════════════════ */
+@media(max-width: 600px) {
+
+  /* ── Header ── */
+  .kheader          { padding: 12px 16px; }
+  .kheader-logo     { width: 150px; }
+  .kheader-btn      { padding: 8px 14px; font-size: 12px; min-width: 80px; }
+
+  /* ── Tab Bar ── */
+  .ktab-bar {
+    display: flex; overflow-x: auto; scrollbar-width: none;
+    padding: 0; gap: 0;
+    border-bottom: 1px solid var(--kborder);
+  }
+  .ktab-bar::-webkit-scrollbar { display: none; }
+  .ktab-btn {
+    flex-shrink: 0; padding: 14px 0;
+    border-bottom: none !important;
+    box-shadow: none !important;
+  }
+  .ktab-btn.active {
+    border-bottom: none !important;
+    box-shadow: inset 0 -2px 0 #111 !important;
+  }
+  .ktab-bar:not(.kadmin-top-tabs) .ktab-btn {
+    width: 25vw; flex-shrink: 0; text-align: center;
+    font-size: clamp(14px, 3.8vw, 17px); padding: 14px 0; white-space: nowrap;
+  }
+  .ktab-bar:not(.kadmin-top-tabs) .ktab-btn:nth-child(6) { width: 32vw; }
+  .kadmin-top-tabs {
+    display: grid !important; grid-template-columns: 1fr 1fr;
+    overflow: visible; border-bottom: 1px solid var(--kborder); padding: 0 16px;
+  }
+  .kadmin-top-tabs .ktab-btn {
+    width: 100%; text-align: center; white-space: nowrap;
+    font-size: clamp(14px, 4vw, 18px); padding: 16px 8px;
+  }
+
+  /* ── Search ── */
+  .ksearch-row { padding: 8px 16px 6px; }
+  .admin-search-row { flex-direction: row; align-items: center; gap: 8px; }
+  .admin-search-row .ksearch-wrap { flex: 1; min-width: 0; }
+  .admin-catmgr-btn {
+    width: auto; min-height: 40px; border-radius: 6px;
+    font-size: 12px; flex-shrink: 0; padding: 10px 12px; white-space: nowrap;
+  }
+
+  /* ── Sub / Prod pills ── */
+  .ksub-row     { padding: 6px 16px 10px; }
+  .kprod-row    { padding: 8px 16px 12px; }
+  .ksub-pill    { flex-shrink: 0 !important; white-space: nowrap; font-size: 13px; padding: 5px 14px; }
+  .kprod-btn    { flex-shrink: 0 !important; white-space: nowrap; }
+  .ksub-scroll  { -webkit-overflow-scrolling: touch; padding-bottom: 0; align-items: center; }
+  .kprod-scroll { -webkit-overflow-scrolling: touch; gap: 20px; }
+
+  /* ── Content ── */
+  .kcontent { padding: 16px 16px 60px; }
+
+  /* ── Hero (Home A) ── */
+  .khero    { padding: 40px 24px 40px; }
+  .kcat-grid {
+    padding: 0 24px 24px; gap: 8px;
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .kcat-btn   { aspect-ratio: 1.6 / 1; }
+  .kcat-label { font-size: clamp(16px, 4.5vw, 22px); }
+
+  /* ── Ad Cards ── */
+  .kad-grid   { grid-template-columns: 1fr !important; gap: 10px; }
+  .kad-thumb  { aspect-ratio: 16/6 !important; }
+  .kad-meta   { padding: 8px 12px 12px; }
+  .kad-title  { font-size: 15px; margin-bottom: 6px; }
+  .kad-overlay { display: none !important; }
+
+  /* ── Card Slider arrows ── */
+  .kcard-arrow { opacity: 1; width: 22px; height: 22px; }
+
+  /* ── Section ── */
+  .ksect-title  { font-size: 15px; padding-right: 44px; }
+  .ksect-add-btn { width: 34px; height: 34px; }
+
+  /* ── Modal ── */
+  .kmodal-overlay,
+  .kmodal-overlay.center,
+  .kmodal-overlay:not(.center) {
+    align-items: center !important;
+    padding: 16px !important;
+  }
+  .kmodal-sheet {
+    border-radius: 20px !important;
+    max-width: 100% !important; width: 100% !important;
+    height: 78vh !important; max-height: 78vh !important; min-height: unset !important;
+    padding: 0 20px 36px !important;
+    animation: sheetFade .22s ease !important;
+  }
+  .kmodal-sheet[style*="flex-direction"] { overflow: hidden !important; padding: 0 !important; }
+  .kmodal-sheet:not([style*="flex-direction"]) { overflow-y: auto !important; overflow-x: hidden !important; }
+  .kmodal-swipe-hint { display: none; }
+  .kmodal-handle { margin: 16px auto 12px; }
+  .kmodal-overlay.open::after {
+    content: '아래로 스와이프 해서 닫기';
+    position: fixed; bottom: 12px; left: 50%; transform: translateX(-50%);
+    font-size: 11px; font-weight: 500; color: rgba(255,255,255,0.55);
+    letter-spacing: 0.02em; pointer-events: none; white-space: nowrap;
+    font-family: 'Pretendard', sans-serif; z-index: 201;
+  }
+  .kdetail-modal {
+    height: 78vh !important; max-height: 78vh !important;
+    border-radius: 20px !important;
+    display: flex !important; flex-direction: column !important; overflow: hidden !important;
+  }
+  #detailContent { padding: 16px 20px 8px !important; }
+  #detailFooter  { border-radius: 0 0 20px 20px !important; padding: 12px 20px 16px !important; }
+
 }
