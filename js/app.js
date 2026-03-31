@@ -103,13 +103,11 @@ function homeCatSelect(cat) {
 
   var tabBar = document.querySelector('#viewHome .ktab-bar');
   if(tabBar) {
-    // 탭바가 이미 있으면 DOM 교체 없이 active만 바꾸고 즉시 스크롤 + 콘텐츠만 갱신
     var btns = tabBar.querySelectorAll('.ktab-btn');
     btns.forEach(function(btn, i) {
       btn.classList.toggle('active', MAIN_CATS[i] === cat);
     });
     _scrollTabIntoCenter(cat, null, 'instant');
-    // 서브 pills 갱신
     var subScroll = document.querySelector('#viewHome .ksub-scroll');
     if(subScroll) {
       var subs = getSubs(cat);
@@ -118,15 +116,12 @@ function homeCatSelect(cat) {
             return '<button class="ksub-pill" onclick="homeSubSelect(\''+s.name+'\')">'+s.name+'</button>';
           }).join('');
     }
-    // 검색창 초기화
     var si = document.getElementById('homeSearchInput');
     if(si) si.value = '';
     var sc = document.getElementById('homeSearchClear');
     if(sc) sc.classList.remove('visible');
-    // 콘텐츠만 갱신 (관리자모드와 동일하게 네트워크 요청 없이 즉시)
     renderHomeContent();
   } else {
-    // 탭바 없으면(홈A→B 첫 진입) 전체 렌더
     renderHomeB();
     setTimeout(function() { _scrollTabIntoCenter(cat, null, 'instant'); }, 0);
   }
@@ -795,9 +790,10 @@ function typeBlockInnerHTML(idx,prefix) {
     <input class="kinput" placeholder="타입명 입력" id="${prefix}TypeCustomName_${idx}" />
   </div>
   <div class="ktype-size-row">
-    <input class="kinput-sm" type="number" placeholder="가로(px)" id="${prefix}TypeW_${idx}" />
-    <span>×</span>
-    <input class="kinput-sm" type="number" placeholder="세로(px)" id="${prefix}TypeH_${idx}" />
+    <input class="kinput-sm" type="number" placeholder="가로" id="${prefix}TypeW_${idx}" />
+    <span style="font-size:13px;color:#aaa;flex-shrink:0;">×</span>
+    <input class="kinput-sm" type="number" placeholder="세로" id="${prefix}TypeH_${idx}" />
+    <span style="font-size:12px;color:#999;flex-shrink:0;">mm</span>
   </div>
   <label class="kupload-label">
     <input type="file" accept="image/*" onchange="typeFileChange('${prefix}','${idx}',this)" />
@@ -1073,12 +1069,11 @@ function renderDetail() {
           <div style="margin-bottom:10px;">
             <span style="font-size:14px;font-weight:700;letter-spacing:-0.02em;">${escapeHTML(t.name)}</span>
           </div>
-          <div onclick="${t.src?`openLightbox('${t.src}')`:''}" style="width:100%;background:${t.src?'transparent':'#f2f2f2'};border-radius:6px;overflow:hidden;min-height:140px;display:flex;align-items:center;justify-content:center;cursor:${t.src?'zoom-in':'default'};">
+          <div onclick="${t.src?`openLightbox('${t.src}')`:''}" style="width:100%;background:${t.src?'transparent':'#f2f2f2'};border-radius:6px;overflow:hidden;min-height:140px;display:flex;align-items:center;justify-content:center;cursor:${t.src?'zoom-in':'default'};margin-bottom:10px;">
             ${t.src?`<img src="${t.src}" style="width:100%;display:block;border-radius:6px;" />`:`<span style="color:#999;font-size:13px;">이미지 없음</span>`}
           </div>
           ${(t.width&&t.height)||t.unitPrice?`
-          <div style="position:relative;">
-            ${t.unitPrice?`<div style="text-align:right;font-size:11px;color:#bbb;font-weight:400;margin-bottom:5px;">단가는 사이즈에 따라 변동될 수 있습니다.</div>`:``}
+          <div>
             <div style="background:#f2f2f2;border-radius:6px;overflow:hidden;display:flex;align-items:stretch;">
               ${t.width&&t.height?`<div style="flex:1;padding:13px 16px;display:flex;align-items:center;gap:8px;"><span style="font-size:12px;font-weight:700;color:#111;white-space:nowrap;flex-shrink:0;">사이즈</span><span style="font-size:13px;color:#333;font-weight:500;">${escapeHTML(t.width)}×${escapeHTML(t.height)}mm</span></div>`:``}
               ${(t.width&&t.height)&&t.unitPrice?`<div style="width:1px;background:rgba(0,0,0,0.1);flex-shrink:0;margin:12px 0;"></div>`:``}
@@ -1128,7 +1123,30 @@ function renderDetail() {
   } else {
     // Edit tab
     editSettingPhotos = null;
+    var editCatInit = ad.mainCat || MAIN_CATS[0];
+    var editSubInit = ad.subCat || '';
+    var editProdInit = ad.product || '';
+    var editSubsInit = getSubs(editCatInit);
+    var editProdsInit = getProds(editCatInit, editSubInit);
     html+=`<div class="kform-group">
+      <label class="kform-label">카테고리</label>
+      <select class="kinput" id="editCat" onchange="editCatChange()">
+        ${MAIN_CATS.map(c=>`<option value="${c}" ${c===editCatInit?'selected':''}>${c}</option>`).join('')}
+      </select>
+    </div>
+    <div class="kform-group">
+      <label class="kform-label">세부 카테고리</label>
+      <select class="kinput" id="editSubSel" onchange="editSubChange()">
+        ${editSubsInit.map(s=>`<option value="${s.name}" ${s.name===editSubInit?'selected':''}>${s.name}</option>`).join('')}
+      </select>
+    </div>
+    <div class="kform-group">
+      <label class="kform-label">상품</label>
+      <select class="kinput" id="editProdSel">
+        ${editProdsInit.length ? editProdsInit.map(p=>`<option value="${p.name}" ${p.name===editProdInit?'selected':''}>${p.name}</option>`).join('') : '<option value="">상품 없음</option>'}
+      </select>
+    </div>
+    <div class="kform-group">
       <label class="kform-label">광고 이름</label>
       <input class="kinput" type="text" id="editTitle" value="${ad.title}" placeholder="광고 이름" />
     </div>
@@ -1151,9 +1169,10 @@ function renderDetail() {
           <input class="kinput" placeholder="타입명 입력" id="editTypeCustomName_${i}" value="${isCustom?t.name:''}" />
         </div>
         <div class="ktype-size-row">
-          <input class="kinput-sm" type="number" placeholder="가로(px)" id="editTypeW_${i}" value="${t.width||''}" />
-          <span>×</span>
-          <input class="kinput-sm" type="number" placeholder="세로(px)" id="editTypeH_${i}" value="${t.height||''}" />
+          <input class="kinput-sm" type="number" placeholder="가로" id="editTypeW_${i}" value="${t.width||''}" />
+          <span style="font-size:13px;color:#aaa;flex-shrink:0;">×</span>
+          <input class="kinput-sm" type="number" placeholder="세로" id="editTypeH_${i}" value="${t.height||''}" />
+          <span style="font-size:12px;color:#999;flex-shrink:0;">mm</span>
         </div>
         <label class="kupload-label">
           <input type="file" accept="image/*" onchange="typeFileChange('edit','${i}',this)" />
@@ -1214,6 +1233,23 @@ function renderDetail() {
       });
     }, 50);
   }
+}
+
+function editCatChange() {
+  var cat = document.getElementById('editCat')?.value;
+  if(!cat) return;
+  var subs = getSubs(cat);
+  var subSel = document.getElementById('editSubSel');
+  if(subSel) subSel.innerHTML = subs.map(function(s){ return '<option value="'+s.name+'">'+s.name+'</option>'; }).join('') || '<option value="">세부 카테고리 없음</option>';
+  editSubChange();
+}
+function editSubChange() {
+  var cat = document.getElementById('editCat')?.value;
+  var sub = document.getElementById('editSubSel')?.value || '';
+  if(!cat) return;
+  var prods = getProds(cat, sub);
+  var prodSel = document.getElementById('editProdSel');
+  if(prodSel) prodSel.innerHTML = prods.length ? prods.map(function(p){ return '<option value="'+p.name+'">'+p.name+'</option>'; }).join('') : '<option value="">상품 없음</option>';
 }
 
 function editAddType() {
@@ -1283,6 +1319,9 @@ function editRemoveSettingPhoto(idx) {
 function editSave() {
   const title=document.getElementById('editTitle')?.value.trim();
   if(!title){alert('광고 이름을 입력하세요');return;}
+  const newCat  = document.getElementById('editCat')?.value || detailAd.mainCat;
+  const newSub  = document.getElementById('editSubSel')?.value || detailAd.subCat;
+  const newProd = document.getElementById('editProdSel')?.value || detailAd.product;
 
   const blocks=document.querySelectorAll('[id^="editTypeBlock_"]');
   const rawTypes=Array.from(blocks).map(b=>{
@@ -1326,7 +1365,7 @@ function editSave() {
         finalSettingPhotos.push({src: spSrc, storeName: spStore});
       }
     }
-    DB.ads[idx]={...DB.ads[idx],title,types:finalTypes,adDate:new Date().toLocaleDateString('ko-KR'),settingPhotos:finalSettingPhotos};
+    DB.ads[idx]={...DB.ads[idx],mainCat:newCat,subCat:newSub,product:newProd,title,types:finalTypes,adDate:new Date().toLocaleDateString('ko-KR'),settingPhotos:finalSettingPhotos};
     detailAd=DB.ads[idx];
     saveData();
     sbUpdateAd(DB.ads[idx]);
@@ -3401,37 +3440,34 @@ function copyReqCode() {
 //  INIT
 // ══════════════════════════════════════════════════════
 (async function() {
-  // 새로고침 시 이전 페이지 상태 복원
-  var hadState = loadPageState();
+  loadPageState();
 
   if(adminLoggedIn && curView === 'admin') {
-    // 관리자 화면 복원
     document.getElementById('viewHome').classList.remove('active');
     document.getElementById('viewAdmin').classList.add('active');
     renderAdmin();
     setTimeout(function(){ _scrollTabIntoCenter(aState.cat, 'adminCatBar'); }, 100);
   } else if(homeScreen === 'B' && hState.cat) {
-    // 홈 B화면(카테고리 선택 상태) 복원
+    // 홈B: 스피너 먼저 → sbLoadAll 완료 후 1회 렌더 (이미지 깜빡임 방지)
     document.getElementById('viewHome').classList.add('active');
     document.getElementById('viewAdmin').classList.remove('active');
-    renderHomeB();
-    setTimeout(function(){ _scrollTabIntoCenter(hState.cat, null, 'instant'); }, 0);
+    document.getElementById('viewHome').innerHTML =
+      '<div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;">'
+      + '<div style="width:28px;height:28px;border:3px solid #eee;border-top-color:#111;border-radius:50%;animation:spin .7s linear infinite;"></div>'
+      + '<div style="font-size:13px;color:#bbb;">불러오는 중...</div></div>';
   } else {
     renderHomeA();
   }
 
-  var ok = await sbLoadAll();
-  if(ok) {
-    console.log('Supabase 데이터 로드 성공');
-    // 데이터 로드 후 현재 화면 다시 렌더링
-    if(adminLoggedIn && curView === 'admin') {
-      renderAdmin();
-      setTimeout(function(){ _scrollTabIntoCenter(aState.cat, 'adminCatBar'); }, 100);
-    } else if(homeScreen === 'B' && hState.cat) {
-      renderHomeB();
-      setTimeout(function(){ _scrollTabIntoCenter(hState.cat, null, 'instant'); }, 0);
-    } else {
-      renderHomeA();
-    }
+  await sbLoadAll();
+
+  if(adminLoggedIn && curView === 'admin') {
+    renderAdmin();
+    setTimeout(function(){ _scrollTabIntoCenter(aState.cat, 'adminCatBar'); }, 100);
+  } else if(homeScreen === 'B' && hState.cat) {
+    renderHomeB();
+    setTimeout(function(){ _scrollTabIntoCenter(hState.cat, null, 'instant'); }, 0);
+  } else {
+    renderHomeA();
   }
 })();
