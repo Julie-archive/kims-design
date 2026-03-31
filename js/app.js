@@ -1214,6 +1214,7 @@ function renderDetail() {
       });
     }, 50);
   }
+}
 
 function editAddType() {
   const idx=editTypeCount++;
