@@ -101,35 +101,9 @@ function homeCatSelect(cat) {
   hState = {cat, sub:'', prod:'__all__', search:''};
   savePageState();
 
-  // 탭바가 이미 DOM에 있으면 active만 교체 후 부드럽게 스크롤 (깜빡임 없음)
-  var tabBar = document.querySelector('#viewHome .ktab-bar');
-  if(tabBar) {
-    var btns = tabBar.querySelectorAll('.ktab-btn');
-    btns.forEach(function(btn, i) {
-      btn.classList.toggle('active', MAIN_CATS[i] === cat);
-    });
-    _scrollTabIntoCenter(cat);
-    // 콘텐츠 영역만 로딩 스피너로 교체
-    var content = document.getElementById('homeProdContent');
-    if(content) {
-      content.innerHTML = '<div style="padding:60px 0;display:flex;flex-direction:column;align-items:center;gap:12px;">'
-        + '<div style="width:28px;height:28px;border:3px solid #eee;border-top-color:#111;border-radius:50%;animation:spin .7s linear infinite;"></div>'
-        + '<div style="font-size:13px;color:#bbb;">불러오는 중...</div></div>';
-    }
-  } else {
-    // 탭바 없으면(홈A→B 첫 진입) 로딩 전체 표시
-    var el = document.getElementById('viewHome');
-    el.innerHTML = '<div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;">'
-      + '<div style="width:28px;height:28px;border:3px solid #eee;border-top-color:#111;border-radius:50%;animation:spin .7s linear infinite;"></div>'
-      + '<div style="font-size:13px;color:#bbb;">불러오는 중...</div></div>';
-  }
-
-  sbLoadAll().then(function(ok) {
-    if(homeScreen === 'B' && hState.cat === cat) {
-      renderHomeB();
-      setTimeout(function() { _scrollTabIntoCenter(cat, null, 'instant'); }, 0);
-    }
-  });
+  // DB는 초기 로드 시 이미 채워져 있으므로 네트워크 재요청 없이 바로 렌더링
+  renderHomeB();
+  setTimeout(function() { _scrollTabIntoCenter(cat, null, 'instant'); }, 0);
 }
 
 function renderHomeB() {
@@ -1073,11 +1047,12 @@ function renderDetail() {
           <div style="margin-bottom:10px;">
             <span style="font-size:14px;font-weight:700;letter-spacing:-0.02em;">${escapeHTML(t.name)}</span>
           </div>
-          <div onclick="${t.src?`openLightbox('${t.src}')`:''}" style="width:100%;background:${t.src?'transparent':'#f2f2f2'};border-radius:6px;overflow:hidden;min-height:140px;display:flex;align-items:center;justify-content:center;cursor:${t.src?'zoom-in':'default'};margin-bottom:10px;">
+          <div onclick="${t.src?`openLightbox('${t.src}')`:''}" style="width:100%;background:${t.src?'transparent':'#f2f2f2'};border-radius:6px;overflow:hidden;min-height:140px;display:flex;align-items:center;justify-content:center;cursor:${t.src?'zoom-in':'default'};">
             ${t.src?`<img src="${t.src}" style="width:100%;display:block;border-radius:6px;" />`:`<span style="color:#999;font-size:13px;">이미지 없음</span>`}
           </div>
           ${(t.width&&t.height)||t.unitPrice?`
-          <div>
+          <div style="position:relative;">
+            ${t.unitPrice?`<div style="text-align:right;font-size:11px;color:#bbb;font-weight:400;margin-bottom:5px;">단가는 사이즈에 따라 변동될 수 있습니다.</div>`:``}
             <div style="background:#f2f2f2;border-radius:6px;overflow:hidden;display:flex;align-items:stretch;">
               ${t.width&&t.height?`<div style="flex:1;padding:13px 16px;display:flex;align-items:center;gap:8px;"><span style="font-size:12px;font-weight:700;color:#111;white-space:nowrap;flex-shrink:0;">사이즈</span><span style="font-size:13px;color:#333;font-weight:500;">${escapeHTML(t.width)}×${escapeHTML(t.height)}mm</span></div>`:``}
               ${(t.width&&t.height)&&t.unitPrice?`<div style="width:1px;background:rgba(0,0,0,0.1);flex-shrink:0;margin:12px 0;"></div>`:``}
