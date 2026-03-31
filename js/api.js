@@ -246,7 +246,36 @@ async function sbDeleteRequest(id) {
   try { await sb.from('requests').delete().eq('id', id); } catch(e) { console.warn(e); }
 }
 
+async function compressImage(base64DataUrl, maxWidth, quality) {
+  return new Promise(function(resolve) {
+    var img = new Image();
+    img.onload = function() {
+      var canvas = document.createElement('canvas');
+      var w = img.width;
+      var h = img.height;
+      // maxWidth 초과 시 비율 유지하며 축소
+      if(w > maxWidth) {
+        h = Math.round(h * maxWidth / w);
+        w = maxWidth;
+      }
+      canvas.width = w;
+      canvas.height = h;
+      var ctx = canvas.getContext('2d');
+      ctx.drawImage(img, 0, 0, w, h);
+      resolve(canvas.toDataURL('image/jpeg', quality));
+    };
+    img.onerror = function() { resolve(base64DataUrl); }; // 실패 시 원본 유지
+    img.src = base64DataUrl;
+  });
+}
+
 async function uploadImageToStorage(base64DataUrl, fileName) {
+  // 업로드 전 이미지 압축 (최대 1800px, 품질 0.82) → 용량 대폭 감소
+  try {
+    base64DataUrl = await compressImage(base64DataUrl, 1800, 0.82);
+  } catch(e) {
+    console.warn('[Storage] 압축 실패, 원본 사용:', e);
+  }
   // 최대 2회 재시도
   for(var attempt = 0; attempt < 2; attempt++) {
     try {
@@ -280,16 +309,10 @@ async function uploadImageToStorage(base64DataUrl, fileName) {
 async function processAdTypes(types) {
   var result = [];
   var failedUploads = [];
-  // 배치 타임스탬프 1회 생성 → 같은 등록 건 내 파일명 고유 보장
-  var batchTs = Date.now();
   for(var i=0; i<types.length; i++) {
     var t = types[i];
     if(t.src && t.src.startsWith('data:')) {
-      // 파일명: ad_{타입명}_{배치타임스탬프}_{인덱스}
-      // → 타입명이 같아도(예: 행잉형+행잉형) 인덱스로 구분되어 덮어쓰기 방지
-      var safeName = (t.name||'type').replace(/[^a-zA-Z0-9가-힣]/g,'_');
-      var fileName = 'ad_' + safeName + '_' + batchTs + '_' + i;
-      var url = await uploadImageToStorage(t.src, fileName);
+      var url = await uploadImageToStorage(t.src, 'ad_' + (t.name||'type').replace(/[^a-zA-Z0-9]/g,'_'));
       if(url) {
         // 업로드 성공 → Storage URL 사용
         result.push({name:t.name, width:t.width, height:t.height, memo:t.memo||'', unitPrice:t.unitPrice||'', src: url});
