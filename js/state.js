@@ -36,9 +36,17 @@ function saveData() {
       return Object.assign({}, ad, {
         types: (ad.types||[]).map(function(t) {
           return Object.assign({}, t, {
-
             src: (t.src && t.src.startsWith('data:')) ? '' : (t.src||'')
           });
+        }),
+        // 셋팅 사진에서도 base64 이미지 필터링 추가
+        settingPhotos: (ad.settingPhotos||[]).map(function(p) {
+          var src = typeof p === 'object' ? (p.src||'') : p;
+          var store = typeof p === 'object' ? (p.storeName||'') : '';
+          return {
+            src: src.startsWith('data:') ? '' : src, 
+            storeName: store 
+          };
         })
       });
     });
@@ -52,9 +60,8 @@ function saveData() {
 let DB = loadData();
 
 // ── DB helpers ──
-
 function getSubs(mainCat) { return DB.subs.filter(s=>s.mainCat===mainCat).sort((a,b)=>a.name.localeCompare(b.name,'ko')); }
-function getProds(mainCat,subCat) { return DB.products.filter(p=>p.mainCat===mainCat&&p.subCat===subCat).sort((a,b)=>a.name.localeCompare(b.name,'ko')); }
+function getProducts(mainCat,subCat) { return DB.products.filter(p=>p.mainCat===mainCat&&p.subCat===subCat).sort((a,b)=>a.name.localeCompare(b.name,'ko')); }
 function getAds(mainCat,subCat,prod) { return DB.ads.filter(a=>a.mainCat===mainCat&&a.subCat===subCat&&a.product===prod); }
 function nextId() { return DB.nextId++; }
 
@@ -88,17 +95,23 @@ function loadPageState() {
     if(s.aState) aState = s.aState;
     if(s.adminTab) adminTab = s.adminTab;
     return true;
-  } catch(e) { return false; }
+  } catch(e) {}
+  return false;
 }
 
-let hState = {cat:'',sub:'',prod:'__all__'};
-let aState = {cat:'농산', sub:'', prod:'__all__', search:''};
-let adminTab = 'archive'; // 'archive' | 'requests'
-let aiTypeCount = 0;
-let aiTypeSrcs = {};
-// edit detail state
-let detailAd = null;
-let detailTab = 'view';
-let editTypeCount = 0;
-let editTypeSrcs = {};
+// ── 홈 화면 상태 ──
+let hState = {
+  cat: '',
+  sub: '',
+  prod: '',
+  search: ''
+};
 
+// ── 관리자 화면 상태 ──
+let adminTab = 'archive'; // 'archive' | 'request'
+let aState = {
+  cat: MAIN_CATS[0],
+  sub: '',
+  prod: '__all__',
+  search: ''
+};
