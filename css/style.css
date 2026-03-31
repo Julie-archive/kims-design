@@ -734,10 +734,7 @@ html, body { height: 100%; overflow: hidden; overflow-x: hidden; max-width: 100%
   /* ── Hero (Home A) ── */
   .khero    { padding: 40px 24px 40px; }
   .khero-actions { padding-bottom: 20px; }
-  .kcat-grid {
-    padding: 0 24px 24px; gap: 8px;
-    grid-template-columns: repeat(2, 1fr);
-  }
+  .kcat-grid { padding: 0 24px 8px; gap: 8px; grid-template-columns: repeat(2, 1fr); }
   .kcat-btn   { aspect-ratio: 1.6 / 1; }
   .kcat-label { font-size: clamp(16px, 4.5vw, 22px); }
 
