@@ -13,6 +13,7 @@ function escapeHTML(str) {
     .replace(/"/g, '&quot;')
     .replace(/'/g, '&#039;');
 }
+}
 function switchView(v) {
   curView = v;
   document.getElementById('viewHome').classList.toggle('active', v==='home');
