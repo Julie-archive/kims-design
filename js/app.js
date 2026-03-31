@@ -1292,7 +1292,7 @@ function editSave() {
     const memo=document.getElementById(`editTypeMemo_${idx}`)?.value.trim()||'';
     const unitPrice=document.getElementById(`editTypePrice_${idx}`)?.value.trim()||'';
     const newSrc=editTypeSrcs[idx];
-    const origType=(detailAd.types||[]).find(t=>t.name===name);
+    const origType=(detailAd.types||[])[idx];
     const origSrc=origType?.src||'';
     const src=newSrc!==null&&newSrc!==undefined?newSrc:origSrc;
     return {name,width,height,src,memo,unitPrice};
