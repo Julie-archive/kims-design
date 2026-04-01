@@ -2180,7 +2180,7 @@ function openAdRequest(adId) {
   var types = (ad.types||[]).filter(function(t){ return t.src; });
   var typeSelectEl = document.getElementById('adreq-type-select');
   var typeChecksEl = document.getElementById('adreq-type-checks');
-  if(types.length > 1 && typeSelectEl && typeChecksEl) {
+  if(types.length >= 1 && typeSelectEl && typeChecksEl) {
     typeSelectEl.style.display = '';
     typeChecksEl.innerHTML = types.map(function(t, i) {
       var safeId = 'adreq-type-qty-' + i;
@@ -2299,7 +2299,11 @@ function adreqSubmit() {
   if(!dept||!name||!tel) missing.push('요청자 정보');
   if(!deadline) missing.push('마감 요청일');
   if(!isA3orA4 && !adreqDeliveryDate) missing.push('입고일');
-  if(!qty) missing.push('수량');
+  var hasQty = checkedTypeEls.some(function(el){
+    var qtyId = el.dataset.qtyId;
+    return qtyId && document.getElementById(qtyId)?.value;
+  });
+  if(!hasQty) missing.push('수량 (타입별 수량 입력 필요)');
   if(sitePrevImgsCheck.length === 0) missing.push('설치 위치 사진');
 
   if(missing.length > 0) {
