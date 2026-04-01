@@ -2735,14 +2735,14 @@ function catMgrShowMoveDialog(prodId, prodName) {
   var box = document.createElement('div');
   box.style.cssText = 'background:#fff;border-radius:12px;padding:24px;width:100%;max-width:360px;font-family:Pretendard,sans-serif;';
   box.innerHTML = '<div style="font-size:16px;font-weight:800;margin-bottom:6px;color:#111;">이동할 세부 카테고리 선택</div>'
-    + '<div style="font-size:13px;color:#888;margin-bottom:16px;">''+prodName+'' 을 이동합니다</div>'
+    + '<div style="font-size:13px;color:#888;margin-bottom:16px;">&lsquo;' + prodName + '&rsquo; 을 이동합니다</div>'
     + '<div style="display:flex;flex-direction:column;gap:8px;">'
     + subs.map(function(s){
-        return '<button onclick="catMgrMoveProd('+prodId+',''+s.name+'');document.getElementById('catmgr-move-dialog').remove();" '
-          + 'style="padding:12px 16px;background:#f2f2f2;border:none;border-radius:8px;font-size:14px;font-weight:600;cursor:pointer;font-family:Pretendard,sans-serif;text-align:left;color:#111;">'+s.name+'</button>';
+        return '<button onclick="catMgrMoveProd(' + prodId + ',\'' + s.name + '\');document.getElementById(\'catmgr-move-dialog\').remove();" '
+          + 'style="padding:12px 16px;background:#f2f2f2;border:none;border-radius:8px;font-size:14px;font-weight:600;cursor:pointer;font-family:Pretendard,sans-serif;text-align:left;color:#111;">' + s.name + '</button>';
       }).join('')
     + '</div>'
-    + '<button onclick="document.getElementById('catmgr-move-dialog').remove();" style="margin-top:14px;width:100%;padding:11px;background:none;border:1.5px solid #d8dce3;border-radius:8px;font-size:14px;font-weight:600;cursor:pointer;font-family:Pretendard,sans-serif;color:#888;">취소</button>';
+    + '<button onclick="document.getElementById(\'catmgr-move-dialog\').remove();" style="margin-top:14px;width:100%;padding:11px;background:none;border:1.5px solid #d8dce3;border-radius:8px;font-size:14px;font-weight:600;cursor:pointer;font-family:Pretendard,sans-serif;color:#888;">취소</button>';
   dialog.appendChild(box);
   dialog.addEventListener('click', function(e){ if(e.target===dialog) dialog.remove(); });
   document.body.appendChild(dialog);
@@ -2750,9 +2750,7 @@ function catMgrShowMoveDialog(prodId, prodName) {
 
 // 상품을 세부 카테고리로 변환
 function catMgrConvertToSub(prodId, prodName) {
-  if(!confirm('''+prodName+'' 을 세부 카테고리로 변환하시겠습니까?
-
-상품 목록에서 제거되고 세부 카테고리로 추가됩니다.')) return;
+  if(!confirm('\'' + prodName + '\' 을 세부 카테고리로 변환하시겠습니까?\n\n상품 목록에서 제거되고 세부 카테고리로 추가됩니다.')) return;
   var prod = DB.products.find(function(p){ return p.id === prodId; });
   if(!prod) return;
   // DB에서 상품 제거
