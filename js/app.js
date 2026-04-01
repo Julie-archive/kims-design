@@ -2554,6 +2554,28 @@ function catMgrRenderSubs() {
     renameBtn.addEventListener('click', function(e){ e.stopPropagation(); catMgrRenameSub(s.id, s.name); });
     deleteBtn.addEventListener('click', function(e){ e.stopPropagation(); catMgrDeleteSub(s.id, s.name); });
     row.addEventListener('click', function(){ catMgrSelectSub(s.name); });
+
+    // 세부 카테고리 행을 드롭 타겟으로 - 상품을 드래그해서 이동 가능
+    row.addEventListener('dragover', function(e){
+      e.preventDefault();
+      row.style.background = s.name === catMgrSub ? '#333' : '#e8f0fe';
+      row.style.borderColor = '#4a7cf4';
+    });
+    row.addEventListener('dragleave', function(){
+      row.style.background = s.name === catMgrSub ? '#111' : '#fff';
+      row.style.borderColor = s.name === catMgrSub ? '#111' : 'rgba(0,0,0,0.1)';
+    });
+    row.addEventListener('drop', function(e){
+      e.preventDefault();
+      row.style.background = s.name === catMgrSub ? '#111' : '#fff';
+      row.style.borderColor = s.name === catMgrSub ? '#111' : 'rgba(0,0,0,0.1)';
+      var prodId = parseInt(e.dataTransfer.getData('prodId'));
+      if(!isNaN(prodId)) {
+        catMgrSelectSub(s.name);
+        catMgrMoveProd(prodId, s.name);
+      }
+    });
+
     row.appendChild(nameSpan); row.appendChild(renameBtn); row.appendChild(deleteBtn);
     list.appendChild(row);
   });
@@ -2594,28 +2616,155 @@ function catMgrRenderProds() {
   list.innerHTML = '';
   if(prods.length === 0) {
     list.innerHTML = '<div style="font-size:13px;color:#ccc;text-align:center;padding:16px 0;">등록된 상품이 없습니다</div>';
-  } else {
-    prods.forEach(function(p) {
-      var row = document.createElement('div');
-      row.id = 'catmgr-prod-row-' + p.id;
-      row.style.cssText = 'display:flex;align-items:center;gap:8px;padding:14px 16px;border-radius:8px;background:#fff;border:1.5px solid rgba(0,0,0,0.1);';
-      var nameSpan = document.createElement('span');
-      nameSpan.id = 'catmgr-prod-name-' + p.id;
-      nameSpan.textContent = p.name;
-      nameSpan.style.cssText = 'flex:1;font-size:15px;font-weight:700;letter-spacing:-0.02em;color:#111;';
-      var renameBtn = document.createElement('button');
-      renameBtn.id = 'catmgr-prod-rename-' + p.id;
-      renameBtn.textContent = '수정';
-      renameBtn.style.cssText = 'padding:5px 14px;background:#f2f2f2;border:none;border-radius:7px;font-size:12px;font-weight:600;cursor:pointer;font-family:Pretendard,sans-serif;color:#555;';
-      var deleteBtn = document.createElement('button');
-      deleteBtn.textContent = '삭제';
-      deleteBtn.style.cssText = 'padding:5px 14px;background:#e03333;border:none;border-radius:7px;font-size:12px;font-weight:700;cursor:pointer;font-family:Pretendard,sans-serif;color:#fff;';
-      renameBtn.addEventListener('click', function(){ catMgrRenameProd(p.id, p.name); });
-      deleteBtn.addEventListener('click', function(){ catMgrDeleteProd(p.id, p.name); });
-      row.appendChild(nameSpan); row.appendChild(renameBtn); row.appendChild(deleteBtn);
-      list.appendChild(row);
+    // 드롭 타겟 (빈 상태)
+    list.addEventListener('dragover', function(e){ e.preventDefault(); list.style.background='#f0f4ff'; });
+    list.addEventListener('dragleave', function(){ list.style.background=''; });
+    list.addEventListener('drop', function(e){
+      e.preventDefault(); list.style.background='';
+      var prodId = parseInt(e.dataTransfer.getData('prodId'));
+      catMgrMoveProd(prodId, catMgrSub);
     });
+    return;
   }
+  prods.forEach(function(p) {
+    var row = document.createElement('div');
+    row.id = 'catmgr-prod-row-' + p.id;
+    row.draggable = true;
+    row.style.cssText = 'display:flex;align-items:center;gap:8px;padding:12px 14px;border-radius:8px;background:#fff;border:1.5px solid rgba(0,0,0,0.1);cursor:grab;';
+
+    // 드래그 핸들 아이콘
+    var handle = document.createElement('span');
+    handle.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="#ccc" stroke-width="2" width="14" height="14"><circle cx="9" cy="6" r="1.5" fill="#ccc"/><circle cx="15" cy="6" r="1.5" fill="#ccc"/><circle cx="9" cy="12" r="1.5" fill="#ccc"/><circle cx="15" cy="12" r="1.5" fill="#ccc"/><circle cx="9" cy="18" r="1.5" fill="#ccc"/><circle cx="15" cy="18" r="1.5" fill="#ccc"/></svg>';
+    handle.style.cssText = 'flex-shrink:0;display:flex;align-items:center;';
+
+    var nameSpan = document.createElement('span');
+    nameSpan.id = 'catmgr-prod-name-' + p.id;
+    nameSpan.textContent = p.name;
+    nameSpan.style.cssText = 'flex:1;font-size:15px;font-weight:700;letter-spacing:-0.02em;color:#111;';
+
+    // 이동 버튼
+    var moveBtn = document.createElement('button');
+    moveBtn.textContent = '이동';
+    moveBtn.title = '다른 세부 카테고리로 이동';
+    moveBtn.style.cssText = 'padding:5px 12px;background:#f0f4ff;color:#4a7cf4;border:1px solid #c5d5ff;border-radius:7px;font-size:12px;font-weight:600;cursor:pointer;font-family:Pretendard,sans-serif;';
+
+    // 변환 버튼
+    var convertBtn = document.createElement('button');
+    convertBtn.textContent = '세부로';
+    convertBtn.title = '세부 카테고리로 변환';
+    convertBtn.style.cssText = 'padding:5px 12px;background:#f2f2f2;color:#555;border:none;border-radius:7px;font-size:12px;font-weight:600;cursor:pointer;font-family:Pretendard,sans-serif;';
+
+    var renameBtn = document.createElement('button');
+    renameBtn.id = 'catmgr-prod-rename-' + p.id;
+    renameBtn.textContent = '수정';
+    renameBtn.style.cssText = 'padding:5px 12px;background:#f2f2f2;border:none;border-radius:7px;font-size:12px;font-weight:600;cursor:pointer;font-family:Pretendard,sans-serif;color:#555;';
+
+    var deleteBtn = document.createElement('button');
+    deleteBtn.textContent = '삭제';
+    deleteBtn.style.cssText = 'padding:5px 12px;background:#e03333;border:none;border-radius:7px;font-size:12px;font-weight:700;cursor:pointer;font-family:Pretendard,sans-serif;color:#fff;';
+
+    // 드래그 이벤트
+    row.addEventListener('dragstart', function(e){
+      e.dataTransfer.setData('prodId', p.id);
+      row.style.opacity = '0.4';
+    });
+    row.addEventListener('dragend', function(){
+      row.style.opacity = '1';
+    });
+    row.addEventListener('dragover', function(e){
+      e.preventDefault();
+      row.style.borderColor = '#4a7cf4';
+    });
+    row.addEventListener('dragleave', function(){
+      row.style.borderColor = 'rgba(0,0,0,0.1)';
+    });
+    row.addEventListener('drop', function(e){
+      e.preventDefault();
+      row.style.borderColor = 'rgba(0,0,0,0.1)';
+      var draggedId = parseInt(e.dataTransfer.getData('prodId'));
+      if(draggedId === p.id) return;
+      catMgrMoveProd(draggedId, catMgrSub);
+    });
+
+    moveBtn.addEventListener('click', function(){ catMgrShowMoveDialog(p.id, p.name); });
+    convertBtn.addEventListener('click', function(){ catMgrConvertToSub(p.id, p.name); });
+    renameBtn.addEventListener('click', function(){ catMgrRenameProd(p.id, p.name); });
+    deleteBtn.addEventListener('click', function(){ catMgrDeleteProd(p.id, p.name); });
+
+    row.appendChild(handle);
+    row.appendChild(nameSpan);
+    row.appendChild(moveBtn);
+    row.appendChild(convertBtn);
+    row.appendChild(renameBtn);
+    row.appendChild(deleteBtn);
+    list.appendChild(row);
+  });
+
+  // 리스트 전체도 드롭 타겟
+  list.addEventListener('dragover', function(e){ e.preventDefault(); });
+  list.addEventListener('drop', function(e){
+    e.preventDefault();
+    var prodId = parseInt(e.dataTransfer.getData('prodId'));
+    catMgrMoveProd(prodId, catMgrSub);
+  });
+}
+
+// 상품을 다른 세부 카테고리로 이동 (드롭)
+function catMgrMoveProd(prodId, targetSub) {
+  var prod = DB.products.find(function(p){ return p.id === prodId; });
+  if(!prod || prod.subCat === targetSub) return;
+  prod.subCat = targetSub;
+  sbUpdateProd(prod);
+  saveData();
+  catMgrRenderProds();
+  refreshAdminView();
+}
+
+// 이동 다이얼로그 (버튼 클릭)
+function catMgrShowMoveDialog(prodId, prodName) {
+  var subs = getSubs(catMgrCat).filter(function(s){ return s.name !== catMgrSub; });
+  if(subs.length === 0) { alert('이동할 다른 세부 카테고리가 없습니다.'); return; }
+  var list = document.getElementById('catmgr-prod-list');
+  // 기존 다이얼로그 제거
+  var existing = document.getElementById('catmgr-move-dialog');
+  if(existing) existing.remove();
+
+  var dialog = document.createElement('div');
+  dialog.id = 'catmgr-move-dialog';
+  dialog.style.cssText = 'position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,0.45);display:flex;align-items:center;justify-content:center;padding:20px;';
+  var box = document.createElement('div');
+  box.style.cssText = 'background:#fff;border-radius:12px;padding:24px;width:100%;max-width:360px;font-family:Pretendard,sans-serif;';
+  box.innerHTML = '<div style="font-size:16px;font-weight:800;margin-bottom:6px;color:#111;">이동할 세부 카테고리 선택</div>'
+    + '<div style="font-size:13px;color:#888;margin-bottom:16px;">''+prodName+'' 을 이동합니다</div>'
+    + '<div style="display:flex;flex-direction:column;gap:8px;">'
+    + subs.map(function(s){
+        return '<button onclick="catMgrMoveProd('+prodId+',''+s.name+'');document.getElementById('catmgr-move-dialog').remove();" '
+          + 'style="padding:12px 16px;background:#f2f2f2;border:none;border-radius:8px;font-size:14px;font-weight:600;cursor:pointer;font-family:Pretendard,sans-serif;text-align:left;color:#111;">'+s.name+'</button>';
+      }).join('')
+    + '</div>'
+    + '<button onclick="document.getElementById('catmgr-move-dialog').remove();" style="margin-top:14px;width:100%;padding:11px;background:none;border:1.5px solid #d8dce3;border-radius:8px;font-size:14px;font-weight:600;cursor:pointer;font-family:Pretendard,sans-serif;color:#888;">취소</button>';
+  dialog.appendChild(box);
+  dialog.addEventListener('click', function(e){ if(e.target===dialog) dialog.remove(); });
+  document.body.appendChild(dialog);
+}
+
+// 상품을 세부 카테고리로 변환
+function catMgrConvertToSub(prodId, prodName) {
+  if(!confirm('''+prodName+'' 을 세부 카테고리로 변환하시겠습니까?
+
+상품 목록에서 제거되고 세부 카테고리로 추가됩니다.')) return;
+  var prod = DB.products.find(function(p){ return p.id === prodId; });
+  if(!prod) return;
+  // DB에서 상품 제거
+  DB.products = DB.products.filter(function(p){ return p.id !== prodId; });
+  // 세부 카테고리로 추가
+  var newSub = {id: nextId(), mainCat: prod.mainCat, name: prod.name};
+  DB.subs.push(newSub);
+  saveData();
+  sbConvertProdToSub(prod);
+  catMgrRenderSubs();
+  catMgrRenderProds();
+  refreshAdminView();
 }
 
 function catMgrAddSub() {

@@ -115,6 +115,22 @@ async function sbDeleteProd(id) {
   try { await sb.from('products').delete().eq('id', id); } catch(e) { console.warn(e); }
 }
 
+async function sbUpdateProd(prod) {
+  try {
+    await sb.from('products').update({main_cat:prod.mainCat, sub_cat:prod.subCat, name:prod.name}).eq('id', prod.id);
+  } catch(e) { console.warn('sbUpdateProd error:', e); }
+}
+
+async function sbConvertProdToSub(prod) {
+  // 상품을 세부 카테고리로 변환: products에서 삭제 후 subs에 추가
+  try {
+    await sb.from('products').delete().eq('id', prod.id);
+    const res = await sb.from('subs').insert({main_cat:prod.mainCat, name:prod.name}).select().single();
+    if(res.error) throw res.error;
+    return res.data.id;
+  } catch(e) { console.warn('sbConvertProdToSub error:', e); return null; }
+}
+
 async function sbSaveAd(ad) {
   // types에 base64가 남아있으면 Supabase JSONB에 저장 실패하므로 제거 후 시도
   var typesForDB = (ad.types||[]).map(function(t) {
