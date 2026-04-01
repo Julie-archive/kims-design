@@ -2299,7 +2299,7 @@ function adreqSubmit() {
   if(!dept||!name||!tel) missing.push('요청자 정보');
   if(!deadline) missing.push('마감 요청일');
   if(!isA3orA4 && !adreqDeliveryDate) missing.push('입고일');
-  // 광고물 형태 탭 제거됨 - 사이즈 옵션만 체크
+  if(!qty) missing.push('수량');
   if(sitePrevImgsCheck.length === 0) missing.push('설치 위치 사진');
 
   if(missing.length > 0) {
