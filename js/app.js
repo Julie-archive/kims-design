@@ -2181,6 +2181,23 @@ function openAdRequest(adId) {
     ? `<img src="${thumb}" style="width:100%;height:100%;object-fit:cover;" />`
     : `<svg viewBox="0 0 24 24" fill="none" stroke="#ccc" stroke-width="1.5" width="20" height="20"><rect x="3" y="7" width="18" height="13" rx="2"/><circle cx="9" cy="13" r="2"/><path d="m3 18 5-4 4 4 3-3 6 5"/></svg>`;
 
+  var types = (ad.types||[]).filter(function(t){ return t.src; });
+  var typeSelectEl = document.getElementById('adreq-type-select');
+  var typeChecksEl = document.getElementById('adreq-type-checks');
+  if(types.length > 1 && typeSelectEl && typeChecksEl) {
+    typeSelectEl.style.display = '';
+    typeChecksEl.innerHTML = types.map(function(t) {
+      return '<label style="display:flex;align-items:center;gap:10px;padding:10px 12px;background:#fff;border-radius:6px;border:1.5px solid #e0e0e0;cursor:pointer;">'
+        + '<input type="checkbox" name="adreq-type-check" value="'+t.name+'" checked style="width:16px;height:16px;cursor:pointer;" />'
+        + '<img src="'+t.src+'" style="width:48px;height:36px;object-fit:cover;border-radius:4px;flex-shrink:0;" />'
+        + '<span style="font-size:13px;font-weight:600;color:#111;">'+t.name+'</span>'
+        + (t.width&&t.height ? '<span style="font-size:11px;color:#aaa;margin-left:auto;">'+t.width+'×'+t.height+'mm</span>' : '')
+        + '</label>';
+    }).join('');
+  } else if(typeSelectEl) {
+    typeSelectEl.style.display = 'none';
+  }
+  
   // 타입 탭 초기화
   document.querySelectorAll('.adreq-type-tab').forEach(t => t.classList.remove('active'));
   document.getElementById('adreq-woodlak-size').style.display = 'none';
@@ -2256,12 +2273,15 @@ function adreqSubmit() {
   const sizeW    = (document.getElementById('adreq-size-w')?.value||'').trim();
   const sizeH    = (document.getElementById('adreq-size-h')?.value||'').trim();
   const ad = DB.ads.find(a => String(a.id) === String(adreqAdId));
+  
   // 입고일 읽기
   const adreqDeliveryDay  = (document.getElementById('adreq-delivery-day')?.value||'').trim();
   const adreqDeliveryDate = (document.getElementById('adreq-delivery-date')?.value||'')
                          || (document.getElementById('adreq-custom-date')?.value||'');
   // 설치 위치 사진 필수 확인
   const sitePrevImgsCheck = Array.from((document.getElementById('adreq-site-preview')||{}).querySelectorAll?.('img')||[]);
+  var checkedTypes = Array.from(document.querySelectorAll('input[name="adreq-type-check"]:checked')).map(function(el){ return el.value; });
+  var selectedTypeStr = checkedTypes.length > 0 ? checkedTypes.join(', ') : '';
 
   var missing = [];
   if(!dept||!name||!tel) missing.push('요청자 정보');
@@ -2292,6 +2312,7 @@ function adreqSubmit() {
 
   var descLines = [
     `참고 광고: ${ad?.title||''}`,
+    selectedTypeStr ? `선택 타입: ${selectedTypeStr}` : '',
     `광고물 형태: ${sizeText}`,
     qty ? `수량: ${qty}개` : '',
     branch ? `입고 지점: ${branch}` : '',
