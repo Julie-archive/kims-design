@@ -1385,6 +1385,7 @@ function editSave() {
     const name=sel.value==='__custom__'?(document.getElementById(`editTypeCustomName_${idx}`)?.value.trim()||'기타'):sel.value;
     const width=document.getElementById(`editTypeW_${idx}`)?.value.trim()||'';
     const height=document.getElementById(`editTypeH_${idx}`)?.value.trim()||'';
+    const subtitle=document.getElementById(`editTypeSubtitle_${idx}`)?.value.trim()||'';
     const memo=document.getElementById(`editTypeMemo_${idx}`)?.value.trim()||'';
     const unitPrice=document.getElementById(`editTypePrice_${idx}`)?.value.trim()||'';
     const newSrc=editTypeSrcs[idx];
