@@ -856,7 +856,7 @@ function typeBlockInnerHTML(idx,prefix) {
     <span style="font-size:12px;color:#999;flex-shrink:0;">원 / 개</span>
   </div>
   <div style="margin-top:8px;">
-    <input class="kinput" type="text" id="${prefix}TypeSubtitle_${idx}" placeholder="서브제목 (예: 시즌1, 봄 버전 등)" style="font-size:13px;" />
+    <input class="kinput" type="text" id="${prefix}TypeSubtitle_${idx}" placeholder="연출물 이름 (예: 고당도 오렌지, 설향 딸기 등)" style="font-size:13px;" />
   </div>
   <div style="margin-top:8px;">
     <input class="kinput" type="text" id="${prefix}TypeMemo_${idx}" placeholder="메모 (선택 · 특이사항, 적용 매장 등)" style="font-size:13px;" />
@@ -1237,7 +1237,7 @@ function renderDetail() {
           <span style="font-size:12px;color:#999;flex-shrink:0;">원 / 개</span>
         </div>
         <div style="margin-top:8px;">
-          <input class="kinput" type="text" id="editTypeSubtitle_${i}" value="${(t.subtitle||'').replace(/"/g,'&quot;')}" placeholder="서브제목 (예: 시즌1, 봄 버전 등)" style="font-size:13px;" />
+          <input class="kinput" type="text" id="editTypeSubtitle_${i}" value="${(t.subtitle||'').replace(/"/g,'&quot;')}" placeholder="연출물 이름 (예: 고당도 오렌지, 설향 딸기 등)" style="font-size:13px;" />
         </div>
         <div style="margin-top:8px;">
           <input class="kinput" type="text" id="editTypeMemo_${i}" value="${(t.memo||'').replace(/"/g,'&quot;')}" placeholder="메모 (선택 · 특이사항, 적용 매장 등)" style="font-size:13px;" />
