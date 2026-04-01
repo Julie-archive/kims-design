@@ -856,6 +856,9 @@ function typeBlockInnerHTML(idx,prefix) {
     <span style="font-size:12px;color:#999;flex-shrink:0;">원 / 개</span>
   </div>
   <div style="margin-top:8px;">
+    <input class="kinput" type="text" id="${prefix}TypeSubtitle_${idx}" placeholder="서브제목 (예: 시즌1, 봄 버전 등)" style="font-size:13px;" />
+  </div>
+  <div style="margin-top:8px;">
     <input class="kinput" type="text" id="${prefix}TypeMemo_${idx}" placeholder="메모 (선택 · 특이사항, 적용 매장 등)" style="font-size:13px;" />
   </div>`;
 }
@@ -920,10 +923,11 @@ function collectTypes(prefix) {
     const name=sel.value==='__custom__'?(document.getElementById(`${prefix}TypeCustomName_${idx}`)?.value.trim()||'기타'):sel.value;
     const width=document.getElementById(`${prefix}TypeW_${idx}`)?.value.trim()||'';
     const height=document.getElementById(`${prefix}TypeH_${idx}`)?.value.trim()||'';
+    const subtitle=document.getElementById(`${prefix}TypeSubtitle_${idx}`)?.value.trim()||'';
     const memo=document.getElementById(`${prefix}TypeMemo_${idx}`)?.value.trim()||'';
     const unitPrice=document.getElementById(`${prefix}TypePrice_${idx}`)?.value.trim()||'';
     const src=prefix==='ai'?(aiTypeSrcs[idx]||''):(editTypeSrcs[idx]!==undefined&&editTypeSrcs[idx]!==null?editTypeSrcs[idx]:((detailAd?.types||[])[idx]?.src||''));
-    return {name,width,height,src,memo,unitPrice};
+    return {name,subtitle,width,height,src,memo,unitPrice};
   });
 }
 
@@ -1233,6 +1237,9 @@ function renderDetail() {
           <span style="font-size:12px;color:#999;flex-shrink:0;">원 / 개</span>
         </div>
         <div style="margin-top:8px;">
+          <input class="kinput" type="text" id="editTypeSubtitle_${i}" value="${(t.subtitle||'').replace(/"/g,'&quot;')}" placeholder="서브제목 (예: 시즌1, 봄 버전 등)" style="font-size:13px;" />
+        </div>
+        <div style="margin-top:8px;">
           <input class="kinput" type="text" id="editTypeMemo_${i}" value="${(t.memo||'').replace(/"/g,'&quot;')}" placeholder="메모 (선택 · 특이사항, 적용 매장 등)" style="font-size:13px;" />
         </div>
       </div>`;
@@ -1384,7 +1391,7 @@ function editSave() {
     const origType=(detailAd.types||[])[idx];
     const origSrc=origType?.src||'';
     const src=newSrc!==null&&newSrc!==undefined?newSrc:origSrc;
-    return {name,width,height,src,memo,unitPrice};
+    return {name,subtitle,width,height,src,memo,unitPrice};
   });
 
   const memo=document.getElementById('editMemo')?.value.trim()||'';
@@ -2190,7 +2197,7 @@ function openAdRequest(adId) {
       return '<label style="display:flex;align-items:center;gap:10px;padding:10px 12px;background:#fff;border-radius:6px;border:1.5px solid #e0e0e0;cursor:pointer;">'
         + '<input type="checkbox" name="adreq-type-check" value="'+t.name+'" checked style="width:16px;height:16px;cursor:pointer;" />'
         + '<img src="'+t.src+'" style="width:48px;height:36px;object-fit:cover;border-radius:4px;flex-shrink:0;" />'
-        + '<span style="font-size:13px;font-weight:600;color:#111;">'+t.name+'</span>'
+        + '<span style="font-size:13px;font-weight:600;color:#111;">'+t.name+(t.subtitle?' · <span style="color:#888;font-weight:400;">'+t.subtitle+'</span>':'')+'</span>'
         + (t.width&&t.height ? '<span style="font-size:11px;color:#aaa;margin-left:auto;">'+t.width+'×'+t.height+'mm</span>' : '')
         + '</label>';
     }).join('');
