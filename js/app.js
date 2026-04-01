@@ -2240,17 +2240,6 @@ function adreqToggleSizeOption(val) {
   if(newLabel) newLabel.style.color = val === 'new' ? '#4a7cf4' : '#555';
 }
 
-function adreqToggleSizeOption(val) {
-  var newInputs = document.getElementById('adreq-new-size-inputs');
-  var sameLabel = document.getElementById('adreq-size-same-label');
-  var newLabel = document.getElementById('adreq-size-new-label');
-  if(!newInputs) return;
-  newInputs.style.display = val === 'new' ? '' : 'none';
-  if(sameLabel) sameLabel.style.borderColor = val === 'same' ? '#4a7cf4' : '#d8dce3';
-  if(sameLabel) sameLabel.style.color = val === 'same' ? '#4a7cf4' : '#555';
-  if(newLabel) newLabel.style.borderColor = val === 'new' ? '#4a7cf4' : '#d8dce3';
-  if(newLabel) newLabel.style.color = val === 'new' ? '#4a7cf4' : '#555';
-}
 
 function adreqSelectType(el) {
   document.querySelectorAll('.adreq-type-tab').forEach(t => t.classList.remove('active'));
