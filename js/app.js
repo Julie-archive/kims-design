@@ -1136,12 +1136,6 @@ function renderDetail() {
         </div>
       `).join('');
       if(detailMode==='admin' && adminLoggedIn) {
-        if(ad.memo) {
-          html+=`<div style="margin-top:20px;padding:14px 16px;background:#f2f2f2;border-radius:6px;">
-            <div style="font-size:11px;font-weight:700;color:#aaa;margin-bottom:6px;letter-spacing:0.02em;">메모</div>
-            <div style="font-size:13px;color:#555;line-height:1.6;white-space:pre-wrap;">${escapeHTML(ad.memo)}</div>
-          </div>`;
-        }
         if((ad.settingPhotos||[]).length > 0) {
           html+=`<div style="margin-top:16px;">
             <div style="font-size:12px;font-weight:700;color:#555;margin-bottom:8px;">셋팅 사진</div>
@@ -1155,12 +1149,6 @@ function renderDetail() {
           <button onclick="detailTab='edit';renderDetail();" style="flex:2;padding:13px;background:#4a7cf4;color:#fff;border:none;border-radius:50px;font-size:14px;font-weight:700;cursor:pointer;font-family:'Pretendard',sans-serif;">✎ 수정하기</button>
         </div>`;
       } else {
-        if(ad.memo) {
-          html+=`<div style="margin-top:20px;padding:14px 16px;background:#f2f2f2;border-radius:6px;">
-            <div style="font-size:11px;font-weight:700;color:#aaa;margin-bottom:6px;letter-spacing:0.02em;">메모</div>
-            <div style="font-size:13px;color:#555;line-height:1.6;white-space:pre-wrap;">${escapeHTML(ad.memo)}</div>
-          </div>`;
-        }
         if((ad.settingPhotos||[]).length > 0) {
           html+=`<div style="margin-top:16px;">
             <div style="font-size:12px;font-weight:700;color:#555;margin-bottom:8px;">셋팅 사진</div>
