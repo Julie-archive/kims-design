@@ -118,7 +118,7 @@ async function sbDeleteProd(id) {
 async function sbSaveAd(ad) {
   // types에 base64가 남아있으면 Supabase JSONB에 저장 실패하므로 제거 후 시도
   var typesForDB = (ad.types||[]).map(function(t) {
-    return {name:t.name, width:t.width, height:t.height, memo:t.memo||'', unitPrice:t.unitPrice||'',
+    return {name:t.name, subtitle:t.subtitle||'', width:t.width, height:t.height, memo:t.memo||'', unitPrice:t.unitPrice||'',
             src: (t.src && t.src.startsWith('data:')) ? '__pending__' : (t.src||'')};
   });
   // 전체 컬럼 시도
@@ -159,7 +159,7 @@ async function sbSaveAd(ad) {
 async function sbUpdateAd(ad) {
   if(!ad.id) { console.warn('[sbUpdateAd] id 없음, 저장 불가'); return false; }
   var typesForDB = (ad.types||[]).map(function(t) {
-    return {name:t.name, width:t.width, height:t.height, memo:t.memo||'', unitPrice:t.unitPrice||'',
+    return {name:t.name, subtitle:t.subtitle||'', width:t.width, height:t.height, memo:t.memo||'', unitPrice:t.unitPrice||'',
             src: (t.src && t.src.startsWith('data:')) ? '__pending__' : (t.src||'')};
   });
   try {
@@ -317,14 +317,14 @@ async function processAdTypes(types) {
       var url = await uploadImageToStorage(t.src, 'ad_' + (t.name||'type').replace(/[^a-zA-Z0-9]/g,'_'));
       if(url) {
         // 업로드 성공 → Storage URL 사용
-        result.push({name:t.name, width:t.width, height:t.height, memo:t.memo||'', unitPrice:t.unitPrice||'', src: url});
+        result.push({name:t.name, subtitle:t.subtitle||'', width:t.width, height:t.height, memo:t.memo||'', unitPrice:t.unitPrice||'', src: url});
       } else {
         // 업로드 실패 → base64 원본 유지 (Supabase 저장 실패해도 localStorage엔 보존)
         failedUploads.push(t.name || ('타입' + (i+1)));
-        result.push({name:t.name, width:t.width, height:t.height, memo:t.memo||'', unitPrice:t.unitPrice||'', src: t.src});
+        result.push({name:t.name, subtitle:t.subtitle||'', width:t.width, height:t.height, memo:t.memo||'', unitPrice:t.unitPrice||'', src: t.src});
       }
     } else {
-      result.push({name:t.name, width:t.width, height:t.height, memo:t.memo||'', unitPrice:t.unitPrice||'', src:t.src||''});
+      result.push({name:t.name, subtitle:t.subtitle||'', width:t.width, height:t.height, memo:t.memo||'', unitPrice:t.unitPrice||'', src: t.src||''});
     }
   }
   if(failedUploads.length > 0) {
