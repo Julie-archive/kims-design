@@ -542,6 +542,31 @@
         <div class="kform-label" style="font-size:12px;color:#555;margin-bottom:6px;">광고물 종류 직접 입력</div>
         <input class="kinput" type="text" id="adreq-other-text" placeholder="예) 현수막, 행잉형 배너 등" />
       </div>
+      
+      <!-- 사이즈 옵션 (A3/A4 제외한 타입 선택 시) -->
+      <div id="adreq-size-option" style="display:none;margin-top:12px;">
+        <div class="kform-label" style="font-size:12px;color:#555;margin-bottom:8px;">사이즈</div>
+        <div style="display:flex;gap:8px;margin-bottom:10px;">
+          <label style="display:flex;align-items:center;gap:6px;padding:9px 14px;background:#fff;border:1.5px solid #d8dce3;border-radius:8px;cursor:pointer;flex:1;font-size:13px;font-weight:600;color:#555;" id="adreq-size-same-label">
+            <input type="radio" name="adreq-size-radio" value="same" checked style="accent-color:#4a7cf4;" onchange="adreqToggleSizeOption(this.value)" />
+            기존 사이즈 동일
+          </label>
+          <label style="display:flex;align-items:center;gap:6px;padding:9px 14px;background:#fff;border:1.5px solid #d8dce3;border-radius:8px;cursor:pointer;flex:1;font-size:13px;font-weight:600;color:#555;" id="adreq-size-new-label">
+            <input type="radio" name="adreq-size-radio" value="new" style="accent-color:#4a7cf4;" onchange="adreqToggleSizeOption(this.value)" />
+            신규 사이즈
+          </label>
+        </div>
+        <div id="adreq-new-size-inputs" style="display:none;">
+          <div class="kform-label" style="font-size:12px;color:#555;margin-bottom:6px;">사이즈 입력 <span style="color:#999;font-weight:400;">(mm)</span></div>
+          <div style="display:flex;align-items:center;gap:8px;">
+            <input class="kinput" type="number" id="adreq-new-size-w" placeholder="가로" min="1" />
+            <span style="font-size:15px;color:#bbb;flex-shrink:0;">×</span>
+            <input class="kinput" type="number" id="adreq-new-size-h" placeholder="세로" min="1" />
+            <span style="font-size:13px;color:#999;flex-shrink:0;">mm</span>
+          </div>
+        </div>
+      </div>
+      
       <!-- 사이즈 옵션 (A3/A4 제외한 타입 선택 시) -->
       <div id="adreq-size-option" style="display:none;margin-top:12px;">
         <div class="kform-label" style="font-size:12px;color:#555;margin-bottom:8px;">사이즈</div>
