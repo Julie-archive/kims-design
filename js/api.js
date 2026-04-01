@@ -256,6 +256,7 @@ async function sbUpdateRequest(id, fields) {
     if(fields.status !== undefined) update.status = fields.status;
     if(fields.manager !== undefined) update.manager = fields.manager;
     if(fields.dueDate !== undefined) update.due_date = fields.dueDate;
+    if(fields.rejectReason !== undefined) update.reject_reason = fields.rejectReason;
     await sb.from('requests').update(update).eq('id', id);
   } catch(e) { console.warn('sbUpdateRequest error:', e); }
 }

@@ -2182,13 +2182,17 @@ function openAdRequest(adId) {
   var typeChecksEl = document.getElementById('adreq-type-checks');
   if(types.length > 1 && typeSelectEl && typeChecksEl) {
     typeSelectEl.style.display = '';
-    typeChecksEl.innerHTML = types.map(function(t) {
-      return '<label style="display:flex;align-items:center;gap:10px;padding:10px 12px;background:#fff;border-radius:6px;border:1.5px solid #e0e0e0;cursor:pointer;">'
-        + '<input type="checkbox" name="adreq-type-check" value="'+t.name+'" checked style="width:16px;height:16px;cursor:pointer;" />'
-        + '<img src="'+t.src+'" style="width:48px;height:36px;object-fit:cover;border-radius:4px;flex-shrink:0;" />'
-        + '<span style="font-size:13px;font-weight:600;color:#111;">'+t.name+(t.subtitle?' · <span style="color:#888;font-weight:400;">'+t.subtitle+'</span>':'')+'</span>'
-        + (t.width&&t.height ? '<span style="font-size:11px;color:#aaa;margin-left:auto;">'+t.width+'×'+t.height+'mm</span>' : '')
-        + '</label>';
+    typeChecksEl.innerHTML = types.map(function(t, i) {
+      var safeId = 'adreq-type-qty-' + i;
+      return '<div style="display:flex;align-items:center;gap:8px;padding:10px 12px;background:#fff;border-radius:6px;border:1.5px solid #e0e0e0;">'
+        + '<input type="checkbox" name="adreq-type-check" value="'+t.name+'" data-qty-id="'+safeId+'" checked style="width:16px;height:16px;cursor:pointer;flex-shrink:0;" />'
+        + '<img src="'+t.src+'" style="width:44px;height:33px;object-fit:cover;border-radius:4px;flex-shrink:0;" />'
+        + '<span style="font-size:13px;font-weight:600;color:#111;flex:1;min-width:0;">'+t.name+(t.subtitle?'<br><span style="font-size:11px;color:#888;font-weight:400;">'+t.subtitle+'</span>':'')+'</span>'
+        + '<div style="display:flex;align-items:center;gap:4px;flex-shrink:0;">'
+        + '<input type="number" id="'+safeId+'" min="1" placeholder="수량" style="width:60px;padding:6px 8px;border:1.5px solid #d8dce3;border-radius:6px;font-size:13px;font-family:Pretendard,sans-serif;text-align:center;" />'
+        + '<span style="font-size:12px;color:#999;">개</span>'
+        + '</div>'
+        + '</div>';
     }).join('');
   } else if(typeSelectEl) {
     typeSelectEl.style.display = 'none';
@@ -2197,6 +2201,14 @@ function openAdRequest(adId) {
   // 타입 탭 초기화
   document.querySelectorAll('.adreq-type-tab').forEach(t => t.classList.remove('active'));
   document.getElementById('adreq-woodlak-size').style.display = 'none';
+  // 사이즈 옵션 초기화
+  var sizeOptEl = document.getElementById('adreq-size-option');
+  if(sizeOptEl) sizeOptEl.style.display = 'none';
+  var newSizeEl = document.getElementById('adreq-new-size-inputs');
+  if(newSizeEl) { newSizeEl.style.display = 'none'; }
+  var sameRadioInit = document.querySelector('input[name="adreq-size-radio"][value="same"]');
+  if(sameRadioInit) sameRadioInit.checked = true;
+  ['adreq-new-size-w','adreq-new-size-h'].forEach(function(id){ var el=document.getElementById(id); if(el) el.value=''; });
 
   // 폼 초기화
   ['adreq-dept','adreq-name','adreq-tel','adreq-branch','adreq-deadline',
@@ -2216,14 +2228,41 @@ function openAdRequest(adId) {
   var cc = document.getElementById('adreq-custom-calendar'); if(cc) cc.value='';
 }
 
+function adreqToggleSizeOption(val) {
+  var newInputs = document.getElementById('adreq-new-size-inputs');
+  var sameLabel = document.getElementById('adreq-size-same-label');
+  var newLabel = document.getElementById('adreq-size-new-label');
+  if(!newInputs) return;
+  newInputs.style.display = val === 'new' ? '' : 'none';
+  if(sameLabel) sameLabel.style.borderColor = val === 'same' ? '#4a7cf4' : '#d8dce3';
+  if(sameLabel) sameLabel.style.color = val === 'same' ? '#4a7cf4' : '#555';
+  if(newLabel) newLabel.style.borderColor = val === 'new' ? '#4a7cf4' : '#d8dce3';
+  if(newLabel) newLabel.style.color = val === 'new' ? '#4a7cf4' : '#555';
+}
+
 function adreqSelectType(el) {
   document.querySelectorAll('.adreq-type-tab').forEach(t => t.classList.remove('active'));
   el.classList.add('active');
   const adType = el.dataset.type;
   const isWoodlak = adType === '우드락 셀링';
   const isOther = adType === '기타';
+  const isA3orA4 = adType === '규격POP (A3)' || adType === '규격POP (A4)';
   document.getElementById('adreq-woodlak-size').style.display = isWoodlak ? '' : 'none';
   document.getElementById('adreq-other-input').style.display = isOther ? '' : 'none';
+  // A3/A4는 입고 방법 숨김
+  var deliverySection = document.getElementById('adreq-delivery-section');
+  if(deliverySection) deliverySection.style.display = isA3orA4 ? 'none' : '';
+  // 사이즈 옵션 표시 (A3/A4/우드락 제외)
+  var sizeOptionEl = document.getElementById('adreq-size-option');
+  if(sizeOptionEl) {
+    var showSizeOpt = !isA3orA4 && !isWoodlak;
+    sizeOptionEl.style.display = showSizeOpt ? '' : 'none';
+    if(showSizeOpt) {
+      // 기존 사이즈 동일로 초기화
+      var sameRadio = sizeOptionEl.querySelector('input[value="same"]');
+      if(sameRadio) { sameRadio.checked = true; adreqToggleSizeOption('same'); }
+    }
+  }
   if(!isWoodlak) {
     const w = document.getElementById('adreq-size-w');
     const h = document.getElementById('adreq-size-h');
@@ -2276,16 +2315,21 @@ function adreqSubmit() {
                          || (document.getElementById('adreq-custom-date')?.value||'');
   // 설치 위치 사진 필수 확인
   const sitePrevImgsCheck = Array.from((document.getElementById('adreq-site-preview')||{}).querySelectorAll?.('img')||[]);
-  var checkedTypes = Array.from(document.querySelectorAll('input[name="adreq-type-check"]:checked')).map(function(el){ return el.value; });
-  var selectedTypeStr = checkedTypes.length > 0 ? checkedTypes.join(', ') : '';
+  var checkedTypeEls = Array.from(document.querySelectorAll('input[name="adreq-type-check"]:checked'));
+  var checkedTypes = checkedTypeEls.map(function(el){ return el.value; });
+  var selectedTypeStr = checkedTypeEls.map(function(el){
+    var qtyId = el.dataset.qtyId;
+    var qty = qtyId ? (document.getElementById(qtyId)?.value||'') : '';
+    return el.value + (qty ? ' ×'+qty+'개' : '');
+  }).join(', ');
 
   var missing = [];
+  const isA3orA4 = adType === '규격POP (A3)' || adType === '규격POP (A4)';
   if(!dept||!name||!tel) missing.push('요청자 정보');
   if(!deadline) missing.push('마감 요청일');
-  if(!adreqDeliveryDate) missing.push('입고일');
+  if(!isA3orA4 && !adreqDeliveryDate) missing.push('입고일');
   if(!adType) missing.push('광고물 형태');
   if(adType === '우드락 셀링' && (!sizeW || !sizeH)) missing.push('우드락 셀링 사이즈');
-  if(!qty) missing.push('수량');
   if(sitePrevImgsCheck.length === 0) missing.push('설치 위치 사진');
 
   if(missing.length > 0) {
@@ -2297,7 +2341,18 @@ function adreqSubmit() {
 
   const otherText = (document.getElementById('adreq-other-text')?.value||'').trim();
   const effectiveType = adType === '기타' ? (otherText ? `기타 (${otherText})` : '기타') : adType;
-  const sizeText = adType === '우드락 셀링' ? `${effectiveType} (${sizeW}×${sizeH}mm)` : effectiveType;
+  const isA3orA4submit = adType === '규격POP (A3)' || adType === '규격POP (A4)';
+  const sizeRadio = document.querySelector('input[name="adreq-size-radio"]:checked');
+  const sizeOptionVal = sizeRadio ? sizeRadio.value : 'same';
+  const newSizeW = (document.getElementById('adreq-new-size-w')?.value||'').trim();
+  const newSizeH = (document.getElementById('adreq-new-size-h')?.value||'').trim();
+  var sizeNote = '';
+  if(!isA3orA4submit && !isWoodlak) {
+    sizeNote = sizeOptionVal === 'new' && newSizeW && newSizeH
+      ? ` (신규사이즈: ${newSizeW}×${newSizeH}mm)`
+      : ' (기존 사이즈 동일)';
+  }
+  const sizeText = adType === '우드락 셀링' ? `${effectiveType} (${sizeW}×${sizeH}mm)` : effectiveType + sizeNote;
   const sitePrevImgs = Array.from(document.getElementById('adreq-site-preview').querySelectorAll('img'));
   const sitePhotoSrcs = sitePrevImgs.map(img=>img.src);
 
@@ -3317,12 +3372,39 @@ function renderAdminRequests() {
   });
 }
 
-function updateRequestStatus(id, status) {
+function updateRequestStatus(id, status, rejectReason) {
   var idx = (DB.requests||[]).findIndex(function(r){return r.id===id;});
   if(idx===-1) return;
+  // 반려 시 사유 입력 다이얼로그
+  if(status === '반려' && rejectReason === undefined) {
+    var existing = document.getElementById('reject-reason-dialog');
+    if(existing) existing.remove();
+    var dialog = document.createElement('div');
+    dialog.id = 'reject-reason-dialog';
+    dialog.style.cssText = 'position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,0.45);display:flex;align-items:center;justify-content:center;padding:20px;';
+    var box = document.createElement('div');
+    box.style.cssText = 'background:#fff;border-radius:12px;padding:24px;width:100%;max-width:360px;font-family:Pretendard,sans-serif;';
+    box.innerHTML = '<div style="font-size:16px;font-weight:800;margin-bottom:6px;color:#111;">반려 사유 입력</div>'
+      + '<div style="font-size:13px;color:#888;margin-bottom:14px;">신청자에게 표시되는 사유를 입력하세요</div>'
+      + '<textarea id="reject-reason-input" style="width:100%;padding:10px 12px;border:1.5px solid #d8dce3;border-radius:8px;font-size:13px;font-family:Pretendard,sans-serif;resize:vertical;min-height:80px;outline:none;" placeholder="반려 사유를 입력하세요 (선택)"></textarea>'
+      + '<div style="display:flex;gap:8px;margin-top:14px;">'
+      + '<button id="reject-cancel-btn" style="flex:1;padding:11px;background:none;border:1.5px solid #d8dce3;border-radius:8px;font-size:14px;font-weight:600;cursor:pointer;font-family:Pretendard,sans-serif;color:#888;">취소</button>'
+      + '<button id="reject-confirm-btn" style="flex:1;padding:11px;background:#e03333;border:none;border-radius:8px;font-size:14px;font-weight:700;cursor:pointer;font-family:Pretendard,sans-serif;color:#fff;">반려 처리</button>'
+      + '</div>';
+    dialog.appendChild(box);
+    document.body.appendChild(dialog);
+    document.getElementById('reject-cancel-btn').addEventListener('click', function(){ dialog.remove(); });
+    document.getElementById('reject-confirm-btn').addEventListener('click', function(){
+      var reason = (document.getElementById('reject-reason-input').value||'').trim();
+      dialog.remove();
+      updateRequestStatus(id, status, reason);
+    });
+    return;
+  }
   DB.requests[idx].status = status;
+  if(rejectReason !== undefined) DB.requests[idx].rejectReason = rejectReason;
   saveData();
-  sbUpdateRequest(DB.requests[idx].id, {status: status});
+  sbUpdateRequest(DB.requests[idx].id, {status: status, rejectReason: rejectReason||''});
   if(adminTab==='requests') renderAdminRequests();
 }
 
@@ -3594,7 +3676,8 @@ function searchReqStatus() {
     } else if(req.status === '진행 중') {
       statusNote = '<div style="margin-top:10px;background:#eff6ff;border-radius:6px;padding:10px 12px;font-size:12px;color:#1d4ed8;line-height:1.6;">진행 중인 신청은 수정할 수 없습니다.<br>변경이 필요하면 담당자 <strong>'+(req.manager||'')+'</strong>에게 문의해주세요.</div>';
     } else if(req.status === '반려') {
-      statusNote = '<div style="margin-top:10px;background:#fff0f0;border-radius:6px;padding:10px 12px;font-size:12px;color:#e03333;">반려 처리되었습니다. 담당자에게 문의해주세요.</div>';
+      var rejectMsg = req.rejectReason ? req.rejectReason : '담당자에게 문의해주세요.';
+      statusNote = '<div style="margin-top:10px;background:#fff0f0;border-radius:6px;padding:10px 12px;font-size:12px;color:#e03333;line-height:1.6;">반려 처리되었습니다.<br><span style="opacity:.8;">사유: '+rejectMsg+'</span></div>';
     } else if(req.status === '완료') {
       statusNote = '<div style="margin-top:10px;background:#edfaed;border-radius:6px;padding:10px 12px;font-size:12px;color:#2d7a2d;">작업이 완료되었습니다.</div>';
     }
