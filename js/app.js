@@ -2373,17 +2373,6 @@ function adreqSubmit() {
       ? ` (신규사이즈: ${newSizeW}×${newSizeH}mm)`
       : ' (기존 사이즈 동일)';
   }
-  const isA3orA4submit = adType === '규격POP (A3)' || adType === '규격POP (A4)';
-  const sizeRadio = document.querySelector('input[name="adreq-size-radio"]:checked');
-  const sizeOptionVal = sizeRadio ? sizeRadio.value : 'same';
-  const newSizeW = (document.getElementById('adreq-new-size-w')?.value||'').trim();
-  const newSizeH = (document.getElementById('adreq-new-size-h')?.value||'').trim();
-  var sizeNote = '';
-  if(!isA3orA4submit && !isWoodlak) {
-    sizeNote = sizeOptionVal === 'new' && newSizeW && newSizeH
-      ? ` (신규사이즈: ${newSizeW}×${newSizeH}mm)`
-      : ' (기존 사이즈 동일)';
-  }
   const sizeText = adType === '우드락 셀링' ? `${effectiveType} (${sizeW}×${sizeH}mm)` : effectiveType + sizeNote;
   const sitePrevImgs = Array.from(document.getElementById('adreq-site-preview').querySelectorAll('img'));
   const sitePhotoSrcs = sitePrevImgs.map(img=>img.src);
