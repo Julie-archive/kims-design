@@ -1119,7 +1119,7 @@ function renderDetail() {
       html+=types.map((t,i)=>`
         <div style="margin-bottom:${i<types.length-1?28:0}px;padding-bottom:${i<types.length-1?28:0}px;border-bottom:${i<types.length-1?'1px solid var(--kborder)':'none'};">
           <div style="margin-bottom:10px;">
-            <span style="font-size:14px;font-weight:700;letter-spacing:-0.02em;">${t.subtitle?`${escapeHTML(t.subtitle)} `:''}${t.name?`<span style="font-size:12px;font-weight:600;color:#555;background:#f2f2f2;border-radius:4px;padding:2px 7px;">${escapeHTML(t.name)}</span>`:''}</span>
+            <span style="font-size:14px;font-weight:700;letter-spacing:-0.02em;">${t.subtitle?`${escapeHTML(t.subtitle)} `:''}${t.name?`<span style="font-size:11px;font-weight:600;color:#555;background:#f2f2f2;border-radius:4px;padding:2px 7px;margin-left:6px;">${escapeHTML(t.name)}</span>`:''}</span>
           </div>
           <div onclick="${t.src?`openLightbox('${t.src}')`:''}" style="width:100%;background:${t.src?'transparent':'#f2f2f2'};border-radius:6px;overflow:hidden;min-height:140px;display:flex;align-items:center;justify-content:center;cursor:${t.src?'zoom-in':'default'};margin-bottom:10px;">
             ${t.src?`<img src="${t.src}" style="width:100%;display:block;border-radius:6px;" />`:`<span style="color:#999;font-size:13px;">이미지 없음</span>`}
