@@ -2363,7 +2363,6 @@ function adreqSubmit() {
 
   const otherText = (document.getElementById('adreq-other-text')?.value||'').trim();
   const effectiveType = adType === '기타' ? (otherText ? `기타 (${otherText})` : '기타') : adType;
-  const isA3orA4submit = adType === '규격POP (A3)' || adType === '규격POP (A4)';
   const sizeRadio = document.querySelector('input[name="adreq-size-radio"]:checked');
   const sizeOptionVal = sizeRadio ? sizeRadio.value : 'same';
   const newSizeW = (document.getElementById('adreq-new-size-w')?.value||'').trim();
