@@ -2648,12 +2648,6 @@ function catMgrRenderProds() {
     moveBtn.title = '다른 세부 카테고리로 이동';
     moveBtn.style.cssText = 'padding:5px 12px;background:#f0f4ff;color:#4a7cf4;border:1px solid #c5d5ff;border-radius:7px;font-size:12px;font-weight:600;cursor:pointer;font-family:Pretendard,sans-serif;';
 
-    // 변환 버튼
-    var convertBtn = document.createElement('button');
-    convertBtn.textContent = '세부로';
-    convertBtn.title = '세부 카테고리로 변환';
-    convertBtn.style.cssText = 'padding:5px 12px;background:#f2f2f2;color:#555;border:none;border-radius:7px;font-size:12px;font-weight:600;cursor:pointer;font-family:Pretendard,sans-serif;';
-
     var renameBtn = document.createElement('button');
     renameBtn.id = 'catmgr-prod-rename-' + p.id;
     renameBtn.textContent = '수정';
@@ -2687,14 +2681,12 @@ function catMgrRenderProds() {
     });
 
     moveBtn.addEventListener('click', function(){ catMgrShowMoveDialog(p.id, p.name); });
-    convertBtn.addEventListener('click', function(){ catMgrConvertToSub(p.id, p.name); });
     renameBtn.addEventListener('click', function(){ catMgrRenameProd(p.id, p.name); });
     deleteBtn.addEventListener('click', function(){ catMgrDeleteProd(p.id, p.name); });
 
     row.appendChild(handle);
     row.appendChild(nameSpan);
     row.appendChild(moveBtn);
-    row.appendChild(convertBtn);
     row.appendChild(renameBtn);
     row.appendChild(deleteBtn);
     list.appendChild(row);
@@ -2722,40 +2714,53 @@ function catMgrMoveProd(prodId, targetSub) {
 
 // 이동 다이얼로그 (버튼 클릭)
 function catMgrShowMoveDialog(prodId, prodName) {
-  var subs = getSubs(catMgrCat).filter(function(s){ return s.name !== catMgrSub; });
-  if(subs.length === 0) { alert('이동할 다른 세부 카테고리가 없습니다.'); return; }
-  var list = document.getElementById('catmgr-prod-list');
-  // 기존 다이얼로그 제거
   var existing = document.getElementById('catmgr-move-dialog');
   if(existing) existing.remove();
+
+  var subs = getSubs(catMgrCat).filter(function(s){ return s.name !== catMgrSub; });
 
   var dialog = document.createElement('div');
   dialog.id = 'catmgr-move-dialog';
   dialog.style.cssText = 'position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,0.45);display:flex;align-items:center;justify-content:center;padding:20px;';
   var box = document.createElement('div');
   box.style.cssText = 'background:#fff;border-radius:12px;padding:24px;width:100%;max-width:360px;font-family:Pretendard,sans-serif;';
-  box.innerHTML = '<div style="font-size:16px;font-weight:800;margin-bottom:6px;color:#111;">이동할 세부 카테고리 선택</div>'
-    + '<div style="font-size:13px;color:#888;margin-bottom:16px;">&lsquo;' + prodName + '&rsquo; 을 이동합니다</div>'
-    + '<div style="display:flex;flex-direction:column;gap:8px;">'
-    + subs.map(function(s){
-        return '<button onclick="catMgrMoveProd(' + prodId + ',\'' + s.name + '\');document.getElementById(\'catmgr-move-dialog\').remove();" '
-          + 'style="padding:12px 16px;background:#f2f2f2;border:none;border-radius:8px;font-size:14px;font-weight:600;cursor:pointer;font-family:Pretendard,sans-serif;text-align:left;color:#111;">' + s.name + '</button>';
-      }).join('')
+
+  var subsHTML = subs.length > 0
+    ? '<div style="font-size:12px;font-weight:700;color:#aaa;margin:14px 0 8px;letter-spacing:0.02em;">다른 세부 카테고리로 이동</div>'
+      + '<div style="display:flex;flex-direction:column;gap:6px;">'
+      + subs.map(function(s){
+          return '<button onclick="catMgrMoveProd(' + prodId + ',\'' + s.name + '\');document.getElementById(\'catmgr-move-dialog\').remove();" '
+            + 'style="padding:12px 16px;background:#f2f2f2;border:none;border-radius:8px;font-size:14px;font-weight:600;cursor:pointer;font-family:Pretendard,sans-serif;text-align:left;color:#111;">' + s.name + '</button>';
+        }).join('')
+      + '</div>'
+    : '<div style="font-size:12px;font-weight:700;color:#aaa;margin:14px 0 8px;">이동할 다른 세부 카테고리가 없습니다</div>';
+
+  box.innerHTML = '<div style="font-size:16px;font-weight:800;margin-bottom:4px;color:#111;">이동</div>'
+    + '<div style="font-size:13px;color:#888;margin-bottom:4px;">' + prodName + '</div>'
+    + '<div style="border-top:1px solid #f2f2f2;padding-top:14px;margin-top:10px;">'
+    + '<div style="font-size:12px;font-weight:700;color:#aaa;margin-bottom:8px;letter-spacing:0.02em;">세부 카테고리로 승격</div>'
+    + '<button id="catmgr-convert-btn" style="width:100%;padding:12px 16px;background:#fff3cd;border:1.5px solid #ffc107;border-radius:8px;font-size:14px;font-weight:600;cursor:pointer;font-family:Pretendard,sans-serif;text-align:left;color:#856404;">⬆ ' + prodName + ' → 세부 카테고리로 변환</button>'
+    + subsHTML
     + '</div>'
     + '<button onclick="document.getElementById(\'catmgr-move-dialog\').remove();" style="margin-top:14px;width:100%;padding:11px;background:none;border:1.5px solid #d8dce3;border-radius:8px;font-size:14px;font-weight:600;cursor:pointer;font-family:Pretendard,sans-serif;color:#888;">취소</button>';
+
   dialog.appendChild(box);
   dialog.addEventListener('click', function(e){ if(e.target===dialog) dialog.remove(); });
   document.body.appendChild(dialog);
+
+  // 승격 버튼 이벤트
+  document.getElementById('catmgr-convert-btn').addEventListener('click', function(){
+    dialog.remove();
+    catMgrConvertToSub(prodId, prodName);
+  });
 }
 
 // 상품을 세부 카테고리로 변환
 function catMgrConvertToSub(prodId, prodName) {
-  if(!confirm('\'' + prodName + '\' 을 세부 카테고리로 변환하시겠습니까?\n\n상품 목록에서 제거되고 세부 카테고리로 추가됩니다.')) return;
+  if(!confirm('\'' + prodName + '\' 을 세부 카테고리로 승격하시겠습니까?\n상품 목록에서 제거되고 세부 카테고리로 추가됩니다.')) return;
   var prod = DB.products.find(function(p){ return p.id === prodId; });
   if(!prod) return;
-  // DB에서 상품 제거
   DB.products = DB.products.filter(function(p){ return p.id !== prodId; });
-  // 세부 카테고리로 추가
   var newSub = {id: nextId(), mainCat: prod.mainCat, name: prod.name};
   DB.subs.push(newSub);
   saveData();
