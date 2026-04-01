@@ -2240,6 +2240,18 @@ function adreqToggleSizeOption(val) {
   if(newLabel) newLabel.style.color = val === 'new' ? '#4a7cf4' : '#555';
 }
 
+function adreqToggleSizeOption(val) {
+  var newInputs = document.getElementById('adreq-new-size-inputs');
+  var sameLabel = document.getElementById('adreq-size-same-label');
+  var newLabel = document.getElementById('adreq-size-new-label');
+  if(!newInputs) return;
+  newInputs.style.display = val === 'new' ? '' : 'none';
+  if(sameLabel) sameLabel.style.borderColor = val === 'same' ? '#4a7cf4' : '#d8dce3';
+  if(sameLabel) sameLabel.style.color = val === 'same' ? '#4a7cf4' : '#555';
+  if(newLabel) newLabel.style.borderColor = val === 'new' ? '#4a7cf4' : '#d8dce3';
+  if(newLabel) newLabel.style.color = val === 'new' ? '#4a7cf4' : '#555';
+}
+
 function adreqSelectType(el) {
   document.querySelectorAll('.adreq-type-tab').forEach(t => t.classList.remove('active'));
   el.classList.add('active');
@@ -2259,6 +2271,16 @@ function adreqSelectType(el) {
     sizeOptionEl.style.display = showSizeOpt ? '' : 'none';
     if(showSizeOpt) {
       // 기존 사이즈 동일로 초기화
+      var sameRadio = sizeOptionEl.querySelector('input[value="same"]');
+      if(sameRadio) { sameRadio.checked = true; adreqToggleSizeOption('same'); }
+    }
+  }
+  // 사이즈 옵션 표시 (A3/A4/우드락 제외)
+  var sizeOptionEl = document.getElementById('adreq-size-option');
+  if(sizeOptionEl) {
+    var showSizeOpt = !isA3orA4 && !isWoodlak;
+    sizeOptionEl.style.display = showSizeOpt ? '' : 'none';
+    if(showSizeOpt) {
       var sameRadio = sizeOptionEl.querySelector('input[value="same"]');
       if(sameRadio) { sameRadio.checked = true; adreqToggleSizeOption('same'); }
     }
@@ -2341,6 +2363,17 @@ function adreqSubmit() {
 
   const otherText = (document.getElementById('adreq-other-text')?.value||'').trim();
   const effectiveType = adType === '기타' ? (otherText ? `기타 (${otherText})` : '기타') : adType;
+  const isA3orA4submit = adType === '규격POP (A3)' || adType === '규격POP (A4)';
+  const sizeRadio = document.querySelector('input[name="adreq-size-radio"]:checked');
+  const sizeOptionVal = sizeRadio ? sizeRadio.value : 'same';
+  const newSizeW = (document.getElementById('adreq-new-size-w')?.value||'').trim();
+  const newSizeH = (document.getElementById('adreq-new-size-h')?.value||'').trim();
+  var sizeNote = '';
+  if(!isA3orA4submit && !isWoodlak) {
+    sizeNote = sizeOptionVal === 'new' && newSizeW && newSizeH
+      ? ` (신규사이즈: ${newSizeW}×${newSizeH}mm)`
+      : ' (기존 사이즈 동일)';
+  }
   const isA3orA4submit = adType === '규격POP (A3)' || adType === '규격POP (A4)';
   const sizeRadio = document.querySelector('input[name="adreq-size-radio"]:checked');
   const sizeOptionVal = sizeRadio ? sizeRadio.value : 'same';
