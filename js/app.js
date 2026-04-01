@@ -80,7 +80,7 @@ function renderHomeA() {
         </div>
         <div class="kcat-grid" style="grid-template-columns:1fr;gap:10px;margin-top:5px;">
           ${['S.I','지점 운영 광고','52 Week Map'].map(cat=>`
-            <button onclick="homeCatSelect('${cat}')" style="
+            <button onclick="${cat==='52 Week Map' ? `location.href='52weekmap.html'` : `homeCatSelect('${cat}')`}" style="
               width:100%;padding:22px 28px;
               background:#fff;border:1.5px solid rgba(0,0,0,0.12);border-radius:10px;
               display:flex;align-items:center;justify-content:center;
