@@ -1127,7 +1127,7 @@ function renderDetail() {
           ${(t.width&&t.height)||t.unitPrice?`
           <div>
             <div style="background:#f2f2f2;border-radius:6px;overflow:hidden;display:flex;align-items:stretch;">
-              ${t.width&&t.height?`<div style="flex:1;padding:13px 16px;display:flex;align-items:center;gap:8px;"><span style="font-size:12px;font-weight:700;color:#111;white-space:nowrap;flex-shrink:0;">사이즈</span><span style="font-size:13px;color:#333;font-weight:500;">${escapeHTML(t.width)}×${escapeHTML(t.height)}mm${t.subtitle?` <span style="font-size:11px;font-weight:600;color:#555;background:#fff;border-radius:4px;padding:2px 7px;margin-left:4px;">${escapeHTML(t.subtitle)}</span>`:''}</span></div>`:``}
+              ${t.width&&t.height?`<div style="flex:1;padding:13px 16px;display:flex;align-items:center;gap:8px;"><span style="font-size:12px;font-weight:700;color:#111;white-space:nowrap;flex-shrink:0;">사이즈</span><span style="font-size:13px;color:#333;font-weight:500;">${escapeHTML(t.width)}×${escapeHTML(t.height)}mm</span></div>`:``}
               ${(t.width&&t.height)&&t.unitPrice?`<div style="width:1px;background:rgba(0,0,0,0.1);flex-shrink:0;margin:12px 0;"></div>`:``}
               ${t.unitPrice?`<div style="flex:2;padding:13px 16px;display:flex;align-items:center;gap:8px;"><span style="font-size:12px;font-weight:700;color:#111;white-space:nowrap;flex-shrink:0;">단가</span><span style="font-size:13px;color:#333;font-weight:600;">${Number(t.unitPrice).toLocaleString()}원/개</span></div>`:``}
             </div>
