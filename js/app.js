@@ -1421,7 +1421,7 @@ function editSave() {
         finalSettingPhotos.push({src: spSrc, storeName: spStore});
       }
     }
-    DB.ads[idx]={...DB.ads[idx],mainCat:newCat,subCat:newSub,product:newProd,title,types:finalTypes,adDate:new Date().toLocaleDateString('ko-KR'),settingPhotos:finalSettingPhotos};
+    DB.ads[idx]={...DB.ads[idx],mainCat:newCat,subCat:newSub,product:newProd,title,memo:'',types:finalTypes,adDate:new Date().toLocaleDateString('ko-KR'),settingPhotos:finalSettingPhotos};
     detailAd=DB.ads[idx];
     saveData();
     sbUpdateAd(DB.ads[idx]);
