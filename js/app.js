@@ -2201,14 +2201,17 @@ function openAdRequest(adId) {
   // 타입 탭 초기화
   document.querySelectorAll('.adreq-type-tab').forEach(t => t.classList.remove('active'));
   document.getElementById('adreq-woodlak-size').style.display = 'none';
-  // 사이즈 옵션 초기화
-  var sizeOptEl = document.getElementById('adreq-size-option');
-  if(sizeOptEl) sizeOptEl.style.display = 'none';
+  // 광고물 사이즈 섹션 초기화
   var newSizeEl = document.getElementById('adreq-new-size-inputs');
-  if(newSizeEl) { newSizeEl.style.display = 'none'; }
+  if(newSizeEl) newSizeEl.style.display = 'none';
   var sameRadioInit = document.querySelector('input[name="adreq-size-radio"][value="same"]');
-  if(sameRadioInit) sameRadioInit.checked = true;
+  if(sameRadioInit) { sameRadioInit.checked = true; adreqToggleSizeOption('same'); }
   ['adreq-new-size-w','adreq-new-size-h'].forEach(function(id){ var el=document.getElementById(id); if(el) el.value=''; });
+  // 참고 광고 타입명에 A3/A4 포함 시 사이즈 섹션 숨김
+  var adTypes = (ad.types||[]).map(function(t){ return (t.name||'').toUpperCase(); });
+  var hasA3A4 = adTypes.some(function(n){ return n.includes('A3') || n.includes('A4'); });
+  var sizeSectionEl = document.getElementById('adreq-size-section');
+  if(sizeSectionEl) sizeSectionEl.style.display = hasA3A4 ? 'none' : '';
 
   // 폼 초기화
   ['adreq-dept','adreq-name','adreq-tel','adreq-branch','adreq-deadline',
@@ -2241,49 +2244,7 @@ function adreqToggleSizeOption(val) {
 }
 
 
-function adreqSelectType(el) {
-  document.querySelectorAll('.adreq-type-tab').forEach(t => t.classList.remove('active'));
-  el.classList.add('active');
-  const adType = el.dataset.type;
-  const isWoodlak = adType === '우드락 셀링';
-  const isOther = adType === '기타';
-  const isA3orA4 = adType === '규격POP (A3)' || adType === '규격POP (A4)';
-  document.getElementById('adreq-woodlak-size').style.display = isWoodlak ? '' : 'none';
-  document.getElementById('adreq-other-input').style.display = isOther ? '' : 'none';
-  // A3/A4는 입고 방법 숨김
-  var deliverySection = document.getElementById('adreq-delivery-section');
-  if(deliverySection) deliverySection.style.display = isA3orA4 ? 'none' : '';
-  // 사이즈 옵션 표시 (A3/A4/우드락 제외)
-  var sizeOptionEl = document.getElementById('adreq-size-option');
-  if(sizeOptionEl) {
-    var showSizeOpt = !isA3orA4 && !isWoodlak;
-    sizeOptionEl.style.display = showSizeOpt ? '' : 'none';
-    if(showSizeOpt) {
-      // 기존 사이즈 동일로 초기화
-      var sameRadio = sizeOptionEl.querySelector('input[value="same"]');
-      if(sameRadio) { sameRadio.checked = true; adreqToggleSizeOption('same'); }
-    }
-  }
-  // 사이즈 옵션 표시 (A3/A4/우드락 제외)
-  var sizeOptionEl = document.getElementById('adreq-size-option');
-  if(sizeOptionEl) {
-    var showSizeOpt = !isA3orA4 && !isWoodlak;
-    sizeOptionEl.style.display = showSizeOpt ? '' : 'none';
-    if(showSizeOpt) {
-      var sameRadio = sizeOptionEl.querySelector('input[value="same"]');
-      if(sameRadio) { sameRadio.checked = true; adreqToggleSizeOption('same'); }
-    }
-  }
-  if(!isWoodlak) {
-    const w = document.getElementById('adreq-size-w');
-    const h = document.getElementById('adreq-size-h');
-    if(w) w.value = ''; if(h) h.value = '';
-  }
-  if(!isOther) {
-    const ot = document.getElementById('adreq-other-text');
-    if(ot) ot.value = '';
-  }
-}
+function adreqSelectType(el) { /* 탭 방식 제거됨 */ }
 
 function adreqHandlePhotos(input) {
   Array.from(input.files).forEach(file => {
@@ -2314,8 +2275,7 @@ function adreqSubmit() {
   const deadline = (document.getElementById('adreq-deadline')?.value||'');
   const qty      = (document.getElementById('adreq-qty')?.value||'').trim();
   const desc     = (document.getElementById('adreq-desc')?.value||'').trim();
-  const activeTab = document.querySelector('.adreq-type-tab.active');
-  const adType   = activeTab?.dataset?.type || '';
+  const adType = ''; // 탭 방식 제거됨
   const sizeW    = (document.getElementById('adreq-size-w')?.value||'').trim();
   const sizeH    = (document.getElementById('adreq-size-h')?.value||'').trim();
   const ad = DB.ads.find(a => String(a.id) === String(adreqAdId));
@@ -2339,8 +2299,7 @@ function adreqSubmit() {
   if(!dept||!name||!tel) missing.push('요청자 정보');
   if(!deadline) missing.push('마감 요청일');
   if(!isA3orA4 && !adreqDeliveryDate) missing.push('입고일');
-  if(!adType) missing.push('광고물 형태');
-  if(adType === '우드락 셀링' && (!sizeW || !sizeH)) missing.push('우드락 셀링 사이즈');
+  // 광고물 형태 탭 제거됨 - 사이즈 옵션만 체크
   if(sitePrevImgsCheck.length === 0) missing.push('설치 위치 사진');
 
   if(missing.length > 0) {
@@ -2350,19 +2309,13 @@ function adreqSubmit() {
     document.body.appendChild(toast); setTimeout(()=>toast.remove(), 2500); return;
   }
 
-  const otherText = (document.getElementById('adreq-other-text')?.value||'').trim();
-  const effectiveType = adType === '기타' ? (otherText ? `기타 (${otherText})` : '기타') : adType;
   const sizeRadio = document.querySelector('input[name="adreq-size-radio"]:checked');
   const sizeOptionVal = sizeRadio ? sizeRadio.value : 'same';
   const newSizeW = (document.getElementById('adreq-new-size-w')?.value||'').trim();
   const newSizeH = (document.getElementById('adreq-new-size-h')?.value||'').trim();
-  var sizeNote = '';
-  if(!isA3orA4submit && !isWoodlak) {
-    sizeNote = sizeOptionVal === 'new' && newSizeW && newSizeH
-      ? ` (신규사이즈: ${newSizeW}×${newSizeH}mm)`
-      : ' (기존 사이즈 동일)';
-  }
-  const sizeText = adType === '우드락 셀링' ? `${effectiveType} (${sizeW}×${sizeH}mm)` : effectiveType + sizeNote;
+  const sizeText = sizeOptionVal === 'new' && newSizeW && newSizeH
+    ? `신규 사이즈 (${newSizeW}×${newSizeH}mm)`
+    : '기존 사이즈 동일';
   const sitePrevImgs = Array.from(document.getElementById('adreq-site-preview').querySelectorAll('img'));
   const sitePhotoSrcs = sitePrevImgs.map(img=>img.src);
 
