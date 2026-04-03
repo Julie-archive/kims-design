@@ -79,7 +79,8 @@ async function sbLoadAll() {
         eventDesc:r.event_desc, sitePhotoSrcs:r.site_photo_srcs||[], refImageSrcs:r.ref_image_srcs||[],
         manager:r.manager||'', dueDate:r.due_date||'',
         branch:r.branch||'', deliveryDay:r.delivery_day||'',
-        adTypeDetails:r.ad_type_details||{}, productPhotoSrcs:r.product_photo_srcs||[]
+        adTypeDetails:r.ad_type_details||{}, productPhotoSrcs:r.product_photo_srcs||[],
+          rejectReason:r.reject_reason||''
       }; });
     }
   } catch(e) {
