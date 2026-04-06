@@ -79,8 +79,8 @@ function renderHomeA() {
           `).join('')}
         </div>
         <div class="kcat-grid" style="grid-template-columns:1fr;gap:10px;margin-top:5px;">
-          ${['S.I','지점 운영 광고','52 Week Map'].map(cat=>`
-            <button onclick="${cat==='52 Week Map' ? `location.href='52weekmap.html'` : `homeCatSelect('${cat}')`}" style="
+          ${['S.I','지점 운영 광고'].map(cat=>`
+            <button onclick="homeCatSelect('${cat}')" style="
               width:100%;padding:22px 28px;
               background:#fff;border:1.5px solid rgba(0,0,0,0.12);border-radius:10px;
               display:flex;align-items:center;justify-content:center;
@@ -2180,7 +2180,7 @@ function openAdRequest(adId) {
   var types = (ad.types||[]).filter(function(t){ return t.src; });
   var typeSelectEl = document.getElementById('adreq-type-select');
   var typeChecksEl = document.getElementById('adreq-type-checks');
-  if(types.length >= 1 && typeSelectEl && typeChecksEl) {
+  if(types.length > 1 && typeSelectEl && typeChecksEl) {
     typeSelectEl.style.display = '';
     typeChecksEl.innerHTML = types.map(function(t, i) {
       var safeId = 'adreq-type-qty-' + i;
@@ -2299,11 +2299,7 @@ function adreqSubmit() {
   if(!dept||!name||!tel) missing.push('요청자 정보');
   if(!deadline) missing.push('마감 요청일');
   if(!isA3orA4 && !adreqDeliveryDate) missing.push('입고일');
-  var hasQty = checkedTypeEls.some(function(el){
-    var qtyId = el.dataset.qtyId;
-    return qtyId && document.getElementById(qtyId)?.value;
-  });
-  if(!hasQty) missing.push('수량 (타입별 수량 입력 필요)');
+  // 광고물 형태 탭 제거됨 - 사이즈 옵션만 체크
   if(sitePrevImgsCheck.length === 0) missing.push('설치 위치 사진');
 
   if(missing.length > 0) {
@@ -3653,6 +3649,7 @@ function searchReqStatus() {
       + '</div>'
     + '</div>';
   }).join('');
+
   result.innerHTML = '<div style="font-size:13px;font-weight:600;color:#999;margin-bottom:12px;">총 '+matched.length+'건의 신청 내역</div>' + cards;
 }
 
