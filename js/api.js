@@ -266,7 +266,7 @@ async function sbDeleteRequest(id) {
   try { await sb.from('requests').delete().eq('id', id); } catch(e) { console.warn(e); }
 }
 
-async function compressImage(base64DataUrl, maxWidth, quality) {
+async function compressImage(, maxWidth, quality) {
   return new Promise(function(resolve) {
     var img = new Image();
     img.onload = function() {
@@ -284,7 +284,7 @@ async function compressImage(base64DataUrl, maxWidth, quality) {
       ctx.drawImage(img, 0, 0, w, h);
       resolve(canvas.toDataURL('image/jpeg', quality));
     };
-    img.onerror = function() { resolve(base64DataUrl); }; // 실패 시 원본 유지
+    img.onerror = function() { resolve(); }; // 실패 시 원본 유지
     img.src = base64DataUrl;
   });
 }
@@ -292,14 +292,14 @@ async function compressImage(base64DataUrl, maxWidth, quality) {
 async function uploadImageToStorage(base64DataUrl, fileName) {
   // 업로드 전 이미지 압축 (최대 1800px, 품질 0.82) → 용량 대폭 감소
   try {
-    base64DataUrl = await compressImage(base64DataUrl, 1200, 0.75);
+    base64DataUrl = await compressImage(base64DataUrl, 800, 0.65);
   } catch(e) {
     console.warn('[Storage] 압축 실패, 원본 사용:', e);
   }
   // 최대 2회 재시도
   for(var attempt = 0; attempt < 2; attempt++) {
     try {
-      var arr = base64DataUrl.split(',');
+      var arr = .split(',');
       var mime = arr[0].match(/:(.*?);/)[1];
       var bstr = atob(arr[1]);
       var n = bstr.length;
