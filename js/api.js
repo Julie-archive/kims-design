@@ -80,6 +80,7 @@ async function sbLoadAll() {
         manager:r.manager||'', dueDate:r.due_date||'',
         branch:r.branch||'', deliveryDay:r.delivery_day||'',
         adTypeDetails:r.ad_type_details||{}, productPhotoSrcs:r.product_photo_srcs||[],
+        rejectReason:r.reject_reason||''
           rejectReason:r.reject_reason||''
       }; });
     }
