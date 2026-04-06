@@ -292,7 +292,7 @@ async function compressImage(base64DataUrl, maxWidth, quality) {
 async function uploadImageToStorage(base64DataUrl, fileName) {
   // 업로드 전 이미지 압축 (최대 1800px, 품질 0.82) → 용량 대폭 감소
   try {
-    base64DataUrl = await compressImage(base64DataUrl, 1800, 0.82);
+    base64DataUrl = await compressImage(base64DataUrl, 1200, 0.75);
   } catch(e) {
     console.warn('[Storage] 압축 실패, 원본 사용:', e);
   }
