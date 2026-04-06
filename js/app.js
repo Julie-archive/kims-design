@@ -3609,22 +3609,9 @@ function searchReqStatus() {
     result.innerHTML = '<div style="color:#e03333;font-size:13px;text-align:center;padding:12px 0;">연락처를 정확히 입력해주세요</div>';
     return;
   }
-  result.innerHTML = '<div style="text-align:center;padding:20px 0;font-size:13px;color:#aaa;">조회 중...</div>';
-  // Supabase에서 직접 조회
-  sb.from('requests').select('*').order('id', {ascending:false}).then(function(res) {
-    if(!res.error && res.data) DB.requests = res.data.map(function(r){ return {
-      id:r.id, reqCode:r.req_code, submittedAt:r.submitted_at, status:r.status,
-      dept:r.dept, name:r.name, tel:r.tel, title:r.title, deadline:r.deadline,
-      adTypes:r.ad_types||[], bannerType:r.banner_type, customSize:r.custom_size,
-      adTitle:r.ad_title, selling:r.selling, eventStart:r.event_start, eventEnd:r.event_end,
-      eventDesc:r.event_desc, sitePhotoSrcs:r.site_photo_srcs||[], refImageSrcs:r.ref_image_srcs||[],
-      manager:r.manager, dueDate:r.due_date,
-      branch:r.branch||'', deliveryDay:r.delivery_day||'',
-      adTypeDetails:r.ad_type_details||{}, productPhotoSrcs:r.product_photo_srcs||[]
-    }; });
-    var matched = (DB.requests||[]).filter(function(r){
-      return r.tel && r.tel.replace(/[^0-9]/g,'') === tel;
-    });
+  var matched = (DB.requests||[]).filter(function(r){
+    return r.tel && r.tel.replace(/[^0-9]/g,'') === tel;
+  });
   if(matched.length === 0) {
     result.innerHTML = '<div style="text-align:center;padding:28px 0;">'
       + '<svg viewBox="0 0 48 48" fill="none" stroke="#ccc" stroke-width="1.5" width="36" height="36" style="margin:0 auto 12px;display:block;"><circle cx="24" cy="24" r="20"/><path d="M24 14v12M24 32v2"/></svg>'
@@ -3666,9 +3653,7 @@ function searchReqStatus() {
       + '</div>'
     + '</div>';
   }).join('');
-
-    result.innerHTML = '<div style="font-size:13px;font-weight:600;color:#999;margin-bottom:12px;">총 '+matched.length+'건의 신청 내역</div>' + cards;
-  });
+  result.innerHTML = '<div style="font-size:13px;font-weight:600;color:#999;margin-bottom:12px;">총 '+matched.length+'건의 신청 내역</div>' + cards;
 }
 
 
