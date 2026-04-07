@@ -146,7 +146,7 @@ function renderHomeB() {
   el.innerHTML = `
     <div style="flex:1;overflow:hidden;display:flex;flex-direction:column;background:#fff;">
       <header class="kheader">
-        <img src="${LOGO_CLUB}" class="kheader-logo" style="filter:invert(1);mix-blend-mode:multiply;" alt="KIM'S CLUB" onclick="homeGoBack()" />
+        <img src="${LOGO_CLUB}" class="kheader-logo" style="filter:invert(1);mix-blend-mode:multiply;" alt="KIM'S CLUB" onclick="this.style.animation='none';this.offsetWidth;this.style.animation='logo-bounce .3s ease';homeGoBack();" />
         <button class="kheader-btn" onclick="goAdmin()">관리자 모드</button>
       </header>
       <!-- Cat tabs -->
