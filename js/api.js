@@ -313,7 +313,7 @@ async function uploadImageToStorage(base64DataUrl, fileName) {
       if(ext === 'jpeg') ext = 'jpg';
       var safeName = fileName.replace(/[^a-zA-Z0-9_-]/g, '_').replace(/_+/g,'_');
       var path = 'ads/' + safeName + '_' + Date.now() + (attempt > 0 ? '_r' + attempt : '') + '.' + ext;
-      var res = await sb.storage.from('images').upload(path, blob, {contentType: mime, upsert: true});
+      var res = await sb.storage.from('images').upload(path, blob, {contentType: mime, upsert: true, cacheControl: '31536000'});
       if(res.error) throw res.error;
       var urlRes = sb.storage.from('images').getPublicUrl(path);
       console.log('[Storage] 업로드 성공:', path);
