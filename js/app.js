@@ -44,8 +44,9 @@ function renderHome() {
 function goHomeRoot() {
   const logo = document.querySelector('.kheader-logo');
   if(logo) {
-    logo.style.transform = 'scale(1.12)';
-    setTimeout(() => { logo.style.transform = 'scale(1)'; }, 150);
+    logo.classList.remove('bounce');
+    void logo.offsetWidth;
+    logo.classList.add('bounce');
   }
   curView = 'home';
   homeScreen = 'A';
