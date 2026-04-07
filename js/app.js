@@ -41,23 +41,15 @@ function renderHome() {
   else renderHomeB();
 }
 
-function goHomeRoot(el) {
-  if(el) {
-    el.classList.remove('logo-animating');
-    void el.offsetWidth; 
-    el.classList.add('logo-animating');
-  }
-  // 모션이 끝날 때까지 0.3초 대기 후 화면 전환
-  setTimeout(() => {
-    curView = 'home';
-    homeScreen = 'A';
-    hState = {cat:'', sub:'', prod:'__all__', search:''};
-    document.getElementById('viewHome').classList.add('active');
-    document.getElementById('viewAdmin').classList.remove('active');
-    try { sessionStorage.removeItem('pageState'); } catch(e) {}
-    savePageState();
-    renderHomeA();
-  }, 300);
+function goHomeRoot() {
+  curView = 'home';
+  homeScreen = 'A';
+  hState = {cat:'', sub:'', prod:'__all__', search:''};
+  document.getElementById('viewHome').classList.add('active');
+  document.getElementById('viewAdmin').classList.remove('active');
+  try { sessionStorage.removeItem('pageState'); } catch(e) {}
+  savePageState();
+  renderHomeA();
 }
 
 function renderHomeA() {
@@ -68,7 +60,7 @@ function renderHomeA() {
   el.innerHTML = `
     <div class="khome-a">
       <header class="kheader">
-        <img src="${LOGO_CLUB}" class="kheader-logo" style="filter:invert(1);mix-blend-mode:multiply;" alt="KIM'S CLUB" onclick="goHomeRoot(this)" />
+        <img src="${LOGO_CLUB}" class="kheader-logo" style="filter:invert(1);mix-blend-mode:multiply;" alt="KIM'S CLUB" onclick="goHomeRoot()" />
         <button class="kheader-btn" onclick="goAdmin()">관리자 모드</button>
       </header>
       <div style="flex:1;overflow-y:auto;">
@@ -145,7 +137,7 @@ function renderHomeB() {
   el.innerHTML = `
     <div style="flex:1;overflow:hidden;display:flex;flex-direction:column;background:#fff;">
       <header class="kheader">
-        <img src="${LOGO_CLUB}" class="kheader-logo" style="filter:invert(1);mix-blend-mode:multiply;" alt="KIM'S CLUB" onclick="homeGoBack(this)" />
+        <img src="${LOGO_CLUB}" class="kheader-logo" style="filter:invert(1);mix-blend-mode:multiply;" alt="KIM'S CLUB" onclick="homeGoBack()" />
         <button class="kheader-btn" onclick="goAdmin()">관리자 모드</button>
       </header>
       <!-- Cat tabs -->
@@ -188,21 +180,13 @@ function renderHomeB() {
   renderHomeContent();
 }
 
-function homeGoBack(el) {
-  if(el) {
-    el.classList.remove('logo-animating');
-    void el.offsetWidth; 
-    el.classList.add('logo-animating');
-  }
-  // 0.3초 대기 후 이전 화면으로 전환
-  setTimeout(() => {
-    curView = 'home';
-    homeScreen='A';
-    hState = {cat:'', sub:'', prod:'__all__', search:''};
-    try { sessionStorage.removeItem('pageState'); } catch(e) {}
-    savePageState();
-    renderHomeA();
-  }, 300);
+function homeGoBack() {
+  curView = 'home';
+  homeScreen='A';
+  hState = {cat:'', sub:'', prod:'__all__', search:''};
+  try { sessionStorage.removeItem('pageState'); } catch(e) {}
+  savePageState();
+  renderHomeA();
 }
 function homeSubSelect(sub) {
   hState.sub=sub;
@@ -359,7 +343,7 @@ function renderAdmin() {
     el.innerHTML = `
       <div style="flex:1;overflow:hidden;display:flex;flex-direction:column;background:#fff;">
         <header class="kheader">
-          <img src="${LOGO_CLUB}" class="kheader-logo" style="filter:invert(1);mix-blend-mode:multiply;" alt="KIM'S CLUB" onclick="goHomeRoot(this)" />
+          <img src="${LOGO_CLUB}" class="kheader-logo" style="filter:invert(1);mix-blend-mode:multiply;" alt="KIM'S CLUB" onclick="homeGoBack()" />
           <button class="kheader-btn" onclick="pinOpen()">관리자 모드</button>
         </header>
         <div class="klocked">
@@ -380,7 +364,7 @@ function renderAdmin() {
       <div style="flex-shrink:0;background:#fff;">
         <!-- Row 1: Logo + Button (same as normal mode) -->
         <header class="kheader">
-          <img src="${LOGO_CLUB}" class="kheader-logo" style="filter:invert(1);mix-blend-mode:multiply;" alt="KIM'S CLUB" onclick="goHomeRoot(this)" />
+          <img src="${LOGO_CLUB}" class="kheader-logo" style="filter:invert(1);mix-blend-mode:multiply;" alt="KIM'S CLUB" onclick="goHomeRoot()" />
           <button class="kheader-btn" onclick="adminGoNormal()">일반 모드</button>
         </header>
         <!-- Row 2: Tabs centered -->
