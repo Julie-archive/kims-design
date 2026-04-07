@@ -190,6 +190,12 @@ function renderHomeB() {
 }
 
 function homeGoBack() {
+  const logo = document.querySelector('.kheader-logo');
+  if(logo) {
+    logo.style.animation='none';
+    logo.offsetWidth;
+    logo.style.animation='logo-bounce .3s ease';
+  }
   curView = 'home';
   homeScreen='A';
   hState = {cat:'', sub:'', prod:'__all__', search:''};
