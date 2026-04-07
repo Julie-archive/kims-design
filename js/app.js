@@ -42,6 +42,11 @@ function renderHome() {
 }
 
 function goHomeRoot() {
+  const logo = document.querySelector('.kheader-logo');
+  if(logo) {
+    logo.style.transform = 'scale(1.12)';
+    setTimeout(() => { logo.style.transform = 'scale(1)'; }, 150);
+  }
   curView = 'home';
   homeScreen = 'A';
   hState = {cat:'', sub:'', prod:'__all__', search:''};
