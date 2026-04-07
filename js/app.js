@@ -42,12 +42,6 @@ function renderHome() {
 }
 
 function goHomeRoot() {
-  const logo = document.querySelector('.kheader-logo');
-  if(logo) {
-    logo.classList.remove('bounce');
-    void logo.offsetWidth;
-    logo.classList.add('bounce');
-  }
   curView = 'home';
   homeScreen = 'A';
   hState = {cat:'', sub:'', prod:'__all__', search:''};
@@ -56,6 +50,15 @@ function goHomeRoot() {
   try { sessionStorage.removeItem('pageState'); } catch(e) {}
   savePageState();
   renderHomeA();
+  // 렌더 후 로고 찾아서 애니메이션
+  setTimeout(() => {
+    const logo = document.querySelector('.kheader-logo');
+    if(logo) {
+      logo.classList.remove('bounce');
+      void logo.offsetWidth;
+      logo.classList.add('bounce');
+    }
+  }, 0);
 }
 
 function renderHomeA() {
