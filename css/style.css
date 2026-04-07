@@ -335,8 +335,8 @@ html, body { height: 100%; overflow: hidden; overflow-x: hidden; max-width: 100%
   40%  { transform: scale(1.12); }
   100% { transform: scale(1); }
 }
-.kheader-logo.bounce {
-  animation: logo-bounce .3s ease;
+.logo-animating {
+  animation: logo-bounce 0.3s ease !important;
 }
 
 /* 핸들 + 스와이프 힌트 */
