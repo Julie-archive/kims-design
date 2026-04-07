@@ -69,7 +69,7 @@ function renderHomeA() {
   el.innerHTML = `
     <div class="khome-a">
       <header class="kheader">
-        <img src="${LOGO_CLUB}" class="kheader-logo" style="filter:invert(1);mix-blend-mode:multiply;" alt="KIM'S CLUB" onclick="goHomeRoot()" />
+        <img src="${LOGO_CLUB}" class="kheader-logo" style="filter:invert(1);mix-blend-mode:multiply;" alt="KIM'S CLUB" onclick="this.style.animation='none';this.offsetWidth;this.style.animation='logo-bounce .3s ease';goHomeRoot();" />
         <button class="kheader-btn" onclick="goAdmin()">관리자 모드</button>
       </header>
       <div style="flex:1;overflow-y:auto;">
@@ -352,7 +352,7 @@ function renderAdmin() {
     el.innerHTML = `
       <div style="flex:1;overflow:hidden;display:flex;flex-direction:column;background:#fff;">
         <header class="kheader">
-          <img src="${LOGO_CLUB}" class="kheader-logo" style="filter:invert(1);mix-blend-mode:multiply;" alt="KIM'S CLUB" onclick="goHomeRoot()" />
+          <img src="${LOGO_CLUB}" class="kheader-logo" style="filter:invert(1);mix-blend-mode:multiply;" alt="KIM'S CLUB" onclick="this.style.animation='none';this.offsetWidth;this.style.animation='logo-bounce .3s ease';goHomeRoot();" />
           <button class="kheader-btn" onclick="pinOpen()">관리자 모드</button>
         </header>
         <div class="klocked">
@@ -373,7 +373,7 @@ function renderAdmin() {
       <div style="flex-shrink:0;background:#fff;">
         <!-- Row 1: Logo + Button (same as normal mode) -->
         <header class="kheader">
-          <img src="${LOGO_CLUB}" class="kheader-logo" style="filter:invert(1);mix-blend-mode:multiply;" alt="KIM'S CLUB" onclick="goHomeRoot()" />
+          <img src="${LOGO_CLUB}" class="kheader-logo" style="filter:invert(1);mix-blend-mode:multiply;" alt="KIM'S CLUB" onclick="this.style.animation='none';this.offsetWidth;this.style.animation='logo-bounce .3s ease';goHomeRoot();" />
           <button class="kheader-btn" onclick="adminGoNormal()">일반 모드</button>
         </header>
         <!-- Row 2: Tabs centered -->
