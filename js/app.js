@@ -860,6 +860,10 @@ function typeBlockInnerHTML(idx,prefix) {
   </div>
   <div style="margin-top:8px;">
     <input class="kinput" type="text" id="${prefix}TypeMemo_${idx}" placeholder="메모 (선택 · 특이사항, 적용 매장 등)" style="font-size:13px;" />
+  </div>
+  <div style="margin-top:10px;display:flex;align-items:center;gap:8px;">
+    <input type="checkbox" id="${prefix}TypeKickselling_${idx}" style="width:16px;height:16px;cursor:pointer;accent-color:#4a7cf4;" />
+    <label for="${prefix}TypeKickselling_${idx}" style="font-size:13px;font-weight:600;color:#555;cursor:pointer;">킥셀링 (PMS 등록 완료 · 신청 불필요)</label>
   </div>`;
 }
 
@@ -927,7 +931,8 @@ function collectTypes(prefix) {
     const memo=document.getElementById(`${prefix}TypeMemo_${idx}`)?.value.trim()||'';
     const unitPrice=document.getElementById(`${prefix}TypePrice_${idx}`)?.value.trim()||'';
     const src=prefix==='ai'?(aiTypeSrcs[idx]||''):(editTypeSrcs[idx]!==undefined&&editTypeSrcs[idx]!==null?editTypeSrcs[idx]:((detailAd?.types||[])[idx]?.src||''));
-    return {name,subtitle,width,height,src,memo,unitPrice};
+    const isKickselling = document.getElementById(`${prefix}TypeKickselling_${idx}`)?.checked || false;
+    return {name,subtitle,width,height,src,memo,unitPrice,isKickselling};
   });
 }
 
@@ -1157,7 +1162,10 @@ function renderDetail() {
             </div>
           </div>`;
         }
-        if(footer) footer.innerHTML=`<button onclick="openAdRequest(${ad.id})" style="width:100%;padding:14px;background:#4a7cf4;color:#fff;border:none;border-radius:50px;font-size:15px;font-weight:700;cursor:pointer;font-family:'Pretendard',sans-serif;letter-spacing:-0.02em;">이 광고로 신청하기</button>`;
+        var isKickselling = (ad.types||[]).some(function(t){ return t.isKickselling; });
+if(footer) footer.innerHTML = isKickselling
+  ? `<button disabled style="width:100%;padding:14px;background:#e8f5e9;color:#2d7a2d;border:1.5px solid #b2dfdb;border-radius:50px;font-size:15px;font-weight:700;cursor:default;font-family:'Pretendard',sans-serif;letter-spacing:-0.02em;">✓ PMS 등록 완료</button>`
+  : `<button onclick="openAdRequest(${ad.id})" style="width:100%;padding:14px;background:#4a7cf4;color:#fff;border:none;border-radius:50px;font-size:15px;font-weight:700;cursor:pointer;font-family:'Pretendard',sans-serif;letter-spacing:-0.02em;">이 광고로 신청하기</button>`;
       }
     }
   } else {
