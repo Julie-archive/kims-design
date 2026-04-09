@@ -931,7 +931,7 @@ function collectTypes(prefix) {
     const memo=document.getElementById(`${prefix}TypeMemo_${idx}`)?.value.trim()||'';
     const unitPrice=document.getElementById(`${prefix}TypePrice_${idx}`)?.value.trim()||'';
     const src=prefix==='ai'?(aiTypeSrcs[idx]||''):(editTypeSrcs[idx]!==undefined&&editTypeSrcs[idx]!==null?editTypeSrcs[idx]:((detailAd?.types||[])[idx]?.src||''));
-    const isKickselling = document.getElementById(`${prefix}TypeKickselling_${idx}`)?.checked || false;
+    return {name,subtitle,width,height,src,memo,unitPrice};
     return {name,subtitle,width,height,src,memo,unitPrice,isKickselling};
   });
 }
@@ -3383,6 +3383,8 @@ function openRequestDetail(id) {
   var requests = DB.requests||[];
   var r = requests.find(function(r){return r.id===id;});
   if(!r) return;
+  var footer = document.getElementById('detailFooter');
+  if(footer) footer.innerHTML = '';
   var num = requests.length - requests.findIndex(function(r2){return r2.id===id;});
   var statusColors = {'검토 중':'#111','진행 중':'#555','완료':'#aaa','반려':'#e03333'};
   var sc = statusColors[r.status]||'#111';
