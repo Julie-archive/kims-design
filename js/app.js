@@ -79,8 +79,8 @@ function renderHomeA() {
           `).join('')}
         </div>
         <div class="kcat-grid" style="grid-template-columns:1fr;gap:10px;margin-top:5px;">
-          ${['S.I','지점 운영 광고','52주 광고 맵'].map(cat=>`
-            <button onclick="${cat === '52주 광고 맵' ? "window.open('52weekmap.html', '_blank')" : `homeCatSelect('${cat}')`}" style="
+          ${['S.I','지점 운영 광고'].map(cat=>`
+            <button onclick="homeCatSelect('${cat}')" style="
               width:100%;padding:22px 28px;
               background:#fff;border:1.5px solid rgba(0,0,0,0.12);border-radius:10px;
               display:flex;align-items:center;justify-content:center;
@@ -3496,31 +3496,33 @@ function openRequestDetail(id) {
     });
   }
 
-  // Site photos
-  if((r.sitePhotoSrcs||[]).length) {
-    var sp = container.querySelector('#detail-site-pics');
-    sp.innerHTML = '<div style="margin-bottom:16px;"><div style="font-size:11px;font-weight:600;color:#999;letter-spacing:1px;text-transform:uppercase;margin-bottom:8px;">현장 사진</div><div id="sp-imgs" style="display:flex;flex-wrap:wrap;gap:8px;"></div></div>';
-    (r.sitePhotoSrcs||[]).forEach(function(src){
-      var img = document.createElement('img');
-      img.src = src; img.style.cssText = 'width:80px;height:80px;object-fit:cover;border-radius:6px;cursor:zoom-in;border:1px solid rgba(0,0,0,0.1);';
-      img.addEventListener('click', function(){ openLightbox(src); });
-      sp.querySelector('#sp-imgs').appendChild(img);
-    });
-  }
-
-  // Ref images
-  if((r.refImageSrcs||[]).length) {
-    var rp = container.querySelector('#detail-ref-pics');
-    rp.innerHTML = '<div style="margin-bottom:16px;"><div style="font-size:11px;font-weight:600;color:#999;letter-spacing:1px;text-transform:uppercase;margin-bottom:8px;">레퍼런스</div><div id="rp-imgs" style="display:flex;flex-wrap:wrap;gap:8px;"></div></div>';
-    (r.refImageSrcs||[]).forEach(function(src){
-      var img = document.createElement('img');
-      img.src = src; img.style.cssText = 'width:80px;height:80px;object-fit:cover;border-radius:6px;cursor:zoom-in;border:1px solid rgba(0,0,0,0.1);';
-      img.addEventListener('click', function(){ openLightbox(src); });
-      rp.querySelector('#rp-imgs').appendChild(img);
-    });
-  }
-
+// 모달 먼저 열고 내용 채우기 (다른 컴퓨터 타이밍 이슈 방지)
   modalOpen('modalDetail');
+  // 사진은 모달 열린 후 비동기로 처리
+  requestAnimationFrame(function() {
+    if((r.sitePhotoSrcs||[]).length) {
+      var sp = container.querySelector('#detail-site-pics');
+      if(!sp) return;
+      sp.innerHTML = '<div style="margin-bottom:16px;"><div style="font-size:11px;font-weight:600;color:#999;letter-spacing:1px;text-transform:uppercase;margin-bottom:8px;">현장 사진</div><div id="sp-imgs" style="display:flex;flex-wrap:wrap;gap:8px;"></div></div>';
+      (r.sitePhotoSrcs||[]).forEach(function(src){
+        var img = document.createElement('img');
+        img.src = src; img.style.cssText = 'width:80px;height:80px;object-fit:cover;border-radius:6px;cursor:zoom-in;border:1px solid rgba(0,0,0,0.1);';
+        img.addEventListener('click', function(){ openLightbox(src); });
+        sp.querySelector('#sp-imgs').appendChild(img);
+      });
+    }
+    if((r.refImageSrcs||[]).length) {
+      var rp = container.querySelector('#detail-ref-pics');
+      if(!rp) return;
+      rp.innerHTML = '<div style="margin-bottom:16px;"><div style="font-size:11px;font-weight:600;color:#999;letter-spacing:1px;text-transform:uppercase;margin-bottom:8px;">레퍼런스</div><div id="rp-imgs" style="display:flex;flex-wrap:wrap;gap:8px;"></div></div>';
+      (r.refImageSrcs||[]).forEach(function(src){
+        var img = document.createElement('img');
+        img.src = src; img.style.cssText = 'width:80px;height:80px;object-fit:cover;border-radius:6px;cursor:zoom-in;border:1px solid rgba(0,0,0,0.1);';
+        img.addEventListener('click', function(){ openLightbox(src); });
+        rp.querySelector('#rp-imgs').appendChild(img);
+      });
+    }
+  });
 }
 
 function deleteRequest(id) {
