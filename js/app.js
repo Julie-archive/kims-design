@@ -860,10 +860,6 @@ function typeBlockInnerHTML(idx,prefix) {
   </div>
   <div style="margin-top:8px;">
     <input class="kinput" type="text" id="${prefix}TypeMemo_${idx}" placeholder="메모 (선택 · 특이사항, 적용 매장 등)" style="font-size:13px;" />
-  </div>
-  <div style="margin-top:10px;display:flex;align-items:center;gap:8px;">
-    <input type="checkbox" id="${prefix}TypeKickselling_${idx}" style="width:16px;height:16px;cursor:pointer;accent-color:#4a7cf4;" />
-    <label for="${prefix}TypeKickselling_${idx}" style="font-size:13px;font-weight:600;color:#555;cursor:pointer;">킥셀링 (PMS 등록 완료 · 신청 불필요)</label>
   </div>`;
 }
 
