@@ -65,7 +65,7 @@ function renderHomeA() {
       </header>
       <div style="flex:1;overflow-y:auto;">
         <div class="khero">
-          <h1 class="khero-title">Kim's club<br/>SI&SP Design</h1>
+          <h1 class="khero-title">Kim's club<br/>SP Design</h1>
           <p class="khero-sub">킴스클럽 광고 운영 표준화 플랫폼입니다.</p>
           <div class="khero-actions" style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap;padding-bottom:40px;">
             <button class="khero-btn" onclick="openRequestModal()">광고 신청하기</button>
