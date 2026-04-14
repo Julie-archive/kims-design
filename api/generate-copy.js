@@ -15,7 +15,7 @@ export default async function handler(req, res) {
   try {
     // Vercel 환경 변수에 등록할 Gemini API 키를 가져옵니다.
     const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
-    const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
+    const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash-latest" });
 
     // AI에게 내리는 프롬프트 (규칙)
     const prompt = `너는 킴스클럽의 전문 카피라이터야. 마트 매대 POP 및 포스터에 들어갈 세련되고 직관적인 셀링 문구 3가지를 추천해줘.
