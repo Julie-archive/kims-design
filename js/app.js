@@ -3728,3 +3728,76 @@ function copyReqCode() {
     renderHomeA();
   }
 })();
+
+
+
+// ══════════════════════════════════════════════════════
+//  AI 카피 추천 기능 (프론트엔드 로직)
+// ══════════════════════════════════════════════════════
+document.addEventListener('DOMContentLoaded', () => {
+  // 모달 등 동적으로 생성되는 요소에 이벤트를 바인딩하기 위해 이벤트 위임 사용
+  document.body.addEventListener('click', async (e) => {
+    if (e.target && e.target.id === 'btn-ai-copy') {
+      
+      // 타이틀(상품명) 입력칸 가져오기
+      const titleInput = document.getElementById('rq-ad-title'); 
+      const keyword = titleInput ? titleInput.value.trim() : '';
+
+      if (!keyword) {
+        alert('먼저 타이틀(광고 타이틀 문구)을 입력해주세요!');
+        if (titleInput) titleInput.focus();
+        return;
+      }
+
+      const resultsContainer = document.getElementById('ai-copy-results');
+      if (!resultsContainer) return;
+      
+      resultsContainer.style.display = 'flex';
+      resultsContainer.innerHTML = '<div style="padding:10px; font-size: 13px; color: #5c6bc0; background: #fff; border-radius: 6px; border: 1.5px solid #e2e8ff; display:flex; align-items:center; justify-content:center; gap:8px;"><div style="width:14px;height:14px;border:2px solid #c0d0ff;border-top-color:#5c6bc0;border-radius:50%;animation:spin .7s linear infinite;"></div>AI가 킴스클럽 맞춤 카피를 고민 중입니다...</div>';
+
+      // api.js에 추가해둔 함수 호출
+      if (typeof fetchAiCopy !== 'function') {
+         resultsContainer.innerHTML = '<span style="color: red; font-size: 13px; padding: 4px;">❌ fetchAiCopy 함수를 찾을 수 없습니다. (api.js 확인 필요)</span>';
+         return;
+      }
+
+      const copies = await fetchAiCopy(keyword);
+
+      if (copies && copies.length > 0) {
+        resultsContainer.innerHTML = '';
+        copies.forEach(copy => {
+          const copyBtn = document.createElement('button');
+          copyBtn.type = 'button';
+          copyBtn.style.cssText = 'text-align: left; padding: 10px 14px; background: #fff; border: 1.5px solid #e2e8ff; border-radius: 6px; font-size: 13px; cursor: pointer; color: #333; transition: all 0.2s; line-height: 1.4;';
+          copyBtn.textContent = copy.replace(/^["'\s]+|["'\s]+$/g, ''); // 앞뒤 따옴표 등 제거
+          
+          copyBtn.onmouseover = () => {
+            copyBtn.style.background = '#f4f6ff';
+            copyBtn.style.borderColor = '#5c6bc0';
+          };
+          copyBtn.onmouseout = () => {
+            copyBtn.style.background = '#fff';
+            copyBtn.style.borderColor = '#e2e8ff';
+          };
+
+          copyBtn.onclick = () => {
+            const sellingInput = document.getElementById('rq-selling');
+            if (sellingInput) {
+              // 기존 내용이 있으면 줄바꿈 후 추가, 없으면 그냥 추가
+              if (sellingInput.value) {
+                 sellingInput.value += '\n' + copyBtn.textContent;
+              } else {
+                 sellingInput.value = copyBtn.textContent;
+              }
+            }
+            resultsContainer.style.display = 'none';
+          };
+          
+          resultsContainer.appendChild(copyBtn);
+        });
+      } else {
+        resultsContainer.innerHTML = '<span style="color: #e03333; font-size: 13px; padding: 4px;">❌ 문구 생성에 실패했습니다. API 설정이나 네트워크를 확인해주세요.</span>';
+      }
+    }
+  });
+});
