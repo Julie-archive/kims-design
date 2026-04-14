@@ -13,6 +13,21 @@
 <link rel="preload" href="https://fonts.cdnfonts.com/s/127281/GmarketSansMedium.woff" as="font" type="font/woff" crossorigin>
 <link rel="preload" href="https://fonts.cdnfonts.com/s/127281/GmarketSansBold.woff" as="font" type="font/woff" crossorigin>
   
+<link rel="manifest" href="/manifest.json">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black">
+<link rel="apple-touch-icon" href="/icons/icon-192x192.png">
+
+<script>
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('/sw.js')
+        .then(reg => console.log('서비스 워커 등록 성공', reg))
+        .catch(err => console.log('서비스 워커 등록 실패', err));
+    });
+  }
+</script>
+  
 </head>
 <body>
 <div id="app">
