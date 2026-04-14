@@ -348,19 +348,29 @@
     <!-- 요청 내용 -->
     <div class="kform-label" style="margin-bottom:8px;">요청 내용</div>
     <div style="background:#f4f6ff;border:1.5px solid #e2e8ff;border-radius:6px;padding:16px;margin-bottom:16px;">
-      <div style="margin-bottom:10px;">
-        <div class="kform-label">타이틀 <span style="color:#e03333;">*</span></div>
-        <input class="kinput" type="text" id="rq-ad-title" placeholder="광고 타이틀 문구" />
-      </div>
-      <div style="margin-bottom:10px;">
-        <div class="kform-label">셀링 문구 <span style="color:#e03333;">*</span></div>
-        <textarea class="kinput" id="rq-selling" rows="2" placeholder="셀링 문구를 입력하세요" style="resize:vertical;min-height:60px;width:100%;"></textarea>
-      </div>
-      <div>
-        <div class="kform-label">행사 내용</div>
-        <textarea class="kinput" id="rq-event-desc" rows="3" placeholder="할인 내용 및 조건을 상세하게 입력하세요.&#10;(예: 신한카드 결제, 이멤버 적립, 000원 이상 구매 등)" style="resize:vertical;min-height:80px;width:100%;"></textarea>
-      </div>
+  
+    <div style="margin-bottom:10px;">
+    <div class="kform-label">타이틀 <span style="color:#e03333;">*</span></div>
+    <input class="kinput" type="text" id="rq-ad-title" placeholder="광고 타이틀 문구" />
     </div>
+
+    <div style="margin-bottom:10px;">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
+      <div class="kform-label" style="margin-bottom: 0;">셀링 문구 <span style="color:#e03333;">*</span></div>
+      <button type="button" id="btn-ai-copy" style="cursor:pointer; background:#fff; border:1.5px solid #e2e8ff; border-radius:4px; padding:2px 8px; font-size:12px; color:#5c6bc0; font-weight:bold;">
+        ✨ AI 문구 추천
+      </button>
+    </div>
+    <textarea class="kinput" id="rq-selling" rows="2" placeholder="셀링 문구를 직접 입력하거나 AI 추천을 받아보세요" style="resize:vertical;min-height:60px;width:100%;"></textarea>
+    
+    <div id="ai-copy-results" style="display: none; margin-top: 8px; flex-direction: column; gap: 6px;"></div>
+    </div>
+
+  <div>
+    <div class="kform-label">행사 내용</div>
+    <textarea class="kinput" id="rq-event-desc" rows="3" placeholder="할인 내용 및 조건을 상세하게 입력하세요.&#10;(예: 행사카드 결제, 이멤버 적립, 000원 이상 구매 등)" style="resize:vertical;min-height:80px;width:100%;"></textarea>
+  </div>
+  </div>
 
     <!-- 현장 사진 (연출물/기타 선택 시 필수) -->
     <div id="rq-site-section" style="display:none;">
