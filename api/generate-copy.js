@@ -1,7 +1,7 @@
 // api/generate-copy.js
-import { GoogleGenerativeAI } from '@google/generative-ai';
+const { GoogleGenerativeAI } = require('@google/generative-ai');
 
-export default async function handler(req, res) {
+module.exports = async function handler(req, res) {
   // POST 요청만 허용합니다.
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' });
