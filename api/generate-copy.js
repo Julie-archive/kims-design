@@ -1,4 +1,4 @@
-const { GoogleGenerativeAI } = require('@google/generative-ai');
+const { GoogleGenAI } = require('@google/genai');
 
 module.exports = async function handler(req, res) {
   if (req.method !== 'POST') {
@@ -9,17 +9,17 @@ module.exports = async function handler(req, res) {
     return res.status(400).json({ error: '상품명이 필요합니다.' });
   }
   try {
-    const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
-    const model = genAI.getGenerativeModel({ model: "gemini-pro" });
-    const prompt = `너는 킴스클럽의 전문 카피라이터야. 마트 매대 POP 및 포스터에 들어갈 세련되고 직관적인 셀링 문구 3가지를 추천해줘.
+    const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
+    const response = await ai.models.generateContent({
+      model: 'gemini-2.5-flash-preview-04-17',
+      contents: `너는 킴스클럽의 전문 카피라이터야. 마트 매대 POP 및 포스터에 들어갈 세련되고 직관적인 셀링 문구 3가지를 추천해줘.
 사용자가 입력한 상품/키워드: "${keyword}"
-
 규칙:
 1. 각 문구는 20자 이내로 짧고 강렬하게 작성할 것.
 2. 확인되지 않은 구체적인 수치는 절대 사용하지 말고 감각적인 표현 위주로 작성할 것.
-3. 번호나 특수기호를 매기지 말고 텍스트만 줄바꿈으로 구분해서 딱 3줄만 출력해줘.`;
-    const result = await model.generateContent(prompt);
-    const text = result.response.text();
+3. 번호나 특수기호를 매기지 말고 텍스트만 줄바꿈으로 구분해서 딱 3줄만 출력해줘.`
+    });
+    const text = response.text;
     const copies = text.split('\n').filter(line => line.trim() !== '');
     res.status(200).json({ copies });
   } catch (error) {
