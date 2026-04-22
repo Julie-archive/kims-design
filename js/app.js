@@ -571,6 +571,7 @@ function pinOpen() {
 }
 function pinClose() {
   modalClose('modalPin');
+  if(!adminLoggedIn) renderHomeA();
 }
 function pinToggleEye() {
   const inp=document.getElementById('pinInput');
