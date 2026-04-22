@@ -1504,6 +1504,9 @@ function openRequestModal() {
   if(deliveryDay) deliveryDay.value='';
   var deliveryCustom = document.getElementById('rq-delivery-custom');
   if(deliveryCustom) deliveryCustom.style.display='none';
+
+  var aiResults = document.getElementById('ai-copy-results');
+  if(aiResults) { aiResults.style.display = 'none'; aiResults.innerHTML = ''; }
   modalOpen('modalRequest');
   // 모달이 표시된 후 스크롤 상단으로
   setTimeout(function() {
