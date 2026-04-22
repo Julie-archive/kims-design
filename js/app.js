@@ -59,9 +59,9 @@ function renderHomeA() {
   const el = document.getElementById('viewHome');
   el.innerHTML = `
     <div style="flex:1;overflow-y:auto;background:#fff;min-height:100vh;position:relative;display:flex;flex-direction:column;">
-      <header style="display:flex;flex-direction:row;justify-content:space-between;align-items:center;padding:0 50px;height:100px;flex-shrink:0;">
-        <img src="${LOGO_CLUB}" style="width:198px;height:31px;object-fit:contain;filter:invert(1);mix-blend-mode:multiply;cursor:pointer;" alt="KIM'S CLUB" onclick="goHomeRoot()" />
-        <button onclick="goAdmin()" style="display:flex;align-items:center;justify-content:center;padding:13px 35px;background:#000;border:none;border-radius:100px;font-family:'Pretendard',sans-serif;font-size:18px;font-weight:600;color:#fff;cursor:pointer;letter-spacing:-0.04em;white-space:nowrap;">관리자 모드</button>
+      <header class="kheader">
+      <img src="${LOGO_CLUB}" class="kheader-logo" style="filter:invert(1);mix-blend-mode:multiply;" alt="KIM'S CLUB" onclick="goHomeRoot()" />
+      <button onclick="goAdmin()" class="kheader-btn">관리자 모드</button>
       </header>
       <div style="width:100%;height:1px;background:#006341;flex-shrink:0;"></div>
       <div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:40px 20px 60px;">
