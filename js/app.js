@@ -553,11 +553,13 @@ function emptyAdMsg() {
 //  NAVIGATION HELPERS
 // ══════════════════════════════════════════════════════
 function goAdmin() {
-  // 관리자모드 진입 시 항상 첫 화면(농산>전체보기)으로 초기화
+  if(!adminLoggedIn) {
+    setTimeout(()=>pinOpen(), 80);
+    return;
+  }
   aState = {cat:MAIN_CATS[0], sub:'', prod:'__all__', search:''};
   adminTab = 'archive';
   switchView('admin');
-  if(!adminLoggedIn) setTimeout(()=>pinOpen(), 80);
 }
 
 // ══════════════════════════════════════════════════════
@@ -585,11 +587,12 @@ function pinConfirm() {
   const val=document.getElementById('pinInput').value;
   if(val===ADMIN_PIN) {
     adminLoggedIn=true;
-    sessionStorage.setItem('adminLoggedIn', 'true'); // 새로고침 후에도 로그인 유지
+    sessionStorage.setItem('adminLoggedIn', 'true');
     aState={cat:MAIN_CATS[0], sub:'', prod:'__all__', search:''};
     adminTab='archive';
     savePageState();
     pinClose();
+    switchView('admin');
     renderAdmin();
   } else {
     document.getElementById('pinError').textContent='비밀번호가 올바르지 않습니다';
