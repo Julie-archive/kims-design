@@ -738,6 +738,9 @@ select.kinput {
   .kheader-logo     { width: 150px; }
   .kheader-btn      { padding: 8px 14px; font-size: 12px; min-width: 80px; }
 
+  /* ── Home title ── */
+  .home-title { font-size: 40px !important; }
+
   /* ── Tab Bar ── */
   .ktab-bar {
     display: flex; overflow-x: auto; scrollbar-width: none;
