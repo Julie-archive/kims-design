@@ -222,7 +222,7 @@
 <div class="kmodal-overlay center" id="modalRequest">
   <div class="kmodal-sheet" style="max-width:600px;border-radius:12px;max-height:92vh;overflow:hidden;padding:0;display:flex;flex-direction:column;">
     <!-- 공지 바 (상단 고정) -->
-    <div style="background:#4a7cf4;border-radius:0;padding:13px 22px;flex-shrink:0;text-align:center;">
+    <div style="background:#006341;border-radius:0;padding:13px 22px;flex-shrink:0;text-align:center;">
       <span style="font-size:14px;font-weight:700;color:#fff;letter-spacing:-0.02em;">광고물 고정 입고일은 <span style="color:#facc15;">화요일 · 금요일</span>입니다</span>
     </div>
     <!-- 스크롤 영역 -->
@@ -314,7 +314,7 @@
             <!-- 탭: 고정입고일(화/금) / 별도 지정일 -->
             <div style="display:flex;border:1.5px solid #d8dce3;border-radius:6px;overflow:hidden;background:#fff;margin-bottom:10px;">
               <button type="button" id="rq-tab-fixed" onclick="rqSwitchDeliveryTab('fixed')"
-                style="flex:1;padding:9px 4px;background:#4a7cf4;color:#fff;border:none;font-size:12px;font-weight:700;cursor:pointer;font-family:Pretendard,sans-serif;transition:all .15s;">고정입고일(화/금)</button>
+                style="flex:1;padding:9px 4px;background:#006341;color:#fff;border:none;font-size:12px;font-weight:700;cursor:pointer;font-family:Pretendard,sans-serif;transition:all .15s;">고정입고일(화/금)</button>
               <button type="button" id="rq-tab-custom" onclick="rqSwitchDeliveryTab('custom')"
                 style="flex:1;padding:9px 4px;background:none;color:#999;border:none;font-size:12px;font-weight:600;cursor:pointer;font-family:Pretendard,sans-serif;transition:all .15s;">별도 지정일</button>
             </div>
@@ -428,11 +428,11 @@
     <div style="font-size:20px;font-weight:900;margin-bottom:16px;">신청이 완료되었습니다</div>
     <div style="background:#f4f6ff;border:1.5px solid #e2e8ff;border-radius:6px;padding:16px;margin-bottom:20px;">
       <div style="font-size:13px;color:#555;line-height:1.9;">
-        홈 화면 <strong style="color:#4a7cf4;">'신청 현황 조회'</strong>에서<br>
-        입력하신 <strong style="color:#4a7cf4;">연락처</strong>로 확인하세요.
+        홈 화면 <strong style="color:#006341;">'신청 현황 조회'</strong>에서<br>
+        입력하신 <strong style="color:#006341;">연락처</strong>로 확인하세요.
       </div>
     </div>
-    <button onclick="modalClose('modalReqSuccess')" style="width:100%;padding:14px;background:#4a7cf4;color:#fff;border:none;border-radius:50px;font-size:15px;font-weight:700;cursor:pointer;font-family:Pretendard,sans-serif;">확인</button>
+    <button onclick="modalClose('modalReqSuccess')" style="width:100%;padding:14px;background:#006341;color:#fff;border:none;border-radius:50px;font-size:15px;font-weight:700;cursor:pointer;font-family:Pretendard,sans-serif;">확인</button>
     <div style="margin-top:14px;font-size:11px;color:#ccc;">신청 번호: <span id="successReqCode"></span></div>
   </div>
 </div>
@@ -451,7 +451,7 @@
           style="flex:1;"
           oninput="formatTelInput(this)"
           onkeydown="if(event.key==='Enter')searchReqStatus();" />
-        <button onclick="searchReqStatus()" style="flex-shrink:0;padding:0 20px;background:#4a7cf4;color:#fff;border:none;border-radius:var(--kr2);font-family:Pretendard,sans-serif;font-size:14px;font-weight:700;cursor:pointer;">조회</button>
+        <button onclick="searchReqStatus()" style="flex-shrink:0;padding:0 20px;background:#006341;color:#fff;border:none;border-radius:var(--kr2);font-family:Pretendard,sans-serif;font-size:14px;font-weight:700;cursor:pointer;">조회</button>
       </div>
     </div>
     <div id="statusResult" style="margin-top:4px;max-height:55vh;overflow-y:auto;"></div>
@@ -465,7 +465,7 @@
 <div class="kmodal-overlay center" id="modalAdRequest">
   <div class="kmodal-sheet" style="max-width:520px;border-radius:12px;max-height:92vh;overflow:hidden;padding:0;display:flex;flex-direction:column;">
     <!-- 공지 바 -->
-    <div style="background:#4a7cf4;border-radius:0;padding:13px 22px;flex-shrink:0;text-align:center;">
+    <div style="background:#006341;border-radius:0;padding:13px 22px;flex-shrink:0;text-align:center;">
       <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;"><span style="font-size:14px;font-weight:700;color:#fff;letter-spacing:-0.02em;">기존 광고물 신청</span><span style="font-size:11px;color:rgba(255,255,255,0.75);font-weight:500;"><span style="color:#facc15;">*</span> 필수 입력 항목</span></div>
     </div>
     <!-- 스크롤 영역 -->
@@ -525,7 +525,7 @@
       <div class="kform-label" style="margin-bottom:6px;">입고일 <span style="color:#e03333;">*</span></div>
       <div style="display:flex;border:1.5px solid #d8dce3;border-radius:8px;overflow:hidden;background:#fff;margin-bottom:10px;">
         <button type="button" id="adreq-tab-fixed" onclick="adreqSwitchDeliveryTab('fixed')"
-          style="flex:1;padding:9px 4px;background:#4a7cf4;color:#fff;border:none;font-size:12px;font-weight:700;cursor:pointer;font-family:Pretendard,sans-serif;transition:all .15s;">고정입고일(화/금)</button>
+          style="flex:1;padding:9px 4px;background:#006341;color:#fff;border:none;font-size:12px;font-weight:700;cursor:pointer;font-family:Pretendard,sans-serif;transition:all .15s;">고정입고일(화/금)</button>
         <button type="button" id="adreq-tab-custom" onclick="adreqSwitchDeliveryTab('custom')"
           style="flex:1;padding:9px 4px;background:none;color:#999;border:none;font-size:12px;font-weight:600;cursor:pointer;font-family:Pretendard,sans-serif;transition:all .15s;">별도 지정일</button>
       </div>
@@ -548,11 +548,11 @@
       <label class="kform-label">광고물 사이즈 <span style="color:#e03333;">*</span></label>
       <div style="display:flex;gap:8px;margin-bottom:10px;">
         <label style="display:flex;align-items:center;gap:6px;padding:11px 16px;background:#fff;border:1.5px solid #d8dce3;border-radius:8px;cursor:pointer;flex:1;font-size:13px;font-weight:600;color:#555;" id="adreq-size-same-label">
-          <input type="radio" name="adreq-size-radio" value="same" checked style="accent-color:#4a7cf4;" onchange="adreqToggleSizeOption(this.value)" />
+          <input type="radio" name="adreq-size-radio" value="same" checked style="accent-color:#006341;" onchange="adreqToggleSizeOption(this.value)" />
           기존 사이즈 동일
         </label>
         <label style="display:flex;align-items:center;gap:6px;padding:11px 16px;background:#fff;border:1.5px solid #d8dce3;border-radius:8px;cursor:pointer;flex:1;font-size:13px;font-weight:600;color:#555;" id="adreq-size-new-label">
-          <input type="radio" name="adreq-size-radio" value="new" style="accent-color:#4a7cf4;" onchange="adreqToggleSizeOption(this.value)" />
+          <input type="radio" name="adreq-size-radio" value="new" style="accent-color:#006341;" onchange="adreqToggleSizeOption(this.value)" />
           신규 사이즈
         </label>
       </div>
