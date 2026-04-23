@@ -816,7 +816,7 @@ select.kinput {
   /* ── Home cat grid ── */
   .home-cat-grid { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; }
   .home-cat-grid button { font-size: 26px !important; }
-  .home-bot-grid { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; }
+  .home-bot-grid { grid-template-columns: repeat(1, minmax(0, 1fr)) !important; }
 
   /* ── Modal ── */
   .kmodal-overlay,
