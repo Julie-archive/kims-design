@@ -82,7 +82,7 @@ function renderHomeA() {
             </button>
           `).join('')}
         </div>
-        <div class="home-bot-grid" style="display:grid;grid-template-columns:repeat(2,minmax(0,395px));gap:15px;margin-bottom:48px;width:100%;max-width:805px;">
+        <div class="home-bot-grid" style="display:grid;grid-template-columns:repeat(2,minmax(0,395px));gap:15px;margin-bottom:48px;width:100%;max-width:800px;">
           ${['매장 그래픽','지점 운영 광고'].map(cat=>`
             <button onclick="homeCatSelect('${cat}')" style="display:flex;align-items:center;justify-content:center;width:100%;height:70px;background:#eaeaea;border:none;border-radius:15px;font-family:'Pretendard',sans-serif;font-size:clamp(18px,3vw,26px);font-weight:600;color:#000;cursor:pointer;letter-spacing:-0.04em;transition:all .18s;"
               onmouseenter="this.style.background='#006341';this.style.color='#fff';"
