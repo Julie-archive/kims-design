@@ -76,7 +76,7 @@ function renderHomeA() {
         <div class="home-cat-grid" style="display:grid;grid-template-columns:repeat(4,minmax(0,190px));gap:15px;margin-bottom:16px;width:100%;max-width:800px;">
           ${[
             {cat:'농산', img:'https://qayhutfedlhzhtrlserh.supabase.co/storage/v1/object/public/images/carrot_AI.jpg'},
-            {cat:'축산', img:'https://qayhutfedlhzhtrlserh.supabase.co/storage/v1/object/public/images/beef_AI.jpg'},
+            {cat:'축산', img:'https://qayhutfedlhzhtrlserh.supabase.co/storage/v1/object/public/images/beef_AI.jpg', pos:'center top'},
             {cat:'수산', img:'https://qayhutfedlhzhtrlserh.supabase.co/storage/v1/object/public/images/fish_AI.jpg'},
             {cat:'공산', img:'https://qayhutfedlhzhtrlserh.supabase.co/storage/v1/object/public/images/chocolate_AI.png'}
           ].map(({cat,img})=>`
