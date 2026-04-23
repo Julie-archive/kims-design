@@ -81,12 +81,14 @@ function renderHomeA() {
             {cat:'공산', img:'https://qayhutfedlhzhtrlserh.supabase.co/storage/v1/object/public/images/chocolate_AI.png'}
           ].map(({cat,img})=>`
             <button onclick="homeCatSelect('${cat}')"
-              style="display:flex;align-items:center;justify-content:center;width:100%;aspect-ratio:1/1;background:url('${img}') center/cover no-repeat;border:none;border-radius:20px;filter:drop-shadow(0px 0px 4px rgba(0,0,0,0.25));cursor:pointer;letter-spacing:-0.04em;transition:all .18s;position:relative;overflow:hidden;">
-              <div style="position:absolute;inset:0;background:rgba(0,0,0,0.4);border-radius:20px;"></div>
-              <span style="position:relative;z-index:1;font-family:'Pretendard',sans-serif;font-size:clamp(20px,3vw,30px);font-weight:600;color:#fff;">
-                ${cat}
-              </span>
-            </button>
+      style="display:flex;align-items:center;justify-content:center;width:100%;aspect-ratio:1/1;background:url('${img}') center/cover no-repeat;border:none;border-radius:20px;filter:drop-shadow(0px 0px 4px rgba(0,0,0,0.25));cursor:pointer;letter-spacing:-0.04em;transition:all .18s;position:relative;overflow:hidden;"
+      onmouseenter="this.querySelector('div').style.background='rgba(0,0,0,0.6)';"
+      onmouseleave="this.querySelector('div').style.background='rgba(0,0,0,0.4)';">
+      <div style="position:absolute;inset:0;background:rgba(0,0,0,0.4);border-radius:20px;transition:background .18s;"></div>
+      <span style="position:relative;z-index:1;font-family:'Pretendard',sans-serif;font-size:clamp(20px,3vw,30px);font-weight:600;color:#fff;">
+        ${cat}
+      </span>
+    </button>
           `).join('')}
         </div>
         <div class="home-bot-grid" style="display:grid;grid-template-columns:repeat(2,minmax(0,395px));gap:15px;margin-bottom:48px;width:100%;max-width:800px;">
