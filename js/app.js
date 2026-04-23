@@ -74,11 +74,18 @@ function renderHomeA() {
             onmouseleave="this.style.transform='scale(1)';">신청 현황 조회</button>
         </div>
         <div class="home-cat-grid" style="display:grid;grid-template-columns:repeat(4,minmax(0,190px));gap:15px;margin-bottom:16px;width:100%;max-width:800px;">
-          ${['농산','축산','수산','공산'].map(cat=>`
-            <button onclick="homeCatSelect('${cat}')" style="display:flex;align-items:center;justify-content:center;width:100%;aspect-ratio:1/1;background:#fff;border:none;border-radius:20px;filter:drop-shadow(0px 0px 4px rgba(0,0,0,0.15));font-family:'Pretendard',sans-serif;font-size:clamp(20px,3vw,30px);font-weight:600;color:#000;cursor:pointer;letter-spacing:-0.04em;transition:all .18s;"
-              onmouseenter="this.style.background='#006341';this.style.color='#fff';"
-              onmouseleave="this.style.background='#fff';this.style.color='#000';">
-              ${cat}
+          ${[
+            {cat:'농산', img:'https://qayhutfedlhzhtrlserh.supabase.co/storage/v1/object/public/images/carrot_AI.jpg'},
+            {cat:'축산', img:'https://qayhutfedlhzhtrlserh.supabase.co/storage/v1/object/public/images/beef_AI.jpg'},
+            {cat:'수산', img:'https://qayhutfedlhzhtrlserh.supabase.co/storage/v1/object/public/images/fish_AI.jpg'},
+            {cat:'공산', img:'https://qayhutfedlhzhtrlserh.supabase.co/storage/v1/object/public/images/chocolate_AI.png'}
+          ].map(({cat,img})=>`
+            <button onclick="homeCatSelect('${cat}')"
+              style="display:flex;align-items:center;justify-content:center;width:100%;aspect-ratio:1/1;background:url('${img}') center/cover no-repeat;border:none;border-radius:20px;filter:drop-shadow(0px 0px 4px rgba(0,0,0,0.25));cursor:pointer;letter-spacing:-0.04em;transition:all .18s;position:relative;overflow:hidden;">
+              <div style="position:absolute;inset:0;background:rgba(0,0,0,0.4);border-radius:20px;"></div>
+              <span style="position:relative;z-index:1;font-family:'Pretendard',sans-serif;font-size:clamp(20px,3vw,30px);font-weight:600;color:#fff;">
+                ${cat}
+              </span>
             </button>
           `).join('')}
         </div>
