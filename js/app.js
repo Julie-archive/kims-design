@@ -572,7 +572,7 @@ function pinOpen() {
 }
 function pinClose() {
   modalClose('modalPin');
-  if(!adminLoggedIn) renderHomeA();
+  if(!adminLoggedIn) switchView('home');
 }
 function pinToggleEye() {
   const inp=document.getElementById('pinInput');
