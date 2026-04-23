@@ -818,6 +818,12 @@ select.kinput {
   .home-cat-grid button { font-size: 26px !important; }
   .home-bot-grid { grid-template-columns: repeat(1, minmax(0, 1fr)) !important; }
 
+  /* ── Home spacing ── */
+  .home-title { margin-bottom: 20px !important; }
+  .home-btn-wrap { margin-bottom: 40px !important; }
+  .home-cat-grid { margin-bottom: 10px !important; }
+  .home-bot-grid { margin-bottom: 30px !important; }
+
   /* ── Modal ── */
   .kmodal-overlay,
   .kmodal-overlay.center,
