@@ -63,7 +63,6 @@ function renderHomeA() {
         <img src="${LOGO_CLUB}" class="kheader-logo" style="filter:invert(1);mix-blend-mode:multiply;" alt="KIM'S CLUB" onclick="goHomeRoot()" />
         <button onclick="goAdmin()" class="kheader-btn">관리자 모드</button>
       </header>
-      <div style="width:100%;height:1px;background:#006341;flex-shrink:0;"></div>
       <div style="flex:1;display:flex;flex-direction:column;align-items:center;padding:90px 20px 60px;">
         <h1 class="home-title" style="font-family:'Pretendard',sans-serif;font-size:50px;font-weight:700;line-height:1.2;text-align:center;letter-spacing:-0.04em;color:#006341;margin-bottom:40px;">킴스클럽 광고 운영<br/>표준화 플랫폼</h1>
         <div style="display:flex;flex-direction:row;gap:20px;margin-bottom:90px;justify-content:center;">
