@@ -48,7 +48,7 @@ html, body { height: 100%; overflow: hidden; overflow-x: hidden; max-width: 100%
 .kheader {
   display: flex; align-items: center; justify-content: space-between;
   padding: 18px 40px; flex-shrink: 0; background: #fff;
-  border-bottom: 1px solid var(--kborder);
+  box-shadow: 0px 2px 3px rgba(0, 0, 0, 0.1);
   min-height: 64px;
 }
 .kheader-btn {
