@@ -399,7 +399,7 @@ html, body { height: 100%; overflow: hidden; overflow-x: hidden; max-width: 100%
   font-family: 'Pretendard', sans-serif; font-size: 14px; outline: none;
   -webkit-appearance: none; transition: border-color .15s, box-shadow .15s;
 }
-.kinput:focus { border-color: #5a8ef5; box-shadow: 0 0 0 3px rgba(0,99,65,0.12); }
+.kinput:focus { border-color: #006341; box-shadow: 0 0 0 3px rgba(0,99,65,0.12); }
 .kinput::placeholder { color: #bbc0cc; }
 
 select.kinput {
