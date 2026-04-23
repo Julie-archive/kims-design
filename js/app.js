@@ -71,7 +71,7 @@ function renderHomeA() {
         </div>
         <div class="home-cat-grid" style="display:grid;grid-template-columns:repeat(4,minmax(0,190px));gap:10px;margin-bottom:16px;width:100%;max-width:800px;">
           ${['농산','축산','수산','공산'].map(cat=>`
-            <button onclick="homeCatSelect('${cat}')" style="display:flex;align-items:center;justify-content:center;width:100%;aspect-ratio:1/1;background:#fff;border:none;border-radius:20px;filter:drop-shadow(0px 0px 6px rgba(0,0,0,0.25));font-family:'Pretendard',sans-serif;font-size:clamp(20px,3vw,30px);font-weight:600;color:#000;cursor:pointer;letter-spacing:-0.04em;transition:all .18s;"
+            <button onclick="homeCatSelect('${cat}')" style="display:flex;align-items:center;justify-content:center;width:100%;aspect-ratio:1/1;background:#fff;border:none;border-radius:20px;filter:drop-shadow(0px 0px 4px rgba(0,0,0,0.15));font-family:'Pretendard',sans-serif;font-size:clamp(20px,3vw,30px);font-weight:600;color:#000;cursor:pointer;letter-spacing:-0.04em;transition:all .18s;"
               onmouseenter="this.style.background='#006341';this.style.color='#fff';"
               onmouseleave="this.style.background='#fff';this.style.color='#000';">
               ${cat}
