@@ -1154,7 +1154,7 @@ function renderDetail() {
         }
         if(footer) footer.innerHTML=`<div style="display:flex;gap:10px;">
           <button onclick="modalClose('modalDetail')" style="flex:1;padding:13px;background:#f2f2f2;color:#666;border:1px solid #d8dce3;border-radius:50px;font-size:14px;font-weight:700;cursor:pointer;font-family:'Pretendard',sans-serif;">닫기</button>
-          <button onclick="detailTab='edit';renderDetail();" style="flex:2;padding:13px;background:#4a7cf4;color:#fff;border:none;border-radius:50px;font-size:14px;font-weight:700;cursor:pointer;font-family:'Pretendard',sans-serif;">✎ 수정하기</button>
+          <button onclick="detailTab='edit';renderDetail();" style="flex:2;padding:13px;background:#006341;color:#fff;border:none;border-radius:50px;font-size:14px;font-weight:700;cursor:pointer;font-family:'Pretendard',sans-serif;">✎ 수정하기</button>
         </div>`;
       } else {
         if((ad.settingPhotos||[]).length > 0) {
@@ -1168,7 +1168,7 @@ function renderDetail() {
         var isKickselling = (ad.types||[]).some(function(t){ return t.name==='A3 킥셀링' || t.name==='A4 킥셀링'; });
 if(footer) footer.innerHTML = isKickselling
   ? `<button disabled style="width:100%;padding:14px;background:#e8f5e9;color:#2d7a2d;border:1.5px solid #b2dfdb;border-radius:50px;font-size:15px;font-weight:700;cursor:default;font-family:'Pretendard',sans-serif;letter-spacing:-0.02em;">✓ PMS 등록 완료</button>`
-  : `<button onclick="openAdRequest(${ad.id})" style="width:100%;padding:14px;background:#4a7cf4;color:#fff;border:none;border-radius:50px;font-size:15px;font-weight:700;cursor:pointer;font-family:'Pretendard',sans-serif;letter-spacing:-0.02em;">이 광고로 신청하기</button>`;
+  : `<button onclick="openAdRequest(${ad.id})" style="width:100%;padding:14px;background:#006341;color:#fff;border:none;border-radius:50px;font-size:15px;font-weight:700;cursor:pointer;font-family:'Pretendard',sans-serif;letter-spacing:-0.02em;">이 광고로 신청하기</button>`;
       }
     }
   } else {
@@ -1260,7 +1260,7 @@ if(footer) footer.innerHTML = isKickselling
           </div>`;
         }).join('')}
       </div>
-      <label style="display:flex;align-items:center;justify-content:center;gap:8px;padding:12px;background:#f4f6ff;border-radius:6px;border:1.5px dashed #c0d0ff;cursor:pointer;">
+      <label style="display:flex;align-items:center;justify-content:center;gap:8px;padding:12px;background:rgba(0,99,65,0.05);border-radius:6px;border:1.5px dashed rgba(0,99,65,0.3);cursor:pointer;">
         <input type="file" accept="image/*" multiple onchange="editAddSettingPhotos(this)" style="display:none;" />
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
         <span style="font-size:13px;color:#999;">셋팅 사진 추가</span>
@@ -1718,8 +1718,8 @@ function renderAdTypeDetails() {
         var origKey = Array.from(rqSelectedTypes).find(function(k){ return k.split('::')[1]===label; });
         return '<div style="position:relative;background:#f2f2f2;border-radius:6px;padding:14px 16px;">'
           + '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">'
-          + '<span style="font-size:12px;font-weight:700;color:#4a7cf4;letter-spacing:-0.01em;">'+label+'</span>'
-          + '<button type="button" onclick="rqRemoveItem(\''+( origKey||('?::'+label) )+'\')" style="width:20px;height:20px;border-radius:50%;background:rgba(74,124,244,0.12);border:none;cursor:pointer;font-size:14px;line-height:1;color:#4a7cf4;flex-shrink:0;">×</button>'
+          + '<span style="font-size:12px;font-weight:700;color:#006341;letter-spacing:-0.01em;">'+label+'</span>'
+          + '<button type="button" onclick="rqRemoveItem(\''+( origKey||('?::'+label) )+'\')" style="width:20px;height:20px;border-radius:50%;background:rgba(74,124,244,0.12);border:none;cursor:pointer;font-size:14px;line-height:1;color:#006341;flex-shrink:0;">×</button>'
           + '</div>'
           + '<div style="display:flex;align-items:center;gap:8px;">'
           + sizeBlock
@@ -2032,7 +2032,7 @@ function rqEditSave() {
     modalClose('modalRequest');
 
     var toast2 = document.createElement('div');
-    toast2.style.cssText = 'position:fixed;top:24px;left:50%;transform:translateX(-50%);background:#4a7cf4;color:#fff;padding:12px 28px;border-radius:50px;font-size:13px;font-weight:700;z-index:9999;';
+    toast2.style.cssText = 'position:fixed;top:24px;left:50%;transform:translateX(-50%);background:#006341;color:#fff;padding:12px 28px;border-radius:50px;font-size:13px;font-weight:700;z-index:9999;';
     toast2.textContent = '✓ 신청 내용이 수정되었습니다';
     document.body.appendChild(toast2);
     setTimeout(function(){ toast2.remove(); }, 2500);
@@ -2141,12 +2141,12 @@ function adreqSwitchDeliveryTab(mode) {
   var customArea = document.getElementById('adreq-custom-area');
   if(!fixedBtn) return;
   if(mode === 'fixed') {
-    fixedBtn.style.background = '#4a7cf4'; fixedBtn.style.color = '#fff'; fixedBtn.style.fontWeight = '700';
+    fixedBtn.style.background = '#006341'; fixedBtn.style.color = '#fff'; fixedBtn.style.fontWeight = '700';
     customBtn.style.background = 'none'; customBtn.style.color = '#999'; customBtn.style.fontWeight = '600';
     fixedArea.style.display = ''; customArea.style.display = 'none';
     document.getElementById('adreq-delivery-day').value = '고정입고일';
   } else {
-    customBtn.style.background = '#4a7cf4'; customBtn.style.color = '#fff'; customBtn.style.fontWeight = '700';
+    customBtn.style.background = '#006341'; customBtn.style.color = '#fff'; customBtn.style.fontWeight = '700';
     fixedBtn.style.background = 'none'; fixedBtn.style.color = '#999'; fixedBtn.style.fontWeight = '600';
     customArea.style.display = ''; fixedArea.style.display = 'none';
     document.getElementById('adreq-delivery-day').value = '별도 지정일';
@@ -2251,10 +2251,10 @@ function adreqToggleSizeOption(val) {
   var newLabel = document.getElementById('adreq-size-new-label');
   if(!newInputs) return;
   newInputs.style.display = val === 'new' ? '' : 'none';
-  if(sameLabel) sameLabel.style.borderColor = val === 'same' ? '#4a7cf4' : '#d8dce3';
-  if(sameLabel) sameLabel.style.color = val === 'same' ? '#4a7cf4' : '#555';
-  if(newLabel) newLabel.style.borderColor = val === 'new' ? '#4a7cf4' : '#d8dce3';
-  if(newLabel) newLabel.style.color = val === 'new' ? '#4a7cf4' : '#555';
+  if(sameLabel) sameLabel.style.borderColor = val === 'same' ? '#006341' : '#d8dce3';
+  if(sameLabel) sameLabel.style.color = val === 'same' ? '#006341' : '#555';
+  if(newLabel) newLabel.style.borderColor = val === 'new' ? '#006341' : '#d8dce3';
+  if(newLabel) newLabel.style.color = val === 'new' ? '#006341' : '#555';
 }
 
 
@@ -2591,7 +2591,7 @@ function catMgrRenderSubs() {
     row.addEventListener('dragover', function(e){
       e.preventDefault();
       row.style.background = s.name === catMgrSub ? '#333' : '#e8f0fe';
-      row.style.borderColor = '#4a7cf4';
+      row.style.borderColor = '#006341';
     });
     row.addEventListener('dragleave', function(){
       row.style.background = s.name === catMgrSub ? '#111' : '#fff';
@@ -2649,7 +2649,7 @@ function catMgrRenderProds() {
   if(prods.length === 0) {
     list.innerHTML = '<div style="font-size:13px;color:#ccc;text-align:center;padding:16px 0;">등록된 상품이 없습니다</div>';
     // 드롭 타겟 (빈 상태)
-    list.addEventListener('dragover', function(e){ e.preventDefault(); list.style.background='#f0f4ff'; });
+    list.addEventListener('dragover', function(e){ e.preventDefault(); list.style.background='rgba(0,99,65,0.06)'; });
     list.addEventListener('dragleave', function(){ list.style.background=''; });
     list.addEventListener('drop', function(e){
       e.preventDefault(); list.style.background='';
@@ -2678,7 +2678,7 @@ function catMgrRenderProds() {
     var moveBtn = document.createElement('button');
     moveBtn.textContent = '이동';
     moveBtn.title = '다른 세부 카테고리로 이동';
-    moveBtn.style.cssText = 'padding:5px 12px;background:#f0f4ff;color:#4a7cf4;border:1px solid #c5d5ff;border-radius:7px;font-size:12px;font-weight:600;cursor:pointer;font-family:Pretendard,sans-serif;';
+    moveBtn.style.cssText = 'padding:5px 12px;background:rgba(0,99,65,0.06);color:#006341;border:1px solid #c5d5ff;border-radius:7px;font-size:12px;font-weight:600;cursor:pointer;font-family:Pretendard,sans-serif;';
 
     var renameBtn = document.createElement('button');
     renameBtn.id = 'catmgr-prod-rename-' + p.id;
@@ -2699,7 +2699,7 @@ function catMgrRenderProds() {
     });
     row.addEventListener('dragover', function(e){
       e.preventDefault();
-      row.style.borderColor = '#4a7cf4';
+      row.style.borderColor = '#006341';
     });
     row.addEventListener('dragleave', function(){
       row.style.borderColor = 'rgba(0,0,0,0.1)';
@@ -3406,7 +3406,7 @@ function openRequestDetail(id) {
     ['입고 지점', r.branch||''],
     ['입고 요청일', r.deliveryDay||'']
   ].filter(function(kv){ return kv[1]; }).map(function(kv){
-    return '<div style="background:#f4f6ff;border-radius:6px;padding:12px;">'
+    return '<div style="background:rgba(0,99,65,0.05);border-radius:6px;padding:12px;">'
       +'<div style="font-size:10px;font-weight:600;color:#999;text-transform:uppercase;margin-bottom:4px;">'+kv[0]+'</div>'
       +'<div style="font-size:13px;font-weight:600;color:#111;">'+(kv[1]||'-')+'</div>'
       +'</div>';
@@ -3420,7 +3420,7 @@ function openRequestDetail(id) {
       if(detail.w && detail.h) detailStr += ' <span style="font-size:10px;opacity:.7;">'+detail.w+'×'+detail.h+'mm</span>';
       if(detail.qty) detailStr += ' <span style="font-size:10px;opacity:.7;">×'+detail.qty+'개</span>';
     }
-    return '<span style="background:#4a7cf4;color:#fff;font-size:12px;font-weight:600;padding:5px 12px;border-radius:50px;margin:2px;display:inline-flex;align-items:center;gap:4px;">'+t+detailStr+'</span>';
+    return '<span style="background:#006341;color:#fff;font-size:12px;font-weight:600;padding:5px 12px;border-radius:50px;margin:2px;display:inline-flex;align-items:center;gap:4px;">'+t+detailStr+'</span>';
   }).join('');
   if(r.bannerType) adTypePills += '<span style="background:#555;color:#fff;font-size:12px;font-weight:600;padding:5px 12px;border-radius:50px;margin:2px;">'+r.bannerType+'</span>';
   if(r.customSize) adTypePills += '<span style="background:#f2f2f2;color:#555;font-size:12px;padding:5px 12px;border-radius:50px;margin:2px;">'+r.customSize+'</span>';
@@ -3445,10 +3445,10 @@ function openRequestDetail(id) {
     +'<div style="font-size:12px;color:#999;margin-bottom:20px;border-bottom:1px solid #f2f2f2;padding-bottom:16px;">제출: '+r.submittedAt+'</div>'
     +'<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:10px;margin-bottom:16px;">'+infoGrid+'</div>'
     +'<div style="margin-bottom:16px;"><div style="font-size:11px;font-weight:600;color:#999;letter-spacing:1px;text-transform:uppercase;margin-bottom:8px;">광고 종류</div><div style="display:flex;flex-wrap:wrap;gap:4px;">'+adTypePills+'</div></div>'
-    +'<div style="background:#f4f6ff;border:1.5px solid #e2e8ff;border-radius:6px;padding:16px;margin-bottom:16px;"><div style="font-size:11px;font-weight:600;color:#999;letter-spacing:1px;text-transform:uppercase;margin-bottom:12px;">요청 내용</div>'+contentRows+'</div>'
+    +'<div style="background:rgba(0,99,65,0.05);border:1.5px solid rgba(0,99,65,0.15);border-radius:6px;padding:16px;margin-bottom:16px;"><div style="font-size:11px;font-weight:600;color:#999;letter-spacing:1px;text-transform:uppercase;margin-bottom:12px;">요청 내용</div>'+contentRows+'</div>'
     +'<div id="detail-site-pics"></div>'
     +'<div id="detail-ref-pics"></div>'
-    +'<div style="background:#f4f6ff;border:1.5px solid #e2e8ff;border-radius:6px;padding:16px;margin-bottom:16px;" id="detail-due-section">'
+    +'<div style="background:rgba(0,99,65,0.05);border:1.5px solid rgba(0,99,65,0.15);border-radius:6px;padding:16px;margin-bottom:16px;" id="detail-due-section">'
       +'<div style="font-size:11px;font-weight:600;color:#999;letter-spacing:1px;text-transform:uppercase;margin-bottom:10px;">완료 예정일</div>'
       +'<div style="display:flex;align-items:center;gap:10px;">'
         +'<input type="date" id="detail-due-date" value="'+(r.dueDate||'')+'" style="flex:1;background:#fff;border:1.5px solid rgba(0,0,0,0.12);border-radius:6px;padding:10px 14px;font-family:Pretendard,sans-serif;font-size:14px;color:#111;outline:none;" />'
@@ -3572,7 +3572,7 @@ function openReqUserDetail(reqId) {
     var d = (req.adTypeDetails||{})[t];
     var dStr = '';
     if(d){ if(d.w&&d.h) dStr+=' '+d.w+'×'+d.h+'mm'; if(d.qty) dStr+=' ×'+d.qty+'개'; }
-    return '<span style="background:#4a7cf4;color:#fff;font-size:12px;font-weight:600;padding:4px 12px;border-radius:50px;display:inline-block;margin:2px;">'+t+dStr+'</span>';
+    return '<span style="background:#006341;color:#fff;font-size:12px;font-weight:600;padding:4px 12px;border-radius:50px;display:inline-block;margin:2px;">'+t+dStr+'</span>';
   }).join('');
 
   var rows = [
@@ -3597,9 +3597,9 @@ function openReqUserDetail(reqId) {
     +'<div style="font-size:18px;font-weight:900;letter-spacing:-0.03em;margin-bottom:4px;">'+req.title+'</div>'
     +'<div style="font-size:12px;color:#bbb;margin-bottom:20px;">신청: '+req.submittedAt+'</div>'
     + (adTypePills ? '<div style="margin-bottom:16px;"><div style="font-size:10px;font-weight:700;color:#aaa;margin-bottom:6px;text-transform:uppercase;">광고 종류</div><div>'+adTypePills+'</div></div>' : '')
-    +'<div style="background:#f8faff;border:1px solid #e2e8ff;border-radius:6px;padding:16px;margin-bottom:16px;">'+rows+'</div>'
+    +'<div style="background:#f8faff;border:1px solid rgba(0,99,65,0.15);border-radius:6px;padding:16px;margin-bottom:16px;">'+rows+'</div>'
     + (sitePics ? '<div style="margin-bottom:16px;"><div style="font-size:10px;font-weight:700;color:#aaa;margin-bottom:8px;text-transform:uppercase;">현장 사진</div><div style="display:flex;flex-wrap:wrap;gap:8px;">'+sitePics+'</div></div>' : '')
-    +'<button onclick="this.closest(\'.kmodal-overlay\').classList.remove(\'open\')" style="width:100%;padding:13px;background:#4a7cf4;color:#fff;border:none;border-radius:50px;font-size:14px;font-weight:700;cursor:pointer;font-family:Pretendard,sans-serif;">닫기</button>'
+    +'<button onclick="this.closest(\'.kmodal-overlay\').classList.remove(\'open\')" style="width:100%;padding:13px;background:#006341;color:#fff;border:none;border-radius:50px;font-size:14px;font-weight:700;cursor:pointer;font-family:Pretendard,sans-serif;">닫기</button>'
   +'</div>';
 
   // 팝업 모달 동적 생성
@@ -3638,9 +3638,9 @@ function searchReqStatus() {
     var sc = statusColors[req.status]||'#111';
     var editBtn = '';
     var statusNote = '';
-    var detailBtn = '<button onclick="openReqUserDetail(\''+req.id+'\')" style="flex:1;padding:10px;background:#f8faff;border:1px solid #e2e8ff;border-radius:6px;font-size:13px;font-weight:600;color:#555;cursor:pointer;font-family:Pretendard,sans-serif;">📋 신청 내용 보기</button>';
+    var detailBtn = '<button onclick="openReqUserDetail(\''+req.id+'\')" style="flex:1;padding:10px;background:#f8faff;border:1px solid rgba(0,99,65,0.15);border-radius:6px;font-size:13px;font-weight:600;color:#555;cursor:pointer;font-family:Pretendard,sans-serif;">📋 신청 내용 보기</button>';
     if(req.status === '검토 중') {
-      editBtn = '<button onclick="openReqEdit(\''+req.id+'\')" style="flex:1;padding:10px;background:#4a7cf4;border:none;border-radius:6px;font-size:13px;font-weight:700;color:#fff;cursor:pointer;font-family:Pretendard,sans-serif;">✎ 수정</button>';
+      editBtn = '<button onclick="openReqEdit(\''+req.id+'\')" style="flex:1;padding:10px;background:#006341;border:none;border-radius:6px;font-size:13px;font-weight:700;color:#fff;cursor:pointer;font-family:Pretendard,sans-serif;">✎ 수정</button>';
     } else if(req.status === '진행 중') {
       statusNote = '<div style="margin-top:10px;background:#eff6ff;border-radius:6px;padding:10px 12px;font-size:12px;color:#1d4ed8;line-height:1.6;">진행 중인 신청은 수정할 수 없습니다.<br>변경이 필요하면 담당자 <strong>'+(req.manager||'')+'</strong>에게 문의해주세요.</div>';
     } else if(req.status === '반려') {
@@ -3650,7 +3650,7 @@ function searchReqStatus() {
       statusNote = '<div style="margin-top:10px;background:#edfaed;border-radius:6px;padding:10px 12px;font-size:12px;color:#2d7a2d;">작업이 완료되었습니다.</div>';
     }
     return '<div style="border:1.5px solid rgba(0,0,0,0.08);border-radius:10px;overflow:hidden;margin-bottom:10px;">'
-      + '<div style="background:#f4f6ff;padding:12px 16px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid rgba(0,0,0,0.06);">'
+      + '<div style="background:rgba(0,99,65,0.05);padding:12px 16px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid rgba(0,0,0,0.06);">'
         + '<div style="font-size:11px;font-weight:700;color:#999;letter-spacing:1px;">'+(req.reqCode||'번호 없음')+'</div>'
         + '<span style="background:'+sc+';color:#fff;font-size:11px;font-weight:700;padding:3px 10px;border-radius:50px;">'+req.status+'</span>'
       + '</div>'
@@ -3658,8 +3658,8 @@ function searchReqStatus() {
         + '<div style="font-size:15px;font-weight:800;color:#111;margin-bottom:4px;letter-spacing:-0.02em;">'+(req.title||'제목 없음')+'</div>'
         + '<div style="font-size:12px;color:#999;margin-bottom:12px;">'+(req.name||'')+(req.dept?' · '+req.dept:'')+'</div>'
         + '<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px;">'
-          + '<div style="background:#f4f6ff;border-radius:6px;padding:10px 12px;"><div style="font-size:10px;color:#999;font-weight:600;margin-bottom:3px;">담당자</div><div style="font-size:13px;font-weight:600;color:#111;">'+(req.manager||'미지정')+'</div></div>'
-          + '<div style="background:#f4f6ff;border-radius:6px;padding:10px 12px;"><div style="font-size:10px;color:#999;font-weight:600;margin-bottom:3px;">완료 예정일</div><div style="font-size:13px;font-weight:600;color:#111;">'+(req.dueDate||'미정')+'</div></div>'
+          + '<div style="background:rgba(0,99,65,0.05);border-radius:6px;padding:10px 12px;"><div style="font-size:10px;color:#999;font-weight:600;margin-bottom:3px;">담당자</div><div style="font-size:13px;font-weight:600;color:#111;">'+(req.manager||'미지정')+'</div></div>'
+          + '<div style="background:rgba(0,99,65,0.05);border-radius:6px;padding:10px 12px;"><div style="font-size:10px;color:#999;font-weight:600;margin-bottom:3px;">완료 예정일</div><div style="font-size:13px;font-weight:600;color:#111;">'+(req.dueDate||'미정')+'</div></div>'
         + '</div>'
         + '<div style="font-size:12px;color:#bbb;">마감: '+(req.deadline||'미정')+' · 신청: '+req.submittedAt+'</div>'
         + statusNote
@@ -3763,7 +3763,7 @@ document.addEventListener('DOMContentLoaded', () => {
       if (!resultsContainer) return;
       
       resultsContainer.style.display = 'flex';
-      resultsContainer.innerHTML = '<div style="padding:10px; font-size: 13px; color: #5c6bc0; background: #fff; border-radius: 6px; border: 1.5px solid #e2e8ff; display:flex; align-items:center; justify-content:center; gap:8px;"><div style="width:14px;height:14px;border:2px solid #c0d0ff;border-top-color:#5c6bc0;border-radius:50%;animation:spin .7s linear infinite;"></div>AI가 킴스클럽 맞춤 카피를 고민 중입니다...</div>';
+      resultsContainer.innerHTML = '<div style="padding:10px; font-size: 13px; color: #5c6bc0; background: #fff; border-radius: 6px; border: 1.5px solid rgba(0,99,65,0.15); display:flex; align-items:center; justify-content:center; gap:8px;"><div style="width:14px;height:14px;border:2px solid rgba(0,99,65,0.3);border-top-color:#5c6bc0;border-radius:50%;animation:spin .7s linear infinite;"></div>AI가 킴스클럽 맞춤 카피를 고민 중입니다...</div>';
 
       // api.js에 추가해둔 함수 호출
       if (typeof fetchAiCopy !== 'function') {
@@ -3778,16 +3778,16 @@ document.addEventListener('DOMContentLoaded', () => {
         copies.forEach(copy => {
           const copyBtn = document.createElement('button');
           copyBtn.type = 'button';
-          copyBtn.style.cssText = 'text-align: left; padding: 10px 14px; background: #fff; border: 1.5px solid #e2e8ff; border-radius: 6px; font-size: 13px; cursor: pointer; color: #333; transition: all 0.2s; line-height: 1.4;';
+          copyBtn.style.cssText = 'text-align: left; padding: 10px 14px; background: #fff; border: 1.5px solid rgba(0,99,65,0.15); border-radius: 6px; font-size: 13px; cursor: pointer; color: #333; transition: all 0.2s; line-height: 1.4;';
           copyBtn.textContent = copy.replace(/^["'\s]+|["'\s]+$/g, ''); // 앞뒤 따옴표 등 제거
           
           copyBtn.onmouseover = () => {
-            copyBtn.style.background = '#f4f6ff';
+            copyBtn.style.background = 'rgba(0,99,65,0.05)';
             copyBtn.style.borderColor = '#5c6bc0';
           };
           copyBtn.onmouseout = () => {
             copyBtn.style.background = '#fff';
-            copyBtn.style.borderColor = '#e2e8ff';
+            copyBtn.style.borderColor = 'rgba(0,99,65,0.15)';
           };
 
           copyBtn.onclick = () => {
