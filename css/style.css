@@ -819,8 +819,8 @@ select.kinput {
   .home-bot-grid { grid-template-columns: repeat(1, minmax(0, 1fr)) !important; }
 
   /* ── Home spacing ── */
-  .home-title { margin-bottom: 20px !important; }
-  .home-btn-wrap { margin-bottom: 40px !important; }
+  .home-title { margin-bottom: 16px !important; }
+  .home-btn-wrap { margin-bottom: 32px !important; }
   .home-cat-grid { margin-bottom: 10px !important; }
   .home-bot-grid { margin-bottom: 30px !important; }
 
