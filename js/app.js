@@ -61,7 +61,7 @@ function renderHomeA() {
     <div style="flex:1;overflow-y:auto;background:#fff;min-height:100vh;position:relative;display:flex;flex-direction:column;">
       <header class="kheader">
         <img src="${LOGO_CLUB}" class="kheader-logo" style="filter:invert(1);mix-blend-mode:multiply;" alt="KIM'S CLUB" onclick="goHomeRoot()" />
-        <button onclick="goAdmin()" class="kheader-btn">관리자 모드</button>
+        <button onclick="goAdmin()" class="kheader-btn">디자인 관리자</button>
       </header>
       <div class="home-content-wrap" style="flex:1;display:flex;flex-direction:column;align-items:center;padding:90px 20px 60px;">
         <h1 class="home-title" style="font-family:'Pretendard',sans-serif;font-size:50px;font-weight:700;line-height:1.2;text-align:center;letter-spacing:-0.04em;color:#000;margin-bottom:30px;">킴스클럽 광고 운영<br/><span style="color:#006341;">표준화 플랫폼</span></h1>
@@ -150,7 +150,7 @@ function renderHomeB() {
     <div style="flex:1;overflow:hidden;display:flex;flex-direction:column;background:#fff;">
       <header class="kheader">
         <img src="${LOGO_CLUB}" class="kheader-logo" style="filter:invert(1);mix-blend-mode:multiply;" alt="KIM'S CLUB" onclick="homeGoBack()" />
-        <button class="kheader-btn" onclick="goAdmin()">관리자 모드</button>
+        <button class="kheader-btn" onclick="goAdmin()">디자인 관리자</button>
       </header>
       <!-- Cat tabs -->
       <div class="ktab-bar">
@@ -252,7 +252,7 @@ function renderHomeContent() {
     : getSubs(hState.cat).flatMap(s => getProds(hState.cat, s.name));
   const withAds = prods.filter(p=>getAds(hState.cat, p.subCat||hState.sub, p.name).length>0);
   if(withAds.length===0) {
-    el.innerHTML=`<div class="kempty"><div class="kempty-title">등록된 광고가 없습니다</div><div class="kempty-sub">관리자 모드에서 이미지를 등록하세요</div></div>`;
+    el.innerHTML=`<div class="kempty"><div class="kempty-title">등록된 광고가 없습니다</div><div class="kempty-sub">디자인 관리자 모드에서 이미지를 등록하세요</div></div>`;
   } else {
     el.innerHTML = withAds.map(p=>{
       const ads=getAds(hState.cat, p.subCat||hState.sub, p.name);
@@ -356,12 +356,12 @@ function renderAdmin() {
       <div style="flex:1;overflow:hidden;display:flex;flex-direction:column;background:#fff;">
         <header class="kheader">
           <img src="${LOGO_CLUB}" class="kheader-logo" style="filter:invert(1);mix-blend-mode:multiply;" alt="KIM'S CLUB" onclick="homeGoBack()" />
-          <button class="kheader-btn" onclick="pinOpen()">관리자 모드</button>
+          <button class="kheader-btn" onclick="pinOpen()">디자인 관리자</button>
         </header>
         <div class="klocked">
           <svg viewBox="0 0 24 24" fill="none" stroke="var(--ktext3)" stroke-width="1.5" width="48" height="48" style="opacity:.3"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
           <div style="font-size:18px;font-weight:800;">관리자 전용</div>
-          <div style="font-size:13px;color:var(--ktext3);max-width:220px;line-height:1.6;">PIN을 입력해 관리자 모드에 접속하세요.</div>
+          <div style="font-size:13px;color:var(--ktext3);max-width:220px;line-height:1.6;">PIN을 입력해 디자인 관리자 모드에 접속하세요.</div>
           <button class="kbtn-confirm" style="flex:none;padding:12px 40px;margin-top:8px;background:#111;color:#fff;border:none;border-radius:50px;font-family:'Pretendard',sans-serif;font-size:14px;font-weight:700;cursor:pointer;" onclick="pinOpen()">로그인</button>
         </div>
       </div>
@@ -1130,7 +1130,7 @@ function renderDetail() {
       html+=`<div style="text-align:center;padding:40px 0;color:var(--ktext3);">
         <svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.5" width="40" height="40" style="opacity:.25;margin:0 auto 12px;display:block;"><rect x="6" y="14" width="36" height="26" rx="4"/><circle cx="18" cy="26" r="4"/><path d="m6 36 10-8 8 8 6-6 12 10"/></svg>
         <div style="font-size:14px;font-weight:600;color:var(--ktext2);margin-bottom:6px;">등록된 이미지가 없습니다</div>
-        ${detailMode==='admin'&&adminLoggedIn?`<button onclick="detailTab='edit';renderDetail();" style="margin-top:10px;padding:8px 20px;background:#111;color:#fff;border:none;border-radius:50px;font-family:'Pretendard',sans-serif;font-size:13px;font-weight:700;cursor:pointer;">+ 이미지 추가</button>`:'<div style="font-size:12px;">관리자 모드에서 이미지를 등록해주세요</div>'}
+        ${detailMode==='admin'&&adminLoggedIn?`<button onclick="detailTab='edit';renderDetail();" style="margin-top:10px;padding:8px 20px;background:#111;color:#fff;border:none;border-radius:50px;font-family:'Pretendard',sans-serif;font-size:13px;font-weight:700;cursor:pointer;">+ 이미지 추가</button>`:'<div style="font-size:12px;">디자인 관리자 모드에서 이미지를 등록해주세요</div>'}
       </div>`;
     } else {
       html+=types.map((t,i)=>`
