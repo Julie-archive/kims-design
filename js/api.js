@@ -391,7 +391,7 @@ async function processRequestFiles(srcs, prefix) {
 // AI 카피 문구 생성 요청
 async function fetchAiCopy(keyword) {
   try {
-    const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=AIzaSyBXh25tCSXZ0u6YUyIV5iuf5Ku-ibGhTF4`, {
+    const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=AIzaSyAEGOyjx3SWem_vBzOszbTYBuaRKFemX9w`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
