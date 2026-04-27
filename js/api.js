@@ -388,29 +388,15 @@ async function processRequestFiles(srcs, prefix) {
 // 외부 API 연동 기능 (AI 카피 추천 등)
 // ==========================================
 
-// AI 카피 문구 생성 요청
 async function fetchAiCopy(keyword) {
   try {
-    const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=AIzaSyAEGOyjx3SWem_vBzOszbTYBuaRKFemX9w`, {
+    const response = await fetch('https://kims-design.vercel.app/api/generate-copy', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        contents: [{
-          parts: [{
-            text: `너는 킴스클럽의 전문 카피라이터야. 마트 매대 POP 및 포스터에 들어갈 세련되고 직관적인 셀링 문구 3가지를 추천해줘.
-사용자가 입력한 상품/키워드: "${keyword}"
-규칙:
-1. 각 문구는 20자 이내로 짧고 강렬하게 작성할 것.
-2. 확인되지 않은 구체적인 수치는 절대 사용하지 말고 감각적인 표현 위주로 작성할 것.
-3. 번호나 특수기호를 매기지 말고 텍스트만 줄바꿈으로 구분해서 딱 3줄만 출력해줘.`
-          }]
-        }]
-      })
+      body: JSON.stringify({ keyword })
     });
     const data = await response.json();
-    const text = data.candidates[0].content.parts[0].text;
-    const copies = text.split('\n').filter(line => line.trim() !== '');
-    return copies;
+    return (response.ok && data.copies) ? data.copies : null;
   } catch (err) {
     console.error('AI 카피 생성 에러:', err);
     return null;
