@@ -423,7 +423,7 @@
 
 <!-- REQUEST SUCCESS MODAL -->
 <div class="kmodal-overlay center" id="modalReqSuccess">
-  <div style="width:400px;height:400px;border-radius:15px;background:#fff;display:flex;flex-direction:column;justify-content:center;align-items:center;gap:20px;padding:13px 35px;">
+  <div style="width:400px;border-radius:15px;background:#fff;display:flex;flex-direction:column;justify-content:center;align-items:center;gap:20px;padding:40px 35px;">
     <!-- 체크 아이콘 + 타이틀 -->
     <div style="display:flex;flex-direction:column;align-items:center;gap:10px;">
       <div style="width:60px;height:60px;border-radius:50%;border:5px solid #006341;display:flex;align-items:center;justify-content:center;box-sizing:border-box;">
@@ -434,13 +434,13 @@
       <div style="font-family:'Pretendard',sans-serif;font-size:26px;font-weight:700;letter-spacing:-0.04em;color:#000;text-align:center;">신청이 완료되었습니다</div>
     </div>
     <!-- 안내 박스 -->
-    <div style="width:310px;height:112px;background:rgba(0,99,65,0.1);border-radius:10px;padding:30px 40px;display:flex;align-items:center;justify-content:center;box-sizing:border-box;">
-      <div style="font-family:'Pretendard',sans-serif;font-size:19px;font-weight:500;line-height:26px;letter-spacing:-0.04em;color:#7B7B7B;text-align:center;">홈 화면 신청 현황 조회에서<br>입력하신 연락처로 확인하세요</div>
+    <div style="width:310px;background:rgba(0,99,65,0.1);border-radius:10px;padding:24px 40px;display:flex;align-items:center;justify-content:center;box-sizing:border-box;">
+      <div style="font-family:'Pretendard',sans-serif;font-size:19px;font-weight:500;line-height:26px;letter-spacing:-0.04em;color:#7B7B7B;text-align:center;">
+        홈 화면 <strong style="color:#7B7B7B;">신청 현황 조회</strong>에서<br>입력하신 <strong style="color:#7B7B7B;">연락처</strong>로 확인하세요
+      </div>
     </div>
     <!-- 확인 버튼 -->
     <button onclick="modalClose('modalReqSuccess')" style="width:310px;height:50px;background:#006341;color:#fff;border:none;border-radius:100px;font-family:'Pretendard',sans-serif;font-size:18px;font-weight:700;letter-spacing:-0.04em;cursor:pointer;">확인</button>
-    <!-- 신청 번호 -->
-    <div style="font-size:11px;color:#ccc;">신청 번호: <span id="successReqCode"></span></div>
   </div>
 </div>
 
