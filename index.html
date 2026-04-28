@@ -423,17 +423,24 @@
 
 <!-- REQUEST SUCCESS MODAL -->
 <div class="kmodal-overlay center" id="modalReqSuccess">
-  <div class="kmodal-sheet" style="max-width:400px;border-radius:12px;text-align:center;">
-    <div style="font-size:40px;margin-bottom:12px;">✅</div>
-    <div style="font-size:20px;font-weight:900;margin-bottom:16px;">신청이 완료되었습니다</div>
-    <div style="background:#f4f6ff;border:1.5px solid #e2e8ff;border-radius:6px;padding:16px;margin-bottom:20px;">
-      <div style="font-size:13px;color:#555;line-height:1.9;">
-        홈 화면 <strong style="color:#006341;">'신청 현황 조회'</strong>에서<br>
-        입력하신 <strong style="color:#006341;">연락처</strong>로 확인하세요.
+  <div style="width:400px;height:400px;border-radius:15px;background:#fff;display:flex;flex-direction:column;justify-content:center;align-items:center;gap:20px;padding:13px 35px;">
+    <!-- 체크 아이콘 + 타이틀 -->
+    <div style="display:flex;flex-direction:column;align-items:center;gap:10px;">
+      <div style="width:60px;height:60px;border-radius:50%;border:5px solid #006341;display:flex;align-items:center;justify-content:center;box-sizing:border-box;">
+        <svg width="29" height="22" viewBox="0 0 29 22" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M2 11L10.5 19.5L27 2" stroke="#006341" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
       </div>
+      <div style="font-family:'Pretendard',sans-serif;font-size:26px;font-weight:700;letter-spacing:-0.04em;color:#000;text-align:center;">신청이 완료되었습니다</div>
     </div>
-    <button onclick="modalClose('modalReqSuccess')" style="width:100%;padding:14px;background:#006341;color:#fff;border:none;border-radius:50px;font-size:15px;font-weight:700;cursor:pointer;font-family:Pretendard,sans-serif;">확인</button>
-    <div style="margin-top:14px;font-size:11px;color:#ccc;">신청 번호: <span id="successReqCode"></span></div>
+    <!-- 안내 박스 -->
+    <div style="width:310px;height:112px;background:rgba(0,99,65,0.1);border-radius:10px;padding:30px 40px;display:flex;align-items:center;justify-content:center;box-sizing:border-box;">
+      <div style="font-family:'Pretendard',sans-serif;font-size:19px;font-weight:500;line-height:26px;letter-spacing:-0.04em;color:#7B7B7B;text-align:center;">홈 화면 신청 현황 조회에서<br>입력하신 연락처로 확인하세요</div>
+    </div>
+    <!-- 확인 버튼 -->
+    <button onclick="modalClose('modalReqSuccess')" style="width:310px;height:50px;background:#006341;color:#fff;border:none;border-radius:100px;font-family:'Pretendard',sans-serif;font-size:18px;font-weight:700;letter-spacing:-0.04em;cursor:pointer;">확인</button>
+    <!-- 신청 번호 -->
+    <div style="font-size:11px;color:#ccc;">신청 번호: <span id="successReqCode"></span></div>
   </div>
 </div>
 
