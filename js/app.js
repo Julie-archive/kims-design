@@ -2367,7 +2367,7 @@ function adreqSubmit() {
     eventStart:'', eventEnd:'',
     eventDesc: descLines,
     branch, deliveryDay: adreqDeliveryDay, deliveryDate: adreqDeliveryDate,
-    sitePhotoSrcs, refImageSrcs:[], manager:'', dueDate:''
+    sitePhotoSrcs, refImageSrcs: (ad?.types||[]).filter(t=>t.src).map(t=>t.src), manager:'', dueDate:''
   };
   if(!DB.requests) DB.requests=[];
   DB.requests.unshift(request);
@@ -3539,7 +3539,7 @@ function openRequestDetail(id) {
     if((r.refImageSrcs||[]).length) {
       var rp = container.querySelector('#detail-ref-pics');
       if(!rp) return;
-      rp.innerHTML = '<div style="margin-bottom:16px;"><div style="font-size:11px;font-weight:600;color:#999;letter-spacing:1px;text-transform:uppercase;margin-bottom:8px;">레퍼런스</div><div id="rp-imgs" style="display:flex;flex-wrap:wrap;gap:8px;"></div></div>';
+      rp.innerHTML = '<div style="margin-bottom:16px;"><div style="font-size:11px;font-weight:600;color:#999;letter-spacing:1px;text-transform:uppercase;margin-bottom:8px;">참조 광고 이미</div><div id="rp-imgs" style="display:flex;flex-wrap:wrap;gap:8px;"></div></div>';
       (r.refImageSrcs||[]).forEach(function(src){
         var img = document.createElement('img');
         img.src = src; img.style.cssText = 'width:80px;height:80px;object-fit:cover;border-radius:6px;cursor:zoom-in;border:1px solid rgba(0,0,0,0.1);';
