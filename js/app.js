@@ -2208,7 +2208,7 @@ function openAdRequest(adId) {
     typeChecksEl.innerHTML = types.map(function(t, i) {
       var safeId = 'adreq-type-qty-' + i;
       return '<div style="display:flex;align-items:center;gap:8px;padding:10px 12px;background:#fff;border-radius:6px;border:1.5px solid #e0e0e0;">'
-        + '<input type="checkbox" name="adreq-type-check" value="'+t.name+'" data-qty-id="'+safeId+'" checked style="width:16px;height:16px;cursor:pointer;flex-shrink:0;" />'
+        + '<input type="checkbox" name="adreq-type-check" value="'+t.name+'" data-qty-id="'+safeId+'" style="width:16px;height:16px;cursor:pointer;flex-shrink:0;" />'
         + '<img src="'+t.src+'" style="width:44px;height:33px;object-fit:cover;border-radius:4px;flex-shrink:0;" />'
         + '<span style="font-size:13px;font-weight:600;color:#111;flex:1;min-width:0;">'+t.name+(t.subtitle?'<br><span style="font-size:11px;color:#888;font-weight:400;">'+t.subtitle+'</span>':'')+'</span>'
         + '<div style="display:flex;align-items:center;gap:4px;flex-shrink:0;">'
@@ -2331,6 +2331,9 @@ function adreqSubmit() {
   if(!dept||!name||!tel) missing.push('요청자 정보');
   if(!deadline) missing.push('마감 요청일');
   if(!isA3orA4 && !adreqDeliveryDate) missing.push('입고일');
+  if(checkedTypes.length === 0) missing.push('광고 타입 선택');
+  var missingQty = checkedTypeEls.some(function(el){ var qtyId = el.dataset.qtyId; return qtyId && !document.getElementById(qtyId)?.value; });
+  if(missingQty) missing.push('선택 타입 수량');
   // 광고물 형태 탭 제거됨 - 사이즈 옵션만 체크
   if(sitePrevImgsCheck.length === 0) missing.push('설치 위치 사진');
 
