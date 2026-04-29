@@ -2317,6 +2317,15 @@ function adreqSubmit() {
     return el.value + (qty ? ' ×'+qty+'개' : '');
   }).join(', ');
 
+  // 선택된 타입의 이미지+수량 정보 저장
+  var selectedTypeDetails = checkedTypeEls.map(function(el){
+    var typeName = el.value;
+    var qtyId = el.dataset.qtyId;
+    var qty = qtyId ? (document.getElementById(qtyId)?.value||'') : '';
+    var adType = (ad?.types||[]).find(function(t){ return t.name === typeName; });
+    return { name: typeName, qty: qty, src: adType?.src||'' };
+  });
+
   var missing = [];
   const isA3orA4 = adType === '규격POP (A3)' || adType === '규격POP (A4)';
   if(!dept||!name||!tel) missing.push('요청자 정보');
@@ -2367,7 +2376,7 @@ function adreqSubmit() {
     eventStart:'', eventEnd:'',
     eventDesc: descLines,
     branch, deliveryDay: adreqDeliveryDay, deliveryDate: adreqDeliveryDate,
-    sitePhotoSrcs, refImageSrcs: (ad?.types||[]).filter(t=>t.src).map(t=>t.src), manager:'', dueDate:''
+    sitePhotoSrcs, refImageSrcs: selectedTypeDetails.filter(function(t){ return t.src; }).map(function(t){ return t.src; }), selectedTypeDetails: selectedTypeDetails, manager:'', dueDate:''
   };
   if(!DB.requests) DB.requests=[];
   DB.requests.unshift(request);
@@ -3536,17 +3545,17 @@ function openRequestDetail(id) {
         sp.querySelector('#sp-imgs').appendChild(img);
       });
     }
-    if((r.refImageSrcs||[]).length) {
+    if((r.refImageSrcs||[]).length || (r.selectedTypeDetails||[]).length) {
       var rp = container.querySelector('#detail-ref-pics');
       if(!rp) return;
-      rp.innerHTML = '<div style="margin-bottom:16px;"><div style="font-size:11px;font-weight:600;color:#999;letter-spacing:1px;text-transform:uppercase;margin-bottom:8px;">참조 광고 이미</div><div id="rp-imgs" style="display:flex;flex-wrap:wrap;gap:8px;"></div></div>';
-      (r.refImageSrcs||[]).forEach(function(src){
-        var img = document.createElement('img');
-        img.src = src; img.style.cssText = 'width:80px;height:80px;object-fit:cover;border-radius:6px;cursor:zoom-in;border:1px solid rgba(0,0,0,0.1);';
-        img.addEventListener('click', function(){ openLightbox(src); });
-        rp.querySelector('#rp-imgs').appendChild(img);
-      });
-    }
+      var typeImgsHtml = (r.selectedTypeDetails||[]).filter(function(t){ return t.src; }).map(function(t){
+        return '<div style="display:flex;flex-direction:column;align-items:center;gap:4px;">'
+          +'<img src="'+t.src+'" style="width:80px;height:80px;object-fit:cover;border-radius:6px;cursor:zoom-in;border:1px solid rgba(0,0,0,0.1);" onclick="openLightbox(\''+t.src+'\')" />'
+          +'<div style="font-size:11px;font-weight:600;color:#555;text-align:center;">'+t.name+(t.qty?' ×'+t.qty+'개':'')+'</div>'
+          +'</div>';
+      }).join('');
+  rp.innerHTML = '<div style="margin-bottom:16px;"><div style="font-size:11px;font-weight:600;color:#999;letter-spacing:1px;text-transform:uppercase;margin-bottom:8px;">선택 광고 타입</div><div style="display:flex;flex-wrap:wrap;gap:8px;">'+typeImgsHtml+'</div></div>';
+}
   });
 }
 
