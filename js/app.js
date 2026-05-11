@@ -3560,6 +3560,15 @@ function openRequestDetail(id) {
         rp.innerHTML = '<div style="margin-bottom:16px;"><div style="font-size:11px;font-weight:600;color:#999;letter-spacing:1px;text-transform:uppercase;margin-bottom:8px;">선택 광고 타입</div><div style="display:flex;flex-wrap:wrap;gap:8px;">'+typeImgsHtml+'</div></div>';
       }
     }
+    if((r.productPhotoSrcs||[]).length) {
+      var pp = container.querySelector('#detail-ref-pics');
+      if(pp) {
+        var prodImgsHtml = (r.productPhotoSrcs||[]).map(function(src){
+          return '<img src="'+src+'" style="width:80px;height:80px;object-fit:cover;border-radius:6px;cursor:zoom-in;border:1px solid rgba(0,0,0,0.1);" onclick="openLightbox(\''+src+'\')" />';
+        }).join('');
+        pp.innerHTML = '<div style="margin-bottom:16px;"><div style="font-size:11px;font-weight:600;color:#999;letter-spacing:1px;text-transform:uppercase;margin-bottom:8px;">상품 사진</div><div style="display:flex;flex-wrap:wrap;gap:8px;">'+prodImgsHtml+'</div></div>';
+      }
+    }
   });
 }
 
