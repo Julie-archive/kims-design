@@ -3468,6 +3468,7 @@ function openRequestDetail(id) {
     +'<div style="margin-bottom:16px;"><div style="font-size:11px;font-weight:600;color:#999;letter-spacing:1px;text-transform:uppercase;margin-bottom:8px;">광고 종류</div><div style="display:flex;flex-wrap:wrap;gap:4px;">'+adTypePills+'</div></div>'
     +'<div style="background:rgba(0,99,65,0.05);border:1.5px solid rgba(0,99,65,0.15);border-radius:6px;padding:16px;margin-bottom:16px;"><div style="font-size:11px;font-weight:600;color:#999;letter-spacing:1px;text-transform:uppercase;margin-bottom:12px;">요청 내용</div>'+contentRows+'</div>'
     +'<div id="detail-site-pics"></div>'
+    +'<div id="detail-product-pics"></div>'
     +'<div id="detail-ref-pics"></div>'
     +'<div style="background:rgba(0,99,65,0.05);border:1.5px solid rgba(0,99,65,0.15);border-radius:6px;padding:16px;margin-bottom:16px;" id="detail-due-section">'
       +'<div style="font-size:11px;font-weight:600;color:#999;letter-spacing:1px;text-transform:uppercase;margin-bottom:10px;">완료 예정일</div>'
@@ -3561,7 +3562,7 @@ function openRequestDetail(id) {
       }
     }
     if((r.productPhotoSrcs||[]).length) {
-      var pp = container.querySelector('#detail-ref-pics');
+  var pp = container.querySelector('#detail-product-pics');
       if(pp) {
         var prodImgsHtml = (r.productPhotoSrcs||[]).map(function(src){
           return '<img src="'+src+'" style="width:80px;height:80px;object-fit:cover;border-radius:6px;cursor:zoom-in;border:1px solid rgba(0,0,0,0.1);" onclick="openLightbox(\''+src+'\')" />';
