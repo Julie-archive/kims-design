@@ -3550,15 +3550,16 @@ function openRequestDetail(id) {
     }
     if((r.refImageSrcs||[]).length || (r.selectedTypeDetails||[]).length) {
       var rp = container.querySelector('#detail-ref-pics');
-      if(!rp) return;
-      var typeImgsHtml = (r.selectedTypeDetails||[]).filter(function(t){ return t.src; }).map(function(t){
-        return '<div style="display:flex;flex-direction:column;align-items:center;gap:4px;">'
-          +'<img src="'+t.src+'" style="width:80px;height:80px;object-fit:cover;border-radius:6px;cursor:zoom-in;border:1px solid rgba(0,0,0,0.1);" onclick="openLightbox(\''+t.src+'\')" />'
-          +'<div style="font-size:11px;font-weight:600;color:#555;text-align:center;">'+t.name+(t.qty?' ×'+t.qty+'개':'')+'</div>'
-          +'</div>';
-      }).join('');
-  rp.innerHTML = '<div style="margin-bottom:16px;"><div style="font-size:11px;font-weight:600;color:#999;letter-spacing:1px;text-transform:uppercase;margin-bottom:8px;">선택 광고 타입</div><div style="display:flex;flex-wrap:wrap;gap:8px;">'+typeImgsHtml+'</div></div>';
-}
+      if(rp) {
+        var typeImgsHtml = (r.selectedTypeDetails||[]).filter(function(t){ return t.src; }).map(function(t){
+          return '<div style="display:flex;flex-direction:column;align-items:center;gap:4px;">'
+            +'<img src="'+t.src+'" style="width:80px;height:80px;object-fit:cover;border-radius:6px;cursor:zoom-in;border:1px solid rgba(0,0,0,0.1);" onclick="openLightbox(\''+t.src+'\')" />'
+            +'<div style="font-size:11px;font-weight:600;color:#555;text-align:center;">'+t.name+(t.qty?' ×'+t.qty+'개':'')+'</div>'
+            +'</div>';
+        }).join('');
+        rp.innerHTML = '<div style="margin-bottom:16px;"><div style="font-size:11px;font-weight:600;color:#999;letter-spacing:1px;text-transform:uppercase;margin-bottom:8px;">선택 광고 타입</div><div style="display:flex;flex-wrap:wrap;gap:8px;">'+typeImgsHtml+'</div></div>';
+      }
+    }
   });
 }
 
