@@ -3540,34 +3540,44 @@ function openRequestDetail(id) {
   requestAnimationFrame(function() {
     if((r.sitePhotoSrcs||[]).length) {
       var sp = container.querySelector('#detail-site-pics');
-      if(!sp) return;
-      sp.innerHTML = '<div style="margin-bottom:16px;"><div style="font-size:11px;font-weight:600;color:#999;letter-spacing:1px;text-transform:uppercase;margin-bottom:8px;">현장 사진</div><div id="sp-imgs" style="display:flex;flex-wrap:wrap;gap:8px;"></div></div>';
-      (r.sitePhotoSrcs||[]).forEach(function(src){
-        var img = document.createElement('img');
-        img.src = src; img.style.cssText = 'width:80px;height:80px;object-fit:cover;border-radius:6px;cursor:zoom-in;border:1px solid rgba(0,0,0,0.1);';
-        img.addEventListener('click', function(){ openLightbox(src); });
-        sp.querySelector('#sp-imgs').appendChild(img);
-      });
+      if(sp) {
+        sp.innerHTML = '<div style="margin-bottom:16px;"><div style="font-size:11px;font-weight:600;color:#999;letter-spacing:1px;text-transform:uppercase;margin-bottom:8px;">현장 사진</div><div id="sp-imgs" style="display:flex;flex-wrap:wrap;gap:8px;"></div></div>';
+        (r.sitePhotoSrcs||[]).forEach(function(src){
+          var img = document.createElement('img');
+          img.src = src; img.style.cssText = 'width:80px;height:80px;object-fit:cover;border-radius:6px;cursor:zoom-in;border:1px solid rgba(0,0,0,0.1);';
+          img.addEventListener('click', function(){ openLightbox(src); });
+          sp.querySelector('#sp-imgs').appendChild(img);
+        });
+      }
     }
-    if((r.refImageSrcs||[]).length || (r.selectedTypeDetails||[]).length) {
+    if((r.productPhotoSrcs||[]).length) {
+      var pp = container.querySelector('#detail-product-pics');
+      if(pp) {
+        var prodImgsHtml = (r.productPhotoSrcs||[]).map(function(src){
+          return '<img src="'+src+'" style="width:80px;height:80px;object-fit:cover;border-radius:6px;cursor:zoom-in;border:1px solid rgba(0,0,0,0.1);" onclick="openLightbox(\''+src+'\')" />';
+        }).join('');
+        pp.innerHTML = '<div style="margin-bottom:16px;"><div style="font-size:11px;font-weight:600;color:#999;letter-spacing:1px;text-transform:uppercase;margin-bottom:8px;">상품 사진</div><div style="display:flex;flex-wrap:wrap;gap:8px;">'+prodImgsHtml+'</div></div>';
+      }
+    }
+    if((r.refImageSrcs||[]).length) {
       var rp = container.querySelector('#detail-ref-pics');
       if(rp) {
+        var refImgsHtml = (r.refImageSrcs||[]).map(function(src){
+          return '<img src="'+src+'" style="width:80px;height:80px;object-fit:cover;border-radius:6px;cursor:zoom-in;border:1px solid rgba(0,0,0,0.1);" onclick="openLightbox(\''+src+'\')" />';
+        }).join('');
+        rp.innerHTML = '<div style="margin-bottom:16px;"><div style="font-size:11px;font-weight:600;color:#999;letter-spacing:1px;text-transform:uppercase;margin-bottom:8px;">레퍼런스 이미지</div><div style="display:flex;flex-wrap:wrap;gap:8px;">'+refImgsHtml+'</div></div>';
+      }
+    }
+    if((r.selectedTypeDetails||[]).length) {
+      var rp2 = container.querySelector('#detail-ref-pics');
+      if(rp2 && !rp2.innerHTML) {
         var typeImgsHtml = (r.selectedTypeDetails||[]).filter(function(t){ return t.src; }).map(function(t){
           return '<div style="display:flex;flex-direction:column;align-items:center;gap:4px;">'
             +'<img src="'+t.src+'" style="width:80px;height:80px;object-fit:cover;border-radius:6px;cursor:zoom-in;border:1px solid rgba(0,0,0,0.1);" onclick="openLightbox(\''+t.src+'\')" />'
             +'<div style="font-size:11px;font-weight:600;color:#555;text-align:center;">'+t.name+(t.qty?' ×'+t.qty+'개':'')+'</div>'
             +'</div>';
         }).join('');
-        rp.innerHTML = '<div style="margin-bottom:16px;"><div style="font-size:11px;font-weight:600;color:#999;letter-spacing:1px;text-transform:uppercase;margin-bottom:8px;">선택 광고 타입</div><div style="display:flex;flex-wrap:wrap;gap:8px;">'+typeImgsHtml+'</div></div>';
-      }
-    }
-    if((r.productPhotoSrcs||[]).length) {
-  var pp = container.querySelector('#detail-product-pics');
-      if(pp) {
-        var prodImgsHtml = (r.productPhotoSrcs||[]).map(function(src){
-          return '<img src="'+src+'" style="width:80px;height:80px;object-fit:cover;border-radius:6px;cursor:zoom-in;border:1px solid rgba(0,0,0,0.1);" onclick="openLightbox(\''+src+'\')" />';
-        }).join('');
-        pp.innerHTML = '<div style="margin-bottom:16px;"><div style="font-size:11px;font-weight:600;color:#999;letter-spacing:1px;text-transform:uppercase;margin-bottom:8px;">상품 사진</div><div style="display:flex;flex-wrap:wrap;gap:8px;">'+prodImgsHtml+'</div></div>';
+        rp2.innerHTML = '<div style="margin-bottom:16px;"><div style="font-size:11px;font-weight:600;color:#999;letter-spacing:1px;text-transform:uppercase;margin-bottom:8px;">선택 광고 타입</div><div style="display:flex;flex-wrap:wrap;gap:8px;">'+typeImgsHtml+'</div></div>';
       }
     }
   });
