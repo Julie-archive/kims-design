@@ -3465,6 +3465,8 @@ function openRequestDetail(id) {
     ['소속', r.dept],
     ['이름', r.name],
     ['연락처', r.tel],
+    ['이메일', r.email||''],
+    ['마감 요청일', r.deadline||''],
     ['입고 지점', r.branch||''],
     ['입고 요청일', r.deliveryDay||'']
   ].filter(function(kv){ return kv[1]; }).map(function(kv){
