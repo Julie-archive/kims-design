@@ -1938,14 +1938,11 @@ function rqSubmit() {
   DB.requests.unshift(request);
   saveData();
 
-  // Supabase에 저장
+  // Supabase에 저장 후 이메일 발송
   sbSaveRequest(request).then(function(ok) {
     if(!ok) console.warn('Supabase 저장 실패');
-  });
-  
-// 이메일 발송
-  request.email = (document.getElementById('rq-email')?.value || '').trim();
-  if (request.email) {
+    request.email = (document.getElementById('rq-email')?.value || '').trim();
+    if (request.email) {
     fetch('/api/send-email', {
       method: 'POST', headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ type: 'applicant_received', to: request.email, reqCode: request.reqCode, name: request.name, title: request.title })
@@ -1956,8 +1953,6 @@ function rqSubmit() {
     body: JSON.stringify({ type: 'admin_new', reqCode: request.reqCode, name: request.name, title: request.title })
   }).catch(console.error);
 
-  modalClose('modalRequest');
-  openRequestSuccess(request.reqCode);
   modalClose('modalRequest');
   openRequestSuccess(request.reqCode);
 }
@@ -2419,13 +2414,13 @@ function adreqSubmit() {
     }).catch(console.error);
   }
   fetch('/api/send-email', {
-    method: 'POST', headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ type: 'admin_new', reqCode: request.reqCode, name: request.name, title: request.title })
-  }).catch(console.error);
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ type: 'admin_new', reqCode: request.reqCode, name: request.name, title: request.title })
+    }).catch(console.error);
   });
 
-  modalClose('modalAdRequest');
-  openRequestSuccess(reqCode);
+  modalClose('modalRequest');
+  openRequestSuccess(request.reqCode);
 }
 
 // ── Supabase Storage 이미지 업로드 ──
@@ -3468,8 +3463,6 @@ function openRequestDetail(id) {
     ['소속', r.dept],
     ['이름', r.name],
     ['연락처', r.tel],
-    ['이메일', r.email],
-    ['마감 요청일', r.deadline||'미정'],
     ['입고 지점', r.branch||''],
     ['입고 요청일', r.deliveryDay||'']
   ].filter(function(kv){ return kv[1]; }).map(function(kv){
@@ -3510,7 +3503,11 @@ function openRequestDetail(id) {
     +'</div>'
     +'<h2 style="font-size:20px;font-weight:900;letter-spacing:-0.5px;margin-bottom:6px;">'+r.title+'</h2>'
     +'<div style="font-size:12px;color:#999;margin-bottom:20px;border-bottom:1px solid #f2f2f2;padding-bottom:16px;">제출: '+r.submittedAt+'</div>'
-    +'<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:10px;margin-bottom:16px;">'+infoGrid+'</div>'
+    +'<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:10px;margin-bottom:8px;">'+infoGrid+'</div>'
+    +'<div style="display:grid;grid-template-columns:2fr 1fr;gap:10px;margin-bottom:16px;">'
+    +(r.email ? '<div style="background:rgba(0,99,65,0.05);border-radius:6px;padding:12px 16px;min-width:0;"><div style="font-size:10px;font-weight:700;color:#999;margin-bottom:4px;">이메일</div><div style="font-size:13px;font-weight:600;color:#111;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">'+r.email+'</div></div>' : '<div></div>')
+    +'<div style="background:rgba(0,99,65,0.05);border-radius:6px;padding:12px 16px;"><div style="font-size:10px;font-weight:700;color:#999;margin-bottom:4px;">마감 요청일</div><div style="font-size:13px;font-weight:600;color:#111;">'+(r.deadline||'미정')+'</div></div>'
+    +'</div>'
     +'<div style="margin-bottom:16px;"><div style="font-size:11px;font-weight:600;color:#999;letter-spacing:1px;text-transform:uppercase;margin-bottom:8px;">광고 종류</div><div style="display:flex;flex-wrap:wrap;gap:4px;">'+adTypePills+'</div></div>'
     +'<div style="background:rgba(0,99,65,0.05);border:1.5px solid rgba(0,99,65,0.15);border-radius:6px;padding:16px;margin-bottom:16px;"><div style="font-size:11px;font-weight:600;color:#999;letter-spacing:1px;text-transform:uppercase;margin-bottom:12px;">요청 내용</div>'+contentRows+'</div>'
     +'<div id="detail-site-pics"></div>'
