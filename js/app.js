@@ -3468,6 +3468,7 @@ function openRequestDetail(id) {
     ['소속', r.dept],
     ['이름', r.name],
     ['연락처', r.tel],
+    ['이메일', r.email],
     ['마감 요청일', r.deadline||'미정'],
     ['입고 지점', r.branch||''],
     ['입고 요청일', r.deliveryDay||'']
@@ -3663,7 +3664,7 @@ function openReqUserDetail(reqId) {
   }).join('');
 
   var rows = [
-    ['소속', req.dept], ['이름', req.name], ['연락처', req.tel],
+    ['소속', req.dept], ['이름', req.name], ['연락처', req.tel], ['이메일', req.email],
     ['마감 요청일', req.deadline], ['입고 지점', req.branch], ['입고 요청일', req.deliveryDay],
     ['타이틀', req.adTitle], ['셀링 문구', req.selling], ['행사 내용', req.eventDesc]
   ].filter(function(r){ return r[1]; }).map(function(r){
@@ -3686,6 +3687,7 @@ function openReqUserDetail(reqId) {
     + (adTypePills ? '<div style="margin-bottom:16px;"><div style="font-size:10px;font-weight:700;color:#aaa;margin-bottom:6px;text-transform:uppercase;">광고 종류</div><div>'+adTypePills+'</div></div>' : '')
     +'<div style="background:#f8faff;border:1px solid rgba(0,99,65,0.15);border-radius:6px;padding:16px;margin-bottom:16px;">'+rows+'</div>'
     + (sitePics ? '<div style="margin-bottom:16px;"><div style="font-size:10px;font-weight:700;color:#aaa;margin-bottom:8px;text-transform:uppercase;">현장 사진</div><div style="display:flex;flex-wrap:wrap;gap:8px;">'+sitePics+'</div></div>' : '')
+    + ((req.productPhotoSrcs||[]).length ? '<div style="margin-bottom:16px;"><div style="font-size:10px;font-weight:700;color:#aaa;margin-bottom:8px;text-transform:uppercase;">상품 사진</div><div style="display:flex;flex-wrap:wrap;gap:8px;">'+(req.productPhotoSrcs||[]).map(function(src){ return '<img src="'+src+'" onclick="openLightbox(\''+src+'\')" style="width:80px;height:80px;object-fit:cover;border-radius:6px;cursor:zoom-in;border:1px solid rgba(0,0,0,0.08);" />'; }).join('')+'</div></div>' : '')
     +'<button onclick="this.closest(\'.kmodal-overlay\').classList.remove(\'open\')" style="width:100%;padding:13px;background:#006341;color:#fff;border:none;border-radius:50px;font-size:14px;font-weight:700;cursor:pointer;font-family:Pretendard,sans-serif;">닫기</button>'
   +'</div>';
 
