@@ -2385,7 +2385,7 @@ function adreqSubmit() {
 
   var request = {
     id:nextId(), reqCode, submittedAt:new Date().toLocaleString('ko-KR'),
-    status:'검토 중', dept, name, tel,
+    status:'검토 중', dept, name, tel, email:adreqEmail,
     title:`[${ad?.title||''}] ${sizeText}${qty?' · '+qty+'개':''}${branch?' · '+branch:''}`,
     deadline, adTypes:[adType],
     bannerType:'', customSize: adType==='우드락 셀링'?`${sizeW}×${sizeH}mm`:'',
