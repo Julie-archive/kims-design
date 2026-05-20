@@ -219,7 +219,8 @@ async function sbSaveRequest(req) {
     event_desc:req.eventDesc, site_photo_srcs:req.sitePhotoSrcs||[], ref_image_srcs:req.refImageSrcs||[],
     manager:req.manager||'', due_date:req.dueDate||'',
     branch:req.branch||'', delivery_day:req.deliveryDay||'',
-    ad_type_details:req.adTypeDetails||{}, product_photo_srcs:req.productPhotoSrcs||[]
+    ad_type_details:req.adTypeDetails||{}, product_photo_srcs:req.productPhotoSrcs||[],
+    email:req.email||''
   };
   // 기본 필드만 (컬럼 없을 때 fallback)
   const baseData = {
