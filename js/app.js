@@ -1941,21 +1941,20 @@ function rqSubmit() {
   // Supabase에 저장 후 이메일 발송
   sbSaveRequest(request).then(function(ok) {
     if(!ok) console.warn('Supabase 저장 실패');
-    request.email = (document.getElementById('rq-email')?.value || '').trim();
     if (request.email) {
+      fetch('/api/send-email', {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ type: 'applicant_received', to: request.email, reqCode: request.reqCode, name: request.name, title: request.title })
+      }).catch(console.error);
+    }
     fetch('/api/send-email', {
       method: 'POST', headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ type: 'applicant_received', to: request.email, reqCode: request.reqCode, name: request.name, title: request.title })
+      body: JSON.stringify({ type: 'admin_new', reqCode: request.reqCode, name: request.name, title: request.title })
     }).catch(console.error);
-  }
-  fetch('/api/send-email', {
-    method: 'POST', headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ type: 'admin_new', reqCode: request.reqCode, name: request.name, title: request.title })
-  }).catch(console.error);
+  });
 
   modalClose('modalRequest');
   openRequestSuccess(request.reqCode);
-}
 
 // 신청서 수정 (검토 중 상태일 때만)
 var rqEditTargetId = null;
