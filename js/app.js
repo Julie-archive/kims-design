@@ -3472,7 +3472,7 @@ function openRequestDetail(id) {
   ].filter(function(kv){ return kv[1]; }).map(function(kv){
     return '<div style="background:rgba(0,99,65,0.05);border-radius:6px;padding:12px;">'
       +'<div style="font-size:10px;font-weight:600;color:#999;text-transform:uppercase;margin-bottom:4px;">'+kv[0]+'</div>'
-      +'<div style="font-size:13px;font-weight:600;color:#111;">'+(kv[1]||'-')+'</div>'
+      +'<div style="font-size:13px;font-weight:600;color:#111;word-break:break-all;">'+(kv[1]||'-')+'</div>'
       +'</div>';
   }).join('');
 
@@ -3508,10 +3508,6 @@ function openRequestDetail(id) {
     +'<h2 style="font-size:20px;font-weight:900;letter-spacing:-0.5px;margin-bottom:6px;">'+r.title+'</h2>'
     +'<div style="font-size:12px;color:#999;margin-bottom:20px;border-bottom:1px solid #f2f2f2;padding-bottom:16px;">제출: '+r.submittedAt+'</div>'
     +'<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:10px;margin-bottom:8px;">'+infoGrid+'</div>'
-    +'<div style="display:grid;grid-template-columns:3fr 1fr;gap:10px;margin-bottom:16px;">'
-    +(r.email ? '<div style="background:rgba(0,99,65,0.05);border-radius:6px;padding:12px 16px;min-width:0;"><div style="font-size:10px;font-weight:700;color:#999;margin-bottom:4px;">이메일</div><div style="font-size:13px;font-weight:600;color:#111;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">'+r.email+'</div></div>' : '<div></div>')
-    +'<div style="background:rgba(0,99,65,0.05);border-radius:6px;padding:12px 16px;"><div style="font-size:10px;font-weight:700;color:#999;margin-bottom:4px;">마감 요청일</div><div style="font-size:13px;font-weight:600;color:#111;">'+(r.deadline||'미정')+'</div></div>'
-    +'</div>'
     +'<div style="margin-bottom:16px;"><div style="font-size:11px;font-weight:600;color:#999;letter-spacing:1px;text-transform:uppercase;margin-bottom:8px;">광고 종류</div><div style="display:flex;flex-wrap:wrap;gap:4px;">'+adTypePills+'</div></div>'
     +'<div style="background:rgba(0,99,65,0.05);border:1.5px solid rgba(0,99,65,0.15);border-radius:6px;padding:16px;margin-bottom:16px;"><div style="font-size:11px;font-weight:600;color:#999;letter-spacing:1px;text-transform:uppercase;margin-bottom:12px;">요청 내용</div>'+contentRows+'</div>'
     +'<div id="detail-site-pics"></div>'
