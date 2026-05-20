@@ -1955,6 +1955,7 @@ function rqSubmit() {
 
   modalClose('modalRequest');
   openRequestSuccess(request.reqCode);
+}
 
 // 신청서 수정 (검토 중 상태일 때만)
 var rqEditTargetId = null;
