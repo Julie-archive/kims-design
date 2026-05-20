@@ -1487,6 +1487,7 @@ function openRequestModal() {
   var fa=document.getElementById('rq-fixed-area'); if(fa) fa.style.display='';
   var ca=document.getElementById('rq-custom-area'); if(ca) ca.style.display='none';
   var telEl = document.getElementById('rq-tel');
+  var emailEl = document.getElementById('rq-email'); if(emailEl) emailEl.value='';
   if(telEl) telEl.oninput = function(){ formatTelInput(this); };
   rqSiteFiles = []; rqRefFiles = []; rqProductFiles = []; rqSelectedTypes = new Set();
   rqEditTargetId = null; // 수정 모드 초기화
@@ -1900,6 +1901,7 @@ function rqSubmit() {
     submittedAt: new Date().toLocaleString('ko-KR'),
     status: '검토 중',
     dept, name, tel, branch,
+    email: (document.getElementById('rq-email')?.value || '').trim(),
     deliveryDay: deliveryDayLabel,
     title, deadline,
     adTypes: adTypesArr,
@@ -1940,7 +1942,22 @@ function rqSubmit() {
   sbSaveRequest(request).then(function(ok) {
     if(!ok) console.warn('Supabase 저장 실패');
   });
+  
+// 이메일 발송
+  request.email = (document.getElementById('rq-email')?.value || '').trim();
+  if (request.email) {
+    fetch('/api/send-email', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ type: 'applicant_received', to: request.email, reqCode: request.reqCode, name: request.name, title: request.title })
+    }).catch(console.error);
+  }
+  fetch('/api/send-email', {
+    method: 'POST', headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ type: 'admin_new', reqCode: request.reqCode, name: request.name, title: request.title })
+  }).catch(console.error);
 
+  modalClose('modalRequest');
+  openRequestSuccess(request.reqCode);
   modalClose('modalRequest');
   openRequestSuccess(request.reqCode);
 }
@@ -2392,8 +2409,19 @@ function adreqSubmit() {
     var idx = (DB.requests||[]).findIndex(function(r){ return r.id === request.id; });
     if(idx !== -1) { DB.requests[idx].sitePhotoSrcs = uploadedSite; saveData(); }
     sbSaveRequest(request).then(function(ok) {
-      if(!ok) console.warn('Supabase 저장 실패 (adreq)');
-    });
+    if(!ok) console.warn('Supabase 저장 실패');
+  });
+
+  if (request.email) {
+    fetch('/api/send-email', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ type: 'applicant_received', to: request.email, reqCode: request.reqCode, name: request.name, title: request.title })
+    }).catch(console.error);
+  }
+  fetch('/api/send-email', {
+    method: 'POST', headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ type: 'admin_new', reqCode: request.reqCode, name: request.name, title: request.title })
+  }).catch(console.error);
   });
 
   modalClose('modalAdRequest');
@@ -3403,6 +3431,23 @@ function updateRequestStatus(id, status, rejectReason) {
   if(rejectReason !== undefined) DB.requests[idx].rejectReason = rejectReason;
   saveData();
   sbUpdateRequest(DB.requests[idx].id, {status: status, rejectReason: rejectReason||''});
+
+  var _req = DB.requests[idx];
+  if (_req.email && ['진행 중', '완료', '반려'].includes(status)) {
+    fetch('/api/send-email', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        type: 'applicant_status',
+        to: _req.email,
+        reqCode: _req.reqCode,
+        name: _req.name,
+        title: _req.title,
+        status: status,
+        rejectReason: rejectReason || ''
+      })
+    }).catch(console.error);
+  }
+
   if(adminTab==='requests') renderAdminRequests();
 }
 
