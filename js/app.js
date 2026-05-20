@@ -1844,8 +1844,9 @@ function rqSubmit() {
   var adTitle = document.getElementById('rq-ad-title').value.trim();
   var selling = document.getElementById('rq-selling').value.trim();
 
+  const email = (document.getElementById('rq-email')?.value || '').trim();
   var missing = [];
-  if(!dept || !name || !tel) missing.push('요청자 정보');
+  if(!dept || !name || !tel || !email) missing.push('요청자 정보');
   if(rqSelectedTypes.size === 0) missing.push('광고 종류');
   if(has연출물) {
     if(!branch) missing.push('입고 지점');
@@ -1901,7 +1902,7 @@ function rqSubmit() {
     submittedAt: new Date().toLocaleString('ko-KR'),
     status: '검토 중',
     dept, name, tel, branch,
-    email: (document.getElementById('rq-email')?.value || '').trim(),
+    email,
     deliveryDay: deliveryDayLabel,
     title, deadline,
     adTypes: adTypesArr,
@@ -2338,9 +2339,10 @@ function adreqSubmit() {
     return { name: typeName, qty: qty, src: adType?.src||'' };
   });
 
+  const adreqEmail = (document.getElementById('adreq-email')?.value || '').trim();
   var missing = [];
   const isA3orA4 = adType === '규격POP (A3)' || adType === '규격POP (A4)';
-  if(!dept||!name||!tel) missing.push('요청자 정보');
+  if(!dept||!name||!tel||!adreqEmail) missing.push('요청자 정보');
   if(!deadline) missing.push('마감 요청일');
   if(!isA3orA4 && !adreqDeliveryDate) missing.push('입고일');
   if(checkedTypes.length === 0) missing.push('광고 타입 선택');
