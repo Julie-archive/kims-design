@@ -9,7 +9,7 @@ module.exports = async function handler(req, res) {
 
   const { type, to, reqCode, name, title, status, rejectReason } = req.body;
   sgMail.setApiKey(process.env.SENDGRID_API_KEY);
-  const FROM = 'noreply@kimsclub-design.noavibe.app';
+  const FROM = 'kimsclub_design@eland.co.kr';
   const ADMIN_EMAILS = (process.env.ADMIN_EMAIL || '').split(',').map(e => e.trim()).filter(Boolean);
 
   try {
