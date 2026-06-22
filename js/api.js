@@ -370,21 +370,6 @@ async function processRequestFiles(srcs, prefix) {
   return result;
 }
 
-
-
-async function processRequestFiles(srcs, prefix) {
-  var result = [];
-  for(var i=0; i<srcs.length; i++) {
-    if(srcs[i] && srcs[i].startsWith('data:')) {
-      var url = await uploadImageToStorage(srcs[i], prefix + '_' + i);
-      result.push(url || srcs[i]);
-    } else {
-      result.push(srcs[i]);
-    }
-  }
-  return result;
-}
-
 // ==========================================
 // 외부 API 연동 기능 (AI 카피 추천 등)
 // ==========================================
