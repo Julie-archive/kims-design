@@ -46,13 +46,6 @@ async function sbLoadAll() {
 
   return true;
 }
-  
-  } catch(e) {
-    console.error('[sbLoadAll] requests 로드 실패:', e?.message || e);
-  }
-
-  return true;
-}
 
 async function sbSaveSub(sub) {
   try {
