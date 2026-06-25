@@ -16,23 +16,7 @@ async function sbLoadAll() {
     DB.subs = subsRes.data.map(function(r){ return {id:r.id, mainCat:r.main_cat, name:r.name}; });
     DB.products = prodsRes.data.map(function(r){ return {id:r.id, mainCat:r.main_cat, subCat:r.sub_cat, name:r.name}; });
     DB.ads = adsRes.data.map(function(r){ return {id:r.id, mainCat:r.main_cat, subCat:r.sub_cat, product:r.product, title:r.title, adDate:r.ad_date, types:r.types||[], memo:r.memo||'', settingPhotos:r.setting_photos||[], orderAmount:r.order_amount||''}; });
-
-      // base64가 남아있는 광고 Storage 재업로드
-      var toFix = DB.ads.filter(function(ad){
-        return (ad.types||[]).some(function(t){ return t.src && (t.src.startsWith('data:') || t.src === '__pending__'); });
-      });
-      for(var i=0; i<toFix.length; i++) {
-        var ad = toFix[i];
-        var fixed = await processAdTypes(ad.types);
-        var idx = DB.ads.findIndex(function(a){ return a.id===ad.id; });
-        if(idx!==-1) { DB.ads[idx].types = fixed; sbUpdateAd(DB.ads[idx]); }
-      }
-      if(toFix.length > 0) {
-        saveData();
-        if(homeScreen==='B') renderHomeContent();
-        if(curView==='admin') renderAdminContent();
-      }
-    }, 1000);
+    saveData();
   } catch(e) {
     console.warn('Supabase load failed:', e);
     return false;
@@ -52,9 +36,17 @@ async function sbLoadAll() {
         manager:r.manager||'', dueDate:r.due_date||'',
         branch:r.branch||'', deliveryDay:r.delivery_day||'',
         adTypeDetails:r.ad_type_details||{}, productPhotoSrcs:r.product_photo_srcs||[],
-        rejectReason:r.reject_reason||''
+        rejectReason:r.reject_reason||'',
+        email:r.email||''
       }; });
     }
+  } catch(e) {
+    console.error('[sbLoadAll] requests 로드 실패:', e?.message || e);
+  }
+
+  return true;
+}
+  
   } catch(e) {
     console.error('[sbLoadAll] requests 로드 실패:', e?.message || e);
   }
