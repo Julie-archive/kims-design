@@ -17,35 +17,6 @@ async function sbLoadAll() {
     DB.products = prodsRes.data.map(function(r){ return {id:r.id, mainCat:r.main_cat, subCat:r.sub_cat, name:r.name}; });
     DB.ads = adsRes.data.map(function(r){ return {id:r.id, mainCat:r.main_cat, subCat:r.sub_cat, product:r.product, title:r.title, adDate:r.ad_date, types:r.types||[], memo:r.memo||'', settingPhotos:r.setting_photos||[], orderAmount:r.order_amount||''}; });
 
-    // base64 또는 __pending__ 자동 복구
-    setTimeout(async function() {
-      // localStorage 백업과 Supabase 데이터 병합 - 로컬에는 있는데 Supabase에 없는 경우 복구
-      try {
-        var raw = localStorage.getItem(STORAGE_KEY);
-        if(raw) {
-          var local = JSON.parse(raw);
-          var localAds = local.ads || [];
-          var dbIds = new Set(DB.ads.map(function(a){ return a.id; }));
-          // 로컬에만 있는 광고 (Supabase 저장 실패한 것들)
-          var orphans = localAds.filter(function(la){ return !dbIds.has(la.id) && la.title; });
-          if(orphans.length > 0) {
-            console.warn('[sbLoadAll] 로컬에만 있는 광고 발견:', orphans.length, '개 - 재저장 시도');
-            for(var oi=0; oi<orphans.length; oi++) {
-              var oad = orphans[oi];
-              // base64 이미지 Storage 업로드 후 재저장 시도
-              var fixedTypes = await processAdTypes(oad.types||[]);
-              oad.types = fixedTypes;
-              var saved = await sbSaveAd(oad);
-              if(saved) {
-                DB.ads.push(oad);
-                console.log('[sbLoadAll] 복구 성공:', oad.title);
-              }
-            }
-            saveData();
-          }
-        }
-      } catch(recErr) { console.warn('[sbLoadAll] 복구 시도 중 오류:', recErr); }
-
       // base64가 남아있는 광고 Storage 재업로드
       var toFix = DB.ads.filter(function(ad){
         return (ad.types||[]).some(function(t){ return t.src && (t.src.startsWith('data:') || t.src === '__pending__'); });
