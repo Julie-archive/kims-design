@@ -22,6 +22,9 @@ function loadData() {
     if (raw) {
       var d = JSON.parse(raw);
       d.requests = []; // requests는 항상 Supabase에서 로드
+      d.ads = []; // ads는 항상 Supabase에서 로드
+      d.subs = []; // subs는 항상 Supabase에서 로드
+      d.products = []; // products는 항상 Supabase에서 로드
       return d;
     }
   } catch(e) {}
