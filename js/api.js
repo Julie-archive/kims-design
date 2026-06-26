@@ -70,7 +70,7 @@ async function sbSaveProd(prod) {
 }
 
 async function sbDeleteProd(id) {
-  try { await sb.from('products').delete().eq('id', id); } catch(e) { console.warn(e); }
+  try { await sb.from('products').delete().eq('id', Number(id)); } catch(e) { console.warn(e); }
 }
 
 async function sbUpdateProd(prod) {
