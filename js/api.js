@@ -58,7 +58,7 @@ async function sbSaveSub(sub) {
 }
 
 async function sbDeleteSub(id) {
-  try { await sb.from('subs').delete().eq('id', id); } catch(e) { console.warn(e); }
+  try { await sb.from('subs').delete().eq('id', Number(id)); } catch(e) { console.warn(e); }
 }
 
 async function sbSaveProd(prod) {
@@ -162,7 +162,7 @@ async function sbUpdateAd(ad) {
 }
 
 async function sbDeleteAd(id) {
-  try { await sb.from('ads').delete().eq('id', id); } catch(e) { console.warn(e); }
+  try { await sb.from('ads').delete().eq('id', Number(id)); } catch(e) { console.warn(e); }
 }
 
 async function sbSaveRequest(req) {
@@ -221,7 +221,7 @@ async function sbUpdateRequest(id, fields) {
 }
 
 async function sbDeleteRequest(id) {
-  try { await sb.from('requests').delete().eq('id', id); } catch(e) { console.warn(e); }
+  try { await sb.from('requests').delete().eq('id', Number(id)); } catch(e) { console.warn(e); }
 }
 
 async function compressImage(base64DataUrl, maxWidth, quality) {
