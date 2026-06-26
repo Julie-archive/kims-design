@@ -2974,7 +2974,7 @@ function catMgrDeleteSub(id, name) {
   var list = document.getElementById('catmgr-sub-list');
   var targetRow = null;
   list.querySelectorAll('div').forEach(function(r) {
-    if(r.querySelector && r.querySelector('span') && r.querySelector('span').textContent===name) targetRow=r;
+    if(r.id === 'catmgr-prod-row-' + id) targetRow = r;
   });
   if(!targetRow) return;
   targetRow.style.background = '#fff0f0';
