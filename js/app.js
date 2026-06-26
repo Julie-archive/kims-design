@@ -820,8 +820,10 @@ async function aiAddProdConfirm() {
   if(!name)return;
   const cat=document.getElementById('aiCat').value;
   if(DB.products.find(p=>p.mainCat===cat&&p.subCat===aiSelSub&&p.name===name)){alert('이미 존재합니다');return;}
-  DB.products.push({id:nextId(),mainCat:cat,subCat:aiSelSub,name});
+  var newProd = {id:nextId(),mainCat:cat,subCat:aiSelSub,name};
+  DB.products.push(newProd);
   saveData();
+  sbSaveProd(newProd);
   aiSelProd=name; aiInlineProdMode=false;
   renderAiProdRow();
   if(curView==='admin') renderAdmin();
