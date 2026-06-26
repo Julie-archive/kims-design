@@ -24,7 +24,7 @@ async function sbLoadAll() {
 
   // requests는 별도 로드 — 실패해도 나머지 데이터는 유지
   try {
-    const reqsRes = await sb.from('requests').select('*').order('submitted_at', {ascending: false});
+    const reqsRes = await sb.from('requests').select('*').order('submitted_at', {ascending: false}).limit(100);
     if(reqsRes.error) { console.error('[sbLoadAll] requests error:', reqsRes.error); }
     if(!reqsRes.error && reqsRes.data) {
       DB.requests = reqsRes.data.map(function(r){ return {
