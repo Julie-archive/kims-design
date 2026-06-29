@@ -455,6 +455,10 @@ function _scrollTabIntoCenter(cat, barId, behavior) {
 function adminCatSelect(cat) {
   aState = {cat, sub:'', prod:'__all__', search:''};
   savePageState();
+  var content = document.getElementById('adminContent');
+  if(content) content.scrollTop = 0;
+  var kcontent = document.querySelector('.kcontent');
+  if(kcontent) kcontent.scrollTop = 0;
 
   // 탭바가 DOM에 이미 있으면 active만 교체 후 스크롤 (깜빡임 없음)
   var catBar = document.getElementById('adminCatBar');
