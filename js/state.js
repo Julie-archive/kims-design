@@ -4,7 +4,7 @@
 //  DATA STORE (localStorage)
 // ══════════════════════════════════════════════════════
 const MAIN_CATS = ['농산','축산','수산','공산','매장 그래픽','지점 운영 광고'];
-const PRESET_TYPES = ['행잉형','스탠드형','A3 가로형','A4 세로형','배너형','현수막형','평대 자석','바닥 시트'].sort((a,b) => a.localeCompare(b, 'ko'));
+const PRESET_TYPES = ['행잉형','스탠드형','A3/A4 가로형','A3/A4 세로형','배너형','현수막형','평대 자석','바닥 시트'].sort((a,b) => a.localeCompare(b, 'ko'));
 
 // 고정 사이즈 타입 (선택 시 자동 입력)
 const FIXED_SIZE_TYPES = {
