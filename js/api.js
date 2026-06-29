@@ -1,202 +1,165 @@
-// Supabase API and upload helpers
+// Firebase API helpers
 
-const SUPABASE_URL = 'https://qayhutfedlhzhtrlserh.supabase.co';
-const SUPABASE_KEY = 'sb_publishable_NoUBNfjDdpbJJgBDsdpKxw_K9IEg4UP';
-const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+// ── Firebase 초기화 대기 ──
+function waitForFirebase() {
+  return new Promise(function(resolve) {
+    if(window.db && window.storage) { resolve(); return; }
+    var interval = setInterval(function() {
+      if(window.db && window.storage) { clearInterval(interval); resolve(); }
+    }, 50);
+  });
+}
 
-// Supabase 동기화 함수들
+// ── Firestore 동기화 함수 ──
 async function sbLoadAll() {
+  await waitForFirebase();
+  var { collection, getDocs, orderBy, query } = await import("https://www.gstatic.com/firebasejs/12.15.0/firebase-firestore.js");
   try {
-    const [subsRes, prodsRes, adsRes] = await Promise.all([
-      sb.from('subs').select('*').order('id'),
-      sb.from('products').select('*').order('id'),
-      sb.from('ads').select('*').order('id'),
+    var db = window.db;
+    var [subsSnap, prodsSnap, adsSnap] = await Promise.all([
+      getDocs(query(collection(db, 'subs'), orderBy('id'))),
+      getDocs(query(collection(db, 'products'), orderBy('id'))),
+      getDocs(query(collection(db, 'ads'), orderBy('id')))
     ]);
-    if(subsRes.error || prodsRes.error || adsRes.error) throw new Error('Load failed');
-    DB.subs = subsRes.data.map(function(r){ return {id:r.id, mainCat:r.main_cat, name:r.name}; });
-    DB.products = prodsRes.data.map(function(r){ return {id:r.id, mainCat:r.main_cat, subCat:r.sub_cat, name:r.name}; });
-    DB.ads = adsRes.data.map(function(r){ return {id:r.id, mainCat:r.main_cat, subCat:r.sub_cat, product:r.product, title:r.title, adDate:r.ad_date, types:r.types||[], memo:r.memo||'', settingPhotos:r.setting_photos||[], orderAmount:r.order_amount||''}; });
+    DB.subs = subsSnap.docs.map(function(d){ var r=d.data(); return {id:r.id, mainCat:r.mainCat, name:r.name}; });
+    DB.products = prodsSnap.docs.map(function(d){ var r=d.data(); return {id:r.id, mainCat:r.mainCat, subCat:r.subCat, name:r.name}; });
+    DB.ads = adsSnap.docs.map(function(d){ var r=d.data(); return {id:r.id, mainCat:r.mainCat, subCat:r.subCat, product:r.product, title:r.title, adDate:r.adDate, types:r.types||[], memo:r.memo||'', settingPhotos:r.settingPhotos||[], orderAmount:r.orderAmount||''}; });
     saveData();
   } catch(e) {
-    console.warn('Supabase load failed:', e);
+    console.warn('Firestore load failed:', e);
     return false;
   }
 
-  // requests는 별도 로드 — 실패해도 나머지 데이터는 유지
   try {
-    const reqsRes = await sb.from('requests').select('*').order('submitted_at', {ascending: false}).limit(100);
-    if(reqsRes.error) { console.error('[sbLoadAll] requests error:', reqsRes.error); }
-    if(!reqsRes.error && reqsRes.data) {
-      DB.requests = reqsRes.data.map(function(r){ return {
-        id:r.id, reqCode:r.req_code, submittedAt:r.submitted_at, status:r.status,
-        dept:r.dept, name:r.name, tel:r.tel, title:r.title, deadline:r.deadline,
-        adTypes:r.ad_types||[], bannerType:r.banner_type||'', customSize:r.custom_size||'',
-        adTitle:r.ad_title, selling:r.selling, eventStart:r.event_start||'', eventEnd:r.event_end||'',
-        eventDesc:r.event_desc, sitePhotoSrcs:r.site_photo_srcs||[], refImageSrcs:r.ref_image_srcs||[],
-        manager:r.manager||'', dueDate:r.due_date||'',
-        branch:r.branch||'', deliveryDay:r.delivery_day||'',
-        adTypeDetails:r.ad_type_details||{}, productPhotoSrcs:r.product_photo_srcs||[],
-        rejectReason:r.reject_reason||'',
-        email:r.email||''
-      }; });
-    }
+    var { query: q2, orderBy: ob2 } = await import("https://www.gstatic.com/firebasejs/12.15.0/firebase-firestore.js");
+    var reqsSnap = await getDocs(query(collection(db, 'requests'), orderBy('submittedAt', 'desc')));
+    DB.requests = reqsSnap.docs.map(function(d){ var r=d.data(); return {
+      id:r.id, reqCode:r.reqCode, submittedAt:r.submittedAt, status:r.status,
+      dept:r.dept, name:r.name, tel:r.tel, title:r.title, deadline:r.deadline,
+      adTypes:r.adTypes||[], bannerType:r.bannerType||'', customSize:r.customSize||'',
+      adTitle:r.adTitle, selling:r.selling, eventStart:r.eventStart||'', eventEnd:r.eventEnd||'',
+      eventDesc:r.eventDesc, sitePhotoSrcs:r.sitePhotoSrcs||[], refImageSrcs:r.refImageSrcs||[],
+      manager:r.manager||'', dueDate:r.dueDate||'',
+      branch:r.branch||'', deliveryDay:r.deliveryDay||'',
+      adTypeDetails:r.adTypeDetails||{}, productPhotoSrcs:r.productPhotoSrcs||[],
+      rejectReason:r.rejectReason||'', email:r.email||''
+    }; });
   } catch(e) {
-    console.error('[sbLoadAll] requests 로드 실패:', e?.message || e);
+    console.error('requests 로드 실패:', e);
   }
-
   return true;
 }
 
 async function sbSaveSub(sub) {
+  await waitForFirebase();
+  var { doc, setDoc } = await import("https://www.gstatic.com/firebasejs/12.15.0/firebase-firestore.js");
   try {
-    if(sub.id && sub.id < 1000) {
-      const res = await sb.from('subs').insert({main_cat:sub.mainCat, name:sub.name}).select().single();
-      if(res.error) throw res.error;
-      sub.id = res.data.id;
-    }
+    await setDoc(doc(window.db, 'subs', String(sub.id)), {id:sub.id, mainCat:sub.mainCat, name:sub.name});
   } catch(e) { console.warn('sbSaveSub error:', e); }
 }
 
 async function sbDeleteSub(id) {
-  try { await sb.from('subs').delete().eq('id', Number(id)); } catch(e) { console.warn(e); }
+  await waitForFirebase();
+  var { doc, deleteDoc } = await import("https://www.gstatic.com/firebasejs/12.15.0/firebase-firestore.js");
+  try { await deleteDoc(doc(window.db, 'subs', String(id))); } catch(e) { console.warn(e); }
 }
 
 async function sbSaveProd(prod) {
+  await waitForFirebase();
+  var { doc, setDoc } = await import("https://www.gstatic.com/firebasejs/12.15.0/firebase-firestore.js");
   try {
-    const res = await sb.from('products').insert({main_cat:prod.mainCat, sub_cat:prod.subCat, name:prod.name}).select().single();
-    if(res.error) throw res.error;
-    prod.id = res.data.id;
+    await setDoc(doc(window.db, 'products', String(prod.id)), {id:prod.id, mainCat:prod.mainCat, subCat:prod.subCat, name:prod.name});
   } catch(e) { console.warn('sbSaveProd error:', e); }
 }
 
 async function sbDeleteProd(id) {
-  try { await sb.from('products').delete().eq('id', Number(id)); } catch(e) { console.warn(e); }
+  await waitForFirebase();
+  var { doc, deleteDoc } = await import("https://www.gstatic.com/firebasejs/12.15.0/firebase-firestore.js");
+  try { await deleteDoc(doc(window.db, 'products', String(Number(id)))); } catch(e) { console.warn(e); }
 }
 
 async function sbUpdateProd(prod) {
+  await waitForFirebase();
+  var { doc, updateDoc } = await import("https://www.gstatic.com/firebasejs/12.15.0/firebase-firestore.js");
   try {
-    await sb.from('products').update({main_cat:prod.mainCat, sub_cat:prod.subCat, name:prod.name}).eq('id', prod.id);
+    await updateDoc(doc(window.db, 'products', String(prod.id)), {mainCat:prod.mainCat, subCat:prod.subCat, name:prod.name});
   } catch(e) { console.warn('sbUpdateProd error:', e); }
 }
 
 async function sbConvertProdToSub(prod) {
-  // 상품을 세부 카테고리로 변환: products에서 삭제 후 subs에 추가
+  await waitForFirebase();
+  var { doc, deleteDoc, setDoc } = await import("https://www.gstatic.com/firebasejs/12.15.0/firebase-firestore.js");
   try {
-    await sb.from('products').delete().eq('id', prod.id);
-    const res = await sb.from('subs').insert({main_cat:prod.mainCat, name:prod.name}).select().single();
-    if(res.error) throw res.error;
-    return res.data.id;
+    await deleteDoc(doc(window.db, 'products', String(prod.id)));
+    var newId = nextId();
+    await setDoc(doc(window.db, 'subs', String(newId)), {id:newId, mainCat:prod.mainCat, name:prod.name});
+    return newId;
   } catch(e) { console.warn('sbConvertProdToSub error:', e); return null; }
 }
 
 async function sbSaveAd(ad) {
-  // types에 base64가 남아있으면 Supabase JSONB에 저장 실패하므로 제거 후 시도
+  await waitForFirebase();
+  var { doc, setDoc } = await import("https://www.gstatic.com/firebasejs/12.15.0/firebase-firestore.js");
   var typesForDB = (ad.types||[]).map(function(t) {
-    return {name:t.name, subtitle:t.subtitle||'', width:t.width, height:t.height, memo:t.memo||'', unitPrice:t.unitPrice||'',
+    return {name:t.name||'', subtitle:t.subtitle||'', width:t.width||'', height:t.height||'', memo:t.memo||'', unitPrice:t.unitPrice||'',
             src: (t.src && t.src.startsWith('data:')) ? '__pending__' : (t.src||'')};
   });
-  // 전체 컬럼 시도
   try {
-    const res = await sb.from('ads').insert({
-      main_cat:ad.mainCat, sub_cat:ad.subCat, product:ad.product,
-      title:ad.title, ad_date:ad.adDate, types:typesForDB, memo:ad.memo||'',
-      setting_photos:(ad.settingPhotos||[]).map(function(p){
+    await setDoc(doc(window.db, 'ads', String(ad.id)), {
+      id:ad.id, mainCat:ad.mainCat, subCat:ad.subCat, product:ad.product,
+      title:ad.title, adDate:ad.adDate, types:typesForDB, memo:ad.memo||'',
+      settingPhotos:(ad.settingPhotos||[]).map(function(p){
         return {src:(typeof p==='object'?p.src:p)||'', storeName:(typeof p==='object'?p.storeName:'')||''};
       }),
-      order_amount:ad.orderAmount||''
-    }).select('id').single();
-    if(!res.error && res.data) {
-      ad.id = res.data.id;
-      console.log('[sbSaveAd] 저장 성공, id:', ad.id);
-      return true;
-    }
-    console.warn('[sbSaveAd] 1차 실패:', res.error?.message);
-  } catch(e) { console.warn('[sbSaveAd] 1차 예외:', e); }
-
-  // 기본 컬럼만 fallback
-  try {
-    const res2 = await sb.from('ads').insert({
-      main_cat:ad.mainCat, sub_cat:ad.subCat, product:ad.product,
-      title:ad.title, ad_date:ad.adDate, types:typesForDB, memo:ad.memo||''
-    }).select('id').single();
-    if(!res2.error && res2.data) {
-      ad.id = res2.data.id;
-      console.log('[sbSaveAd] fallback 저장 성공, id:', ad.id);
-      return true;
-    }
-    console.error('[sbSaveAd] fallback도 실패:', res2.error?.message);
-  } catch(e2) { console.error('[sbSaveAd] fallback 예외:', e2); }
-
-  return false; // 저장 실패 명시적 반환
+      orderAmount:ad.orderAmount||''
+    });
+    console.log('[sbSaveAd] 저장 성공, id:', ad.id);
+    return true;
+  } catch(e) { console.error('[sbSaveAd] 실패:', e); return false; }
 }
 
 async function sbUpdateAd(ad) {
-  if(!ad.id) { console.warn('[sbUpdateAd] id 없음, 저장 불가'); return false; }
+  await waitForFirebase();
+  var { doc, updateDoc } = await import("https://www.gstatic.com/firebasejs/12.15.0/firebase-firestore.js");
+  if(!ad.id) return false;
   var typesForDB = (ad.types||[]).map(function(t) {
-    return {name:t.name, subtitle:t.subtitle||'', width:t.width, height:t.height, memo:t.memo||'', unitPrice:t.unitPrice||'',
+    return {name:t.name||'', subtitle:t.subtitle||'', width:t.width||'', height:t.height||'', memo:t.memo||'', unitPrice:t.unitPrice||'',
             src: (t.src && t.src.startsWith('data:')) ? '__pending__' : (t.src||'')};
   });
   try {
-    var res = await sb.from('ads').update({
-      main_cat:ad.mainCat, sub_cat:ad.subCat, product:ad.product,
-      title:ad.title, ad_date:ad.adDate, types:typesForDB, memo:ad.memo||'',
-      setting_photos:(ad.settingPhotos||[]).map(function(p){
+    await updateDoc(doc(window.db, 'ads', String(ad.id)), {
+      mainCat:ad.mainCat, subCat:ad.subCat, product:ad.product,
+      title:ad.title, adDate:ad.adDate, types:typesForDB, memo:ad.memo||'',
+      settingPhotos:(ad.settingPhotos||[]).map(function(p){
         return {src:(typeof p==='object'?p.src:p)||'', storeName:(typeof p==='object'?p.storeName:'')||''};
       }),
-      order_amount:ad.orderAmount||''
-    }).eq('id', ad.id);
-    if(!res.error) { console.log('[sbUpdateAd] 업데이트 성공, id:', ad.id); return true; }
-    console.warn('[sbUpdateAd] 1차 실패:', res.error?.message);
-  } catch(e) { console.warn('[sbUpdateAd] 1차 예외:', e); }
-
-  // fallback
-  try {
-    await sb.from('ads').update({
-      main_cat:ad.mainCat, sub_cat:ad.subCat, product:ad.product,
-      title:ad.title, ad_date:ad.adDate, types:typesForDB, memo:ad.memo||''
-    }).eq('id', ad.id);
-    console.log('[sbUpdateAd] fallback 성공');
+      orderAmount:ad.orderAmount||''
+    });
     return true;
-  } catch(e2) { console.error('[sbUpdateAd] fallback 실패:', e2); }
-  return false;
+  } catch(e) { console.error('[sbUpdateAd] 실패:', e); return false; }
 }
 
 async function sbDeleteAd(id) {
-  try { await sb.from('ads').delete().eq('id', Number(id)); } catch(e) { console.warn(e); }
+  await waitForFirebase();
+  var { doc, deleteDoc } = await import("https://www.gstatic.com/firebasejs/12.15.0/firebase-firestore.js");
+  try { await deleteDoc(doc(window.db, 'ads', String(Number(id)))); } catch(e) { console.warn(e); }
 }
 
 async function sbSaveRequest(req) {
-  // 전체 필드로 시도
-  const fullData = {
-    req_code:req.reqCode, submitted_at:req.submittedAt, status:req.status,
-    dept:req.dept, name:req.name, tel:req.tel, title:req.title, deadline:req.deadline,
-    ad_types:req.adTypes, banner_type:req.bannerType||'', custom_size:req.customSize||'',
-    ad_title:req.adTitle, selling:req.selling, event_start:req.eventStart||'', event_end:req.eventEnd||'',
-    event_desc:req.eventDesc, site_photo_srcs:req.sitePhotoSrcs||[], ref_image_srcs:req.refImageSrcs||[],
-    manager:req.manager||'', due_date:req.dueDate||'',
-    branch:req.branch||'', delivery_day:req.deliveryDay||'',
-    ad_type_details:req.adTypeDetails||{}, product_photo_srcs:req.productPhotoSrcs||[],
-    email:req.email||''
-  };
-  // 기본 필드만 (컬럼 없을 때 fallback)
-  const baseData = {
-    req_code:req.reqCode, submitted_at:req.submittedAt, status:req.status,
-    dept:req.dept, name:req.name, tel:req.tel, title:req.title, deadline:req.deadline,
-    ad_types:req.adTypes, banner_type:req.bannerType||'', custom_size:req.customSize||'',
-    ad_title:req.adTitle, selling:req.selling, event_start:req.eventStart||'', event_end:req.eventEnd||'',
-    event_desc:req.eventDesc, site_photo_srcs:req.sitePhotoSrcs||[], ref_image_srcs:req.refImageSrcs||[],
-    manager:req.manager||'', due_date:req.dueDate||''
-  };
-
+  await waitForFirebase();
+  var { doc, setDoc } = await import("https://www.gstatic.com/firebasejs/12.15.0/firebase-firestore.js");
   try {
-    var res = await sb.from('requests').insert(fullData).select().single();
-    if(res.error) {
-      // 컬럼 없음 오류면 기본 필드로 재시도
-      console.warn('Full insert failed, trying base fields:', res.error.message);
-      res = await sb.from('requests').insert(baseData).select().single();
-    }
-    if(res.error) throw res.error;
-    req.id = res.data.id;
+    await setDoc(doc(window.db, 'requests', String(req.id)), {
+      id:req.id, reqCode:req.reqCode||'', submittedAt:req.submittedAt, status:req.status,
+      dept:req.dept, name:req.name, tel:req.tel, title:req.title, deadline:req.deadline||'',
+      adTypes:req.adTypes||[], bannerType:req.bannerType||'', customSize:req.customSize||'',
+      adTitle:req.adTitle||'', selling:req.selling||'', eventStart:req.eventStart||'', eventEnd:req.eventEnd||'',
+      eventDesc:req.eventDesc||'', sitePhotoSrcs:req.sitePhotoSrcs||[], refImageSrcs:req.refImageSrcs||[],
+      manager:req.manager||'', dueDate:req.dueDate||'',
+      branch:req.branch||'', deliveryDay:req.deliveryDay||'',
+      adTypeDetails:req.adTypeDetails||{}, productPhotoSrcs:req.productPhotoSrcs||[],
+      rejectReason:req.rejectReason||'', email:req.email||''
+    });
     return true;
   } catch(e) {
     console.warn('sbSaveRequest error:', e);
@@ -210,18 +173,22 @@ async function sbSaveRequest(req) {
 }
 
 async function sbUpdateRequest(id, fields) {
+  await waitForFirebase();
+  var { doc, updateDoc } = await import("https://www.gstatic.com/firebasejs/12.15.0/firebase-firestore.js");
   try {
     var update = {};
     if(fields.status !== undefined) update.status = fields.status;
     if(fields.manager !== undefined) update.manager = fields.manager;
-    if(fields.dueDate !== undefined) update.due_date = fields.dueDate;
-    if(fields.rejectReason !== undefined) update.reject_reason = fields.rejectReason;
-    await sb.from('requests').update(update).eq('id', id);
+    if(fields.dueDate !== undefined) update.dueDate = fields.dueDate;
+    if(fields.rejectReason !== undefined) update.rejectReason = fields.rejectReason;
+    await updateDoc(doc(window.db, 'requests', String(id)), update);
   } catch(e) { console.warn('sbUpdateRequest error:', e); }
 }
 
 async function sbDeleteRequest(id) {
-  try { await sb.from('requests').delete().eq('id', Number(id)); } catch(e) { console.warn(e); }
+  await waitForFirebase();
+  var { doc, deleteDoc } = await import("https://www.gstatic.com/firebasejs/12.15.0/firebase-firestore.js");
+  try { await deleteDoc(doc(window.db, 'requests', String(Number(id)))); } catch(e) { console.warn(e); }
 }
 
 async function compressImage(base64DataUrl, maxWidth, quality) {
@@ -229,32 +196,24 @@ async function compressImage(base64DataUrl, maxWidth, quality) {
     var img = new Image();
     img.onload = function() {
       var canvas = document.createElement('canvas');
-      var w = img.width;
-      var h = img.height;
-      // maxWidth 초과 시 비율 유지하며 축소
-      if(w > maxWidth) {
-        h = Math.round(h * maxWidth / w);
-        w = maxWidth;
-      }
-      canvas.width = w;
-      canvas.height = h;
-      var ctx = canvas.getContext('2d');
-      ctx.drawImage(img, 0, 0, w, h);
+      var w = img.width, h = img.height;
+      if(w > maxWidth) { h = Math.round(h * maxWidth / w); w = maxWidth; }
+      canvas.width = w; canvas.height = h;
+      canvas.getContext('2d').drawImage(img, 0, 0, w, h);
       resolve(canvas.toDataURL('image/jpeg', quality));
     };
-    img.onerror = function() { resolve(base64DataUrl); }; // 실패 시 원본 유지
+    img.onerror = function() { resolve(base64DataUrl); };
     img.src = base64DataUrl;
   });
 }
 
 async function uploadImageToStorage(base64DataUrl, fileName) {
-  // 업로드 전 이미지 압축 (최대 1800px, 품질 0.82) → 용량 대폭 감소
+  await waitForFirebase();
+  var { ref, uploadBytes, getDownloadURL } = await import("https://www.gstatic.com/firebasejs/12.15.0/firebase-storage.js");
   try {
     base64DataUrl = await compressImage(base64DataUrl, 1800, 0.82);
-  } catch(e) {
-    console.warn('[Storage] 압축 실패, 원본 사용:', e);
-  }
-  // 최대 2회 재시도
+  } catch(e) { console.warn('[Storage] 압축 실패:', e); }
+
   for(var attempt = 0; attempt < 2; attempt++) {
     try {
       var arr = base64DataUrl.split(',');
@@ -264,23 +223,20 @@ async function uploadImageToStorage(base64DataUrl, fileName) {
       var u8arr = new Uint8Array(n);
       while(n--) { u8arr[n] = bstr.charCodeAt(n); }
       var blob = new Blob([u8arr], {type: mime});
-      // HEIC/HEIF → jpeg 강제 변환
-      if(mime === 'image/heic' || mime === 'image/heif') mime = 'image/jpeg';
       var ext = mime.split('/')[1] || 'jpg';
       if(ext === 'jpeg') ext = 'jpg';
-      var safeName = fileName.replace(/[^a-zA-Z0-9_-]/g, '_').replace(/_+/g,'_');
-      var path = 'ads/' + safeName + '_' + Date.now() + (attempt > 0 ? '_r' + attempt : '') + '.' + ext;
-      var res = await sb.storage.from('images').upload(path, blob, {contentType: mime, upsert: true, cacheControl: '31536000'});
-      if(res.error) throw res.error;
-      var urlRes = sb.storage.from('images').getPublicUrl(path);
+      var safeName = fileName.replace(/[^a-zA-Z0-9_-]/g, '_');
+      var path = 'ads/' + safeName + '_' + Date.now() + '.' + ext;
+      var storageRef = ref(window.storage, path);
+      await uploadBytes(storageRef, blob, {contentType: mime});
+      var url = await getDownloadURL(storageRef);
       console.log('[Storage] 업로드 성공:', path);
-      return urlRes.data.publicUrl;
+      return url;
     } catch(e) {
       console.warn('[Storage] 업로드 실패 (시도 ' + (attempt+1) + '):', e);
-      if(attempt < 1) await new Promise(r => setTimeout(r, 1000)); // 1초 대기 후 재시도
+      if(attempt < 1) await new Promise(r => setTimeout(r, 1000));
     }
   }
-  console.error('[Storage] 최종 업로드 실패 - 이미지를 저장할 수 없습니다');
   return null;
 }
 
@@ -292,10 +248,8 @@ async function processAdTypes(types) {
     if(t.src && t.src.startsWith('data:')) {
       var url = await uploadImageToStorage(t.src, 'ad_' + (t.name||'type').replace(/[^a-zA-Z0-9]/g,'_'));
       if(url) {
-        // 업로드 성공 → Storage URL 사용
         result.push({name:t.name, subtitle:t.subtitle||'', width:t.width, height:t.height, memo:t.memo||'', unitPrice:t.unitPrice||'', src: url});
       } else {
-        // 업로드 실패 → base64 원본 유지 (Supabase 저장 실패해도 localStorage엔 보존)
         failedUploads.push(t.name || ('타입' + (i+1)));
         result.push({name:t.name, subtitle:t.subtitle||'', width:t.width, height:t.height, memo:t.memo||'', unitPrice:t.unitPrice||'', src: t.src});
       }
@@ -303,13 +257,8 @@ async function processAdTypes(types) {
       result.push({name:t.name, subtitle:t.subtitle||'', width:t.width, height:t.height, memo:t.memo||'', unitPrice:t.unitPrice||'', src: t.src||''});
     }
   }
-  if(failedUploads.length > 0) {
-    console.error('[processAdTypes] Storage 업로드 실패 타입:', failedUploads);
-    // 전역 플래그로 aiConfirm에서 감지
-    window._uploadFailed = failedUploads;
-  } else {
-    window._uploadFailed = null;
-  }
+  if(failedUploads.length > 0) { window._uploadFailed = failedUploads; }
+  else { window._uploadFailed = null; }
   return result;
 }
 
@@ -326,20 +275,16 @@ async function processRequestFiles(srcs, prefix) {
   return result;
 }
 
-// ==========================================
-// 외부 API 연동 기능 (AI 카피 추천 등)
-// ==========================================
-
 async function fetchAiCopy(keyword) {
   try {
-    const response = await fetch('https://kims-design.vercel.app/api/generate-copy', {
+    var response = await fetch('https://kims-design.vercel.app/api/generate-copy', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ keyword })
     });
-    const data = await response.json();
+    var data = await response.json();
     return (response.ok && data.copies) ? data.copies : null;
-  } catch (err) {
+  } catch(err) {
     console.error('AI 카피 생성 에러:', err);
     return null;
   }
