@@ -2387,7 +2387,7 @@ function adreqSubmit() {
     id:nextId(), reqCode, submittedAt:new Date().toLocaleString('ko-KR'),
     status:'검토 중', dept, name, tel, email:adreqEmail,
     title:`[${ad?.title||''}] ${sizeText}${qty?' · '+qty+'개':''}${branch?' · '+branch:''}`,
-    deadline, adTypes:[adType],
+    deadline, adTypes: checkedTypes.length > 0 ? checkedTypes : [],
     bannerType:'', customSize: adType==='우드락 셀링'?`${sizeW}×${sizeH}mm`:'',
     adTitle:ad?.title||'', selling:'',
     eventStart:'', eventEnd:'',
@@ -2419,10 +2419,10 @@ function adreqSubmit() {
       method: 'POST', headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ type: 'admin_new', reqCode: request.reqCode, name: request.name, title: request.title })
     }).catch(console.error);
+    
+    modalClose('modalAdRequest');
+    openRequestSuccess(request.reqCode);
   });
-
-  modalClose('modalRequest');
-  openRequestSuccess(request.reqCode);
 }
 
 // ── Supabase Storage 이미지 업로드 ──
@@ -3508,7 +3508,7 @@ function openRequestDetail(id) {
     +'<h2 style="font-size:20px;font-weight:900;letter-spacing:-0.5px;margin-bottom:6px;">'+r.title+'</h2>'
     +'<div style="font-size:12px;color:#999;margin-bottom:20px;border-bottom:1px solid #f2f2f2;padding-bottom:16px;">제출: '+r.submittedAt+'</div>'
     +'<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:10px;margin-bottom:8px;">'+infoGrid+'</div>'
-    +'<div style="margin-bottom:16px;"><div style="font-size:11px;font-weight:600;color:#999;letter-spacing:1px;text-transform:uppercase;margin-bottom:8px;">광고 종류</div><div style="display:flex;flex-wrap:wrap;gap:4px;">'+adTypePills+'</div></div>'
+    +(adTypePills ? '<div style="margin-bottom:16px;"><div style="font-size:11px;font-weight:600;color:#999;letter-spacing:1px;text-transform:uppercase;margin-bottom:8px;">광고 종류</div><div style="display:flex;flex-wrap:wrap;gap:4px;">'+adTypePills+'</div></div>' : '')
     +'<div style="background:rgba(0,99,65,0.05);border:1.5px solid rgba(0,99,65,0.15);border-radius:6px;padding:16px;margin-bottom:16px;"><div style="font-size:11px;font-weight:600;color:#999;letter-spacing:1px;text-transform:uppercase;margin-bottom:12px;">요청 내용</div>'+contentRows+'</div>'
     +'<div id="detail-site-pics"></div>'
     +'<div id="detail-product-pics"></div>'
