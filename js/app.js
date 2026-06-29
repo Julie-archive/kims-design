@@ -2412,19 +2412,18 @@ function adreqSubmit() {
     var idx = (DB.requests||[]).findIndex(function(r){ return r.id === request.id; });
     if(idx !== -1) { DB.requests[idx].sitePhotoSrcs = uploadedSite; saveData(); }
     sbSaveRequest(request).then(function(ok) {
-    if(!ok) console.warn('Supabase 저장 실패');
-  });
-
-  if (request.email) {
-    fetch('/api/send-email', {
-      method: 'POST', headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ type: 'applicant_received', to: request.email, reqCode: request.reqCode, name: request.name, title: request.title })
-    }).catch(console.error);
-  }
-  fetch('/api/send-email', {
-      method: 'POST', headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ type: 'admin_new', reqCode: request.reqCode, name: request.name, title: request.title })
-    }).catch(console.error);
+      if(!ok) console.warn('Supabase 저장 실패');
+      if (request.email) {
+        fetch('/api/send-email', {
+          method: 'POST', headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ type: 'applicant_received', to: request.email, reqCode: request.reqCode, name: request.name, title: request.title })
+        }).catch(console.error);
+      }
+      fetch('/api/send-email', {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ type: 'admin_new', reqCode: request.reqCode, name: request.name, title: request.title })
+      }).catch(console.error);
+    });
     
     modalClose('modalAdRequest');
     openRequestSuccess(request.reqCode);
