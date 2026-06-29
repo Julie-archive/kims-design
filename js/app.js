@@ -112,6 +112,8 @@ function homeCatSelect(cat) {
   homeScreen = 'B';
   hState = {cat, sub:'', prod:'__all__', search:''};
   savePageState();
+  var kcontent = document.querySelector('.kcontent');
+  if(kcontent) kcontent.scrollTop = 0;
 
   var tabBar = document.querySelector('#viewHome .ktab-bar');
   if(tabBar) {
