@@ -2339,13 +2339,17 @@ function adreqSubmit() {
   }).join(', ');
 
   // 선택된 타입의 이미지+수량 정보 저장
-  var selectedTypeDetails = checkedTypeEls.map(function(el){
-    var typeName = el.value;
-    var qtyId = el.dataset.qtyId;
-    var qty = qtyId ? (document.getElementById(qtyId)?.value||'') : '';
-    var adType = (ad?.types||[]).find(function(t){ return t.name === typeName; });
-    return { name: typeName, qty: qty, src: adType?.src||'' };
-  });
+  var selectedTypeDetails = checkedTypeEls.length > 0
+    ? checkedTypeEls.map(function(el){
+        var typeName = el.value;
+        var qtyId = el.dataset.qtyId;
+        var qty = qtyId ? (document.getElementById(qtyId)?.value||'') : '';
+        var adType = (ad?.types||[]).find(function(t){ return t.name === typeName; });
+        return { name: typeName, qty: qty, src: adType?.src||'' };
+      })
+    : (ad?.types||[]).filter(function(t){ return t.src; }).map(function(t){
+        return { name: t.name, qty: '', src: t.src };
+      });
 
   const adreqEmail = (document.getElementById('adreq-email')?.value || '').trim();
   var missing = [];
