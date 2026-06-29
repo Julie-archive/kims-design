@@ -2345,7 +2345,6 @@ function adreqSubmit() {
   var missing = [];
   const isA3orA4 = adType === '규격POP (A3)' || adType === '규격POP (A4)';
   if(!dept||!name||!tel||!adreqEmail) missing.push('요청자 정보');
-  if(!deadline) missing.push('마감 요청일');
   if(!isA3orA4 && !adreqDeliveryDate) missing.push('입고일');
   var missingQty = checkedTypeEls.some(function(el){ var qtyId = el.dataset.qtyId; return qtyId && !document.getElementById(qtyId)?.value; });
   if(missingQty) missing.push('선택 타입 수량');
