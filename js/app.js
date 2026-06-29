@@ -2347,7 +2347,6 @@ function adreqSubmit() {
   if(!dept||!name||!tel||!adreqEmail) missing.push('요청자 정보');
   if(!deadline) missing.push('마감 요청일');
   if(!isA3orA4 && !adreqDeliveryDate) missing.push('입고일');
-  if(checkedTypes.length === 0) missing.push('광고 타입 선택');
   var missingQty = checkedTypeEls.some(function(el){ var qtyId = el.dataset.qtyId; return qtyId && !document.getElementById(qtyId)?.value; });
   if(missingQty) missing.push('선택 타입 수량');
   // 광고물 형태 탭 제거됨 - 사이즈 옵션만 체크
