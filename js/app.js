@@ -1182,7 +1182,7 @@ function renderDetail() {
             </div>
           </div>`;
         }
-        var isKickselling = (ad.types||[]).some(function(t){ return t.name==='A3 가로형' || t.name==='A4 세로형'; });
+        var isKickselling = (ad.types||[]).some(function(t){ return t.name==='A3/A4 가로형' || t.name==='A3/A4 세로형'; });;
 if(footer) footer.innerHTML = isKickselling
   ? `<button disabled style="width:100%;padding:14px;background:#e8f5e9;color:#2d7a2d;border:1.5px solid #b2dfdb;border-radius:50px;font-size:15px;font-weight:700;cursor:default;font-family:'Pretendard',sans-serif;letter-spacing:-0.02em;">✓ PMS 등록 완료</button>`
   : `<button onclick="openAdRequest(${ad.id})" style="width:100%;padding:14px;background:#006341;color:#fff;border:none;border-radius:50px;font-size:15px;font-weight:700;cursor:pointer;font-family:'Pretendard',sans-serif;letter-spacing:-0.02em;">이 광고로 신청하기</button>`;
