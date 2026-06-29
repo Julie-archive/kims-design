@@ -952,7 +952,7 @@ function collectTypes(prefix) {
     const unitPrice=document.getElementById(`${prefix}TypePrice_${idx}`)?.value.trim()||'';
     const src=prefix==='ai'?(aiTypeSrcs[idx]||''):(editTypeSrcs[idx]!==undefined&&editTypeSrcs[idx]!==null?editTypeSrcs[idx]:((detailAd?.types||[])[idx]?.src||''));
     return {name,subtitle,width,height,src,memo,unitPrice};
-    return {name,subtitle,width,height,src,memo,unitPrice,isKickselling};
+    return {name,subtitle,width,height,src,memo,unitPrice,isA4A3selling};
   });
 }
 
@@ -1133,6 +1133,7 @@ function renderDetail() {
     }
   }
 
+  var isA4A3selling = (ad.types||[]).some(function(t){ return t.name==='A4/A3 가로형' || t.name==='A4/A3 세로형'; });
   if(detailTab==='view') {
     if(types.length===0) {
       html+=`<div style="text-align:center;padding:40px 0;color:var(--ktext3);">
@@ -1149,7 +1150,7 @@ function renderDetail() {
           <div onclick="${t.src?`openLightbox('${t.src}')`:''}" style="width:100%;background:${t.src?'transparent':'#f2f2f2'};border-radius:6px;overflow:hidden;min-height:140px;display:flex;align-items:center;justify-content:center;cursor:${t.src?'zoom-in':'default'};margin-bottom:10px;">
             ${t.src?`<img src="${t.src}" style="width:100%;display:block;border-radius:6px;max-height:500px;object-fit:contain;" />`:`<span style="color:#999;font-size:13px;">이미지 없음</span>`}
           </div>
-          ${(t.width&&t.height)||t.unitPrice?`
+          ${!isA4A3selling && ((t.width&&t.height)||t.unitPrice)?`
           <div>
             <div style="background:#f2f2f2;border-radius:6px;overflow:hidden;display:flex;align-items:stretch;">
               ${t.width&&t.height?`<div style="flex:1;padding:13px 16px;display:flex;align-items:center;gap:8px;"><span style="font-size:12px;font-weight:700;color:#111;white-space:nowrap;flex-shrink:0;">사이즈</span><span style="font-size:13px;color:#333;font-weight:500;">${escapeHTML(t.width)}×${escapeHTML(t.height)}mm</span></div>`:``}
@@ -1182,8 +1183,7 @@ function renderDetail() {
             </div>
           </div>`;
         }
-        var isKickselling = (ad.types||[]).some(function(t){ return t.name==='A4/A3 가로형' || t.name==='A4/A3 세로형'; });
-if(footer) footer.innerHTML = isKickselling
+        if(footer) footer.innerHTML = isA4A3selling
   ? `<button disabled style="width:100%;padding:14px;background:#e8f5e9;color:#2d7a2d;border:1.5px solid #b2dfdb;border-radius:50px;font-size:15px;font-weight:700;cursor:default;font-family:'Pretendard',sans-serif;letter-spacing:-0.02em;">✓ PMS에서 출력하기</button>`
   : `<button onclick="openAdRequest(${ad.id})" style="width:100%;padding:14px;background:#006341;color:#fff;border:none;border-radius:50px;font-size:15px;font-weight:700;cursor:pointer;font-family:'Pretendard',sans-serif;letter-spacing:-0.02em;">이 광고로 신청하기</button>`;
       }
