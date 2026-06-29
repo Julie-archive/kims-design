@@ -2392,7 +2392,7 @@ function adreqSubmit() {
     adTitle:ad?.title||'', selling:'',
     eventStart:'', eventEnd:'',
     eventDesc: descLines,
-    branch, deliveryDay: adreqDeliveryDay, deliveryDate: adreqDeliveryDate,
+    branch, deliveryDay: adreqDeliveryDate ? adreqDeliveryDay + ' (' + adreqDeliveryDate + ')' : adreqDeliveryDay, deliveryDate: adreqDeliveryDate,
     sitePhotoSrcs, refImageSrcs: selectedTypeDetails.filter(function(t){ return t.src; }).map(function(t){ return t.src; }), selectedTypeDetails: selectedTypeDetails, manager:'', dueDate:''
   };
   if(!DB.requests) DB.requests=[];
