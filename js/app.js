@@ -1949,24 +1949,39 @@ function rqSubmit() {
   if(!DB.requests) DB.requests = [];
   DB.requests.unshift(request);
   saveData();
-
-  // Supabase에 저장 후 이메일 발송
-  sbSaveRequest(request).then(function(ok) {
-    if(!ok) console.warn('Supabase 저장 실패');
-    if (request.email) {
-      fetch('/api/send-email', {
-        method: 'POST', headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ type: 'applicant_received', to: request.email, reqCode: request.reqCode, name: request.name, title: request.title })
-      }).catch(console.error);
-    }
-    fetch('/api/send-email', {
-      method: 'POST', headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ type: 'admin_new', reqCode: request.reqCode, name: request.name, title: request.title })
-    }).catch(console.error);
-  });
-
   modalClose('modalRequest');
   openRequestSuccess(request.reqCode);
+
+  // Storage 업로드 후 Firestore 저장
+  Promise.all([
+    processRequestFiles(rawSiteSrcs, 'rq_site_' + request.id),
+    processRequestFiles(rawRefSrcs, 'rq_ref_' + request.id),
+    processRequestFiles(rawProdSrcs, 'rq_prod_' + request.id)
+  ]).then(function(results) {
+    request.sitePhotoSrcs = results[0];
+    request.refImageSrcs = results[1];
+    request.productPhotoSrcs = results[2];
+    var idx = (DB.requests||[]).findIndex(function(r){ return r.id === request.id; });
+    if(idx !== -1) {
+      DB.requests[idx].sitePhotoSrcs = results[0];
+      DB.requests[idx].refImageSrcs = results[1];
+      DB.requests[idx].productPhotoSrcs = results[2];
+    }
+    saveData();
+    sbSaveRequest(request).then(function(ok) {
+      if(!ok) console.warn('Firestore 저장 실패');
+      if (request.email) {
+        fetch('/api/send-email', {
+          method: 'POST', headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ type: 'applicant_received', to: request.email, reqCode: request.reqCode, name: request.name, title: request.title })
+        }).catch(console.error);
+      }
+      fetch('/api/send-email', {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ type: 'admin_new', reqCode: request.reqCode, name: request.name, title: request.title })
+      }).catch(console.error);
+    });
+  });
 }
 
 // 신청서 수정 (검토 중 상태일 때만)
