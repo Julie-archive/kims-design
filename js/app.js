@@ -1927,11 +1927,14 @@ function rqSubmit() {
 
   // Save site photo previews (already loaded in DOM)
   const sitePrevWrap = document.getElementById('rq-site-preview');
-  request.sitePhotoSrcs = sitePrevWrap ? Array.from(sitePrevWrap.querySelectorAll('img')).map(img=>img.src) : [];
+  const rawSiteSrcs = sitePrevWrap ? Array.from(sitePrevWrap.querySelectorAll('img')).map(img=>img.src) : [];
   const refPrevWrap = document.getElementById('rq-ref-preview');
-  request.refImageSrcs = refPrevWrap ? Array.from(refPrevWrap.querySelectorAll('img')).map(img=>img.src) : [];
+  const rawRefSrcs = refPrevWrap ? Array.from(refPrevWrap.querySelectorAll('img')).map(img=>img.src) : [];
   const prodPrevWrap = document.getElementById('rq-product-preview');
-  request.productPhotoSrcs = prodPrevWrap ? Array.from(prodPrevWrap.querySelectorAll('img')).map(img=>img.src) : [];
+  const rawProdSrcs = prodPrevWrap ? Array.from(prodPrevWrap.querySelectorAll('img')).map(img=>img.src) : [];
+  request.sitePhotoSrcs = [];
+  request.refImageSrcs = [];
+  request.productPhotoSrcs = [];
 
   // 신청 번호 생성
   var today = new Date();
