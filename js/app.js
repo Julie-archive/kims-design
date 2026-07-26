@@ -75,7 +75,7 @@ function renderHomeA() {
         </div>
         <div class="home-cat-grid" style="display:grid;grid-template-columns:repeat(4,minmax(0,190px));gap:15px;margin-bottom:16px;width:100%;max-width:800px;">
           ${[
-{cat:'농산', img:'https://firebasestorage.googleapis.com/v0/b/kims-design.firebasestorage.app/o/carrot_AI.jpg?alt=media&token=54dcc615-3bd5-4eda-a210-755da702fcea'},
+            {cat:'농산', img:'https://firebasestorage.googleapis.com/v0/b/kims-design.firebasestorage.app/o/carrot_AI.jpg?alt=media&token=54dcc615-3bd5-4eda-a210-755da702fcea'},
             {cat:'축산', img:'https://firebasestorage.googleapis.com/v0/b/kims-design.firebasestorage.app/o/beef_AI.jpg?alt=media&token=0e71e586-c056-4037-bcd0-e94d62521d6c', pos:'center top'},
             {cat:'수산', img:'https://firebasestorage.googleapis.com/v0/b/kims-design.firebasestorage.app/o/fish_AI.jpg?alt=media&token=3f12d014-0719-4b78-80d7-f2e12a07ee70'},
             {cat:'공산', img:'https://firebasestorage.googleapis.com/v0/b/kims-design.firebasestorage.app/o/chocolate_AI.png?alt=media&token=a56a5718-d507-45b2-b189-27c330280972'}
