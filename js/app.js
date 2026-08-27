@@ -3022,9 +3022,7 @@ function catMgrDeleteSub(id, name) {
 function catMgrDeleteProd(id, name) {
   var list = document.getElementById('catmgr-prod-list');
   var targetRow = null;
-  list.querySelectorAll('div').forEach(function(r) {
-    if(r.querySelector && r.querySelector('span') && r.querySelector('span').textContent===name) targetRow=r;
-  });
+    targetRow = document.getElementById('catmgr-prod-row-' + id);
   if(!targetRow) return;
   targetRow.style.background = '#fff0f0';
   targetRow.style.border = '1.5px solid #e03333';
