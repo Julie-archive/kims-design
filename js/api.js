@@ -47,6 +47,18 @@ async function sbLoadAll() {
   } catch(e) {
     console.error('requests 로드 실패:', e);
   }
+  // nextId를 Firestore 데이터 기반으로 설정 (ID 충돌 방지)
+  var allIds = [
+    ...(DB.ads||[]).map(function(a){ return a.id; }),
+    ...(DB.requests||[]).map(function(r){ return r.id; }),
+    ...(DB.subs||[]).map(function(s){ return s.id; }),
+    ...(DB.products||[]).map(function(p){ return p.id; })
+  ].filter(function(id){ return typeof id === 'number' && id > 0; });
+  var maxId = allIds.length > 0 ? Math.max.apply(null, allIds) : 99;
+  if(DB.nextId <= maxId) {
+    DB.nextId = maxId + 1;
+    saveData();
+  }
   return true;
 }
 
