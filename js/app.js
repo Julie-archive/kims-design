@@ -3841,7 +3841,7 @@ function copyReqCode() {
   var loadingEl = document.createElement('div');
   loadingEl.id = 'kims-loading';
   loadingEl.style.cssText = 'position:fixed;inset:0;background:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:9999;gap:16px;';
-  loadingEl.innerHTML = '<div style="font-size:15px;font-weight:700;letter-spacing:0.1em;color:#111;">KIM\'S CLUB</div><div style="width:32px;height:32px;border:3px solid #eee;border-top-color:#006341;border-radius:50%;animation:kspin 0.8s linear infinite;"></div>';
+  loadingEl.innerHTML = '<div style="width:32px;height:32px;border:3px solid #eee;border-top-color:#006341;border-radius:50%;animation:kspin 0.8s linear infinite;"></div>';
   if(!document.getElementById('kims-loading')) document.body.appendChild(loadingEl);
   if(!document.getElementById('kspin-style')) {
     var st = document.createElement('style');
