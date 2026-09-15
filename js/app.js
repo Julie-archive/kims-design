@@ -2327,22 +2327,41 @@ function adreqToggleSizeOption(val) {
 function adreqSelectType(el) { /* 탭 방식 제거됨 */ }
 
 function adreqHandlePhotos(input) {
+  const MAX_SIZE = 20 * 1024 * 1024;
   Array.from(input.files).forEach(file => {
+    if(file.size > MAX_SIZE) {
+      alert(`${file.name} 파일이 20MB를 초과하여 업로드할 수 없습니다.`);
+      return;
+    }
     adreqSiteFiles.push(file);
-    const reader = new FileReader();
-    reader.onload = e => {
-      const preview = document.getElementById('adreq-site-preview');
-      const div = document.createElement('div');
-      div.style.cssText = 'position:relative;width:72px;height:72px;border-radius:6px;overflow:hidden;border:1px solid rgba(0,0,0,0.1);flex-shrink:0;';
-      div.innerHTML = `<img src="${e.target.result}" style="width:100%;height:100%;object-fit:cover;" />`;
+    const preview = document.getElementById('adreq-site-preview');
+    const div = document.createElement('div');
+    div.style.cssText = 'position:relative;width:72px;height:72px;border-radius:6px;overflow:hidden;border:1px solid rgba(0,0,0,0.1);flex-shrink:0;background:#f2f2f2;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:4px;padding:4px;';
+    const isImage = file.type.startsWith('image/');
+    if(isImage) {
+      const reader = new FileReader();
+      reader.onload = e => {
+        div.innerHTML = `<img src="${e.target.result}" style="width:100%;height:100%;object-fit:cover;position:absolute;inset:0;" />`;
+        const del = document.createElement('button');
+        del.innerHTML = '×';
+        del.style.cssText = 'position:absolute;top:2px;right:2px;width:18px;height:18px;border-radius:50%;background:rgba(0,0,0,0.6);color:#fff;border:none;cursor:pointer;font-size:12px;line-height:1;display:flex;align-items:center;justify-content:center;z-index:1;';
+        del.onclick = () => { adreqSiteFiles = adreqSiteFiles.filter(f=>f!==file); div.remove(); };
+        div.appendChild(del);
+        preview.appendChild(div);
+      };
+      reader.readAsDataURL(file);
+    } else {
+      var ext = file.name.split('.').pop().toUpperCase();
+      var extColors = {PDF:'#e03333',XLS:'#1d6f42',XLSX:'#1d6f42',DOC:'#2b579a',DOCX:'#2b579a',PPT:'#d24726',PPTX:'#d24726'};
+      var color = extColors[ext] || '#555';
+      div.innerHTML = `<div style="font-size:11px;font-weight:700;color:${color};background:${color}22;border-radius:4px;padding:2px 6px;">${ext}</div><div style="font-size:9px;color:#777;text-align:center;word-break:break-all;line-height:1.2;">${file.name.length>12?file.name.slice(0,12)+'...':file.name}</div>`;
       const del = document.createElement('button');
       del.innerHTML = '×';
       del.style.cssText = 'position:absolute;top:2px;right:2px;width:18px;height:18px;border-radius:50%;background:rgba(0,0,0,0.6);color:#fff;border:none;cursor:pointer;font-size:12px;line-height:1;display:flex;align-items:center;justify-content:center;';
       del.onclick = () => { adreqSiteFiles = adreqSiteFiles.filter(f=>f!==file); div.remove(); };
       div.appendChild(del);
       preview.appendChild(div);
-    };
-    reader.readAsDataURL(file);
+    }
   });
   input.value = '';
 }
