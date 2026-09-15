@@ -1825,10 +1825,12 @@ function rqHandleFiles(input, type) {
         else rqRefFiles = rqRefFiles.filter(f=>f!==file);
         div.remove();
       };
-      div.appendChild(del);
+        div.appendChild(del);
       previewEl.appendChild(div);
     }
   });
+  input.value = '';
+}
 
 function rqSubmit() {
   // 수정 모드인 경우
