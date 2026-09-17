@@ -3908,7 +3908,7 @@ function copyReqCode() {
 // ══════════════════════════════════════════════════════
 //  AI 카피 추천 기능 (프론트엔드 로직)
 // ══════════════════════════════════════════════════════
-document.addEventListener('DOMContentLoaded', () => {
+function initAiCopy() {
   // 모달 등 동적으로 생성되는 요소에 이벤트를 바인딩하기 위해 이벤트 위임 사용
   document.body.addEventListener('click', async (e) => {
     if (e.target && e.target.id === 'btn-ai-copy') {
@@ -3974,4 +3974,9 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     }
   });
-});
+}
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', initAiCopy);
+} else {
+  initAiCopy();
+}
