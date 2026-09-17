@@ -3975,3 +3975,8 @@ function initAiCopy() {
     }
   });
 }
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', initAiCopy);
+} else {
+  initAiCopy();
+}
