@@ -3669,8 +3669,19 @@ function openRequestDetail(id) {
     if((r.refImageSrcs||[]).length) {
       var rp = container.querySelector('#detail-ref-pics');
       if(rp) {
-        var refImgsHtml = (r.refImageSrcs||[]).map(function(src){
-          return '<img src="'+src+'" style="width:80px;height:80px;object-fit:cover;border-radius:6px;cursor:zoom-in;border:1px solid rgba(0,0,0,0.1);" onclick="openLightbox(\''+src+'\')" />';
+          var refImgsHtml = (r.refImageSrcs||[]).map(function(src){
+          var ext = src.split('?')[0].split('.').pop().toUpperCase();
+          var isImg = ['JPG','JPEG','PNG','GIF','WEBP','BMP'].indexOf(ext) !== -1;
+          if(isImg) {
+            return '<img src="'+src+'" style="width:80px;height:80px;object-fit:cover;border-radius:6px;cursor:zoom-in;border:1px solid rgba(0,0,0,0.1);" onclick="openLightbox(\''+src+'\')" />';
+          } else {
+            var extColors = {PDF:'#e03333',XLS:'#1d6f42',XLSX:'#1d6f42',DOC:'#2b579a',DOCX:'#2b579a',PPT:'#d24726',PPTX:'#d24726'};
+            var color = extColors[ext] || '#555';
+            return '<a href="'+src+'" target="_blank" style="display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;width:80px;height:80px;border-radius:6px;border:1px solid rgba(0,0,0,0.1);background:#f8f8f8;text-decoration:none;">'
+              +'<div style="font-size:11px;font-weight:700;color:'+color+';background:'+color+'22;border-radius:4px;padding:2px 6px;">'+ext+'</div>'
+              +'<div style="font-size:9px;color:#777;text-align:center;padding:0 4px;word-break:break-all;line-height:1.2;">파일 열기</div>'
+              +'</a>';
+          }
         }).join('');
         rp.innerHTML = '<div style="margin-bottom:16px;"><div style="font-size:11px;font-weight:600;color:#999;letter-spacing:1px;text-transform:uppercase;margin-bottom:8px;">레퍼런스 이미지</div><div style="display:flex;flex-wrap:wrap;gap:8px;">'+refImgsHtml+'</div></div>';
       }
