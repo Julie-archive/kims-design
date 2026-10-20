@@ -1946,9 +1946,9 @@ function rqSubmit() {
   };
 
   // Save site photo previews (already loaded in DOM)
-  const sitePrevWrap = document.getElementById('rq-site-preview');
-  const rawSiteSrcs = rqSiteFiles.length > 0 ? rqSiteFiles : (sitePrevWrap ? Array.from(sitePrevWrap.querySelectorAll('img')).map(img=>img.src) : []);
-  const refPrevWrap = document.getElementById('rq-ref-preview');
+  const rawSiteSrcs = rqSiteFiles.length > 0 ? [...rqSiteFiles] : (sitePrevWrap ? Array.from(sitePrevWrap.querySelectorAll('img')).map(img=>img.src) : []);
+  const rawRefSrcs = rqRefFiles.length > 0 ? [...rqRefFiles] : (refPrevWrap ? Array.from(refPrevWrap.querySelectorAll('img')).map(img=>img.src) : []);
+  const rawProdSrcs = rqProductFiles.length > 0 ? [...rqProductFiles] : (prodPrevWrap ? Array.from(prodPrevWrap.querySelectorAll('img')).map(img=>img.src) : []);
   const rawRefSrcs = rqRefFiles.length > 0 ? rqRefFiles : (refPrevWrap ? Array.from(refPrevWrap.querySelectorAll('img')).map(img=>img.src) : []);
   const prodPrevWrap = document.getElementById('rq-product-preview');
   const rawProdSrcs = rqProductFiles.length > 0 ? rqProductFiles : (prodPrevWrap ? Array.from(prodPrevWrap.querySelectorAll('img')).map(img=>img.src) : []);
