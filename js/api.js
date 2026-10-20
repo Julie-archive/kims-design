@@ -274,14 +274,36 @@ async function processAdTypes(types) {
   return result;
 }
 
+async function uploadFileToStorage(file, fileName) {
+  await waitForFirebase();
+  var { ref, uploadBytes, getDownloadURL } = await import("https://www.gstatic.com/firebasejs/12.15.0/firebase-storage.js");
+  try {
+    var safeName = fileName.replace(/[^a-zA-Z0-9_\-\.가-힣]/g, '_');
+    var path = 'requests/' + safeName + '_' + Date.now() + '.' + (file.name.split('.').pop());
+    var storageRef = ref(window.storage, path);
+    await uploadBytes(storageRef, file, {contentType: file.type});
+    var url = await getDownloadURL(storageRef);
+    console.log('[Storage] 파일 업로드 성공:', path);
+    return url;
+  } catch(e) {
+    console.error('[Storage] 파일 업로드 실패:', e);
+    return null;
+  }
+}
+
 async function processRequestFiles(srcs, prefix) {
   var result = [];
   for(var i=0; i<srcs.length; i++) {
-    if(srcs[i] && srcs[i].startsWith('data:')) {
-      var url = await uploadImageToStorage(srcs[i], prefix + '_' + i);
-      result.push(url || srcs[i]);
+    var src = srcs[i];
+    if(!src) continue;
+    if(src instanceof File) {
+      var url = await uploadFileToStorage(src, prefix + '_' + i + '_' + src.name);
+      result.push(url || '');
+    } else if(typeof src === 'string' && src.startsWith('data:')) {
+      var url = await uploadImageToStorage(src, prefix + '_' + i);
+      result.push(url || src);
     } else {
-      result.push(srcs[i]);
+      result.push(src);
     }
   }
   return result;
