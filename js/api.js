@@ -30,23 +30,6 @@ async function sbLoadAll() {
     return false;
   }
 
-  try {
-    var { query: q2, orderBy: ob2 } = await import("https://www.gstatic.com/firebasejs/12.15.0/firebase-firestore.js");
-    var reqsSnap = await getDocs(query(collection(db, 'requests'), orderBy('submittedAt', 'desc')));
-    DB.requests = reqsSnap.docs.map(function(d){ var r=d.data(); return {
-      id:r.id, reqCode:r.reqCode, submittedAt:r.submittedAt, status:r.status,
-      dept:r.dept, name:r.name, tel:r.tel, title:r.title, deadline:r.deadline,
-      adTypes:r.adTypes||[], bannerType:r.bannerType||'', customSize:r.customSize||'',
-      adTitle:r.adTitle, selling:r.selling, eventStart:r.eventStart||'', eventEnd:r.eventEnd||'',
-      eventDesc:r.eventDesc, sitePhotoSrcs:r.sitePhotoSrcs||[], refImageSrcs:r.refImageSrcs||[],
-      manager:r.manager||'', dueDate:r.dueDate||'',
-      branch:r.branch||'', deliveryDay:r.deliveryDay||'',
-      adTypeDetails:r.adTypeDetails||{}, productPhotoSrcs:r.productPhotoSrcs||[],
-      rejectReason:r.rejectReason||'', email:r.email||''
-    }; });
-  } catch(e) {
-    console.error('requests 로드 실패:', e);
-  }
   // nextId를 Firestore 데이터 기반으로 설정 (ID 충돌 방지)
   var allIds = [
     ...(DB.ads||[]).map(function(a){ return a.id; }),
@@ -59,7 +42,38 @@ async function sbLoadAll() {
     DB.nextId = maxId + 1;
     saveData();
   }
+  // requests는 백그라운드로 로드
+  sbLoadRequests();
   return true;
+}
+
+async function sbLoadRequests() {
+  await waitForFirebase();
+  var { collection, getDocs, orderBy, query } = await import("https://www.gstatic.com/firebasejs/12.15.0/firebase-firestore.js");
+  try {
+    var db = window.db;
+    var reqsSnap = await getDocs(query(collection(db, 'requests'), orderBy('submittedAt', 'desc')));
+    DB.requests = reqsSnap.docs.map(function(d){ var r=d.data(); return {
+      id:r.id, reqCode:r.reqCode, submittedAt:r.submittedAt, status:r.status,
+      dept:r.dept, name:r.name, tel:r.tel, title:r.title, deadline:r.deadline,
+      adTypes:r.adTypes||[], bannerType:r.bannerType||'', customSize:r.customSize||'',
+      adTitle:r.adTitle, selling:r.selling, eventStart:r.eventStart||'', eventEnd:r.eventEnd||'',
+      eventDesc:r.eventDesc, sitePhotoSrcs:r.sitePhotoSrcs||[], refImageSrcs:r.refImageSrcs||[],
+      manager:r.manager||'', dueDate:r.dueDate||'',
+      branch:r.branch||'', deliveryDay:r.deliveryDay||'',
+      adTypeDetails:r.adTypeDetails||{}, productPhotoSrcs:r.productPhotoSrcs||[],
+      rejectReason:r.rejectReason||'', email:r.email||''
+    }; });
+    var reqIds = (DB.requests||[]).map(function(r){ return r.id; });
+    var allIds = [...(DB.ads||[]).map(function(a){ return a.id; }), ...reqIds,
+      ...(DB.subs||[]).map(function(s){ return s.id; }), ...(DB.products||[]).map(function(p){ return p.id; })]
+      .filter(function(id){ return typeof id === 'number' && id > 0; });
+    var maxId = allIds.length > 0 ? Math.max.apply(null, allIds) : 99;
+    if(DB.nextId <= maxId) { DB.nextId = maxId + 1; saveData(); }
+    if(curView === 'admin' && adminTab === 'requests') renderAdminRequests();
+  } catch(e) {
+    console.error('requests 로드 실패:', e);
+  }
 }
 
 async function sbSaveSub(sub) {
